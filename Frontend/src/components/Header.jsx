@@ -6,7 +6,7 @@ export default function Header() {
       <div className="mx-auto flex w-full flex-wrap items-center justify-between p-4 md:space-x-8">
         <Navbar.Brand href="/">
           <img alt="" src="/favicon.svg" className="mr-3 h-6 sm:h-9" />
-          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Flowbite</span>
+          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">ANH BA BUS</span>
         </Navbar.Brand>
         <div className="order-2 hidden items-center md:flex">
           <a
