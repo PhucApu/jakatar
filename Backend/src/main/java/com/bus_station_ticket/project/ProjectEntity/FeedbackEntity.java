@@ -1,13 +1,16 @@
 package com.bus_station_ticket.project.ProjectEntity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -22,18 +25,22 @@ public class FeedbackEntity {
 
        @ManyToOne
        @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
-       private AccountEnitty accountEnitty;
+       private AccountEnity accountEnitty;
 
        @ManyToOne
        @JoinColumn(name = "ticket_id", referencedColumnName = "ticket_id", nullable = false )
        private TicketEntity ticketEntity;
 
-       @JoinColumn(name = "content", columnDefinition = "TEXT")
+       @Column(name = "content", columnDefinition = "TEXT")
        private String content;
 
-       @JoinColumn(name = "rating")
+       @Column(name = "rating")
        private int rating;
 
+       @Column(name = "date-comment", nullable = false, columnDefinition = "DATETIME")
+       private LocalDateTime dateComment ;
+
+       @Enumerated(EnumType.STRING)
        @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
        private ChoiceEnum isDelete;
 

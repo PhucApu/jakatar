@@ -2,6 +2,9 @@ package com.bus_station_ticket.project.ProjectEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,8 +27,8 @@ public class TicketEntity {
        private String ticketId;
 
        @ManyToOne
-       @JoinColumn(name = "username", referencedColumnName = "username", nullable = true, insertable = false, updatable = true)
-       private AccountEnitty accountEnitty;
+       @JoinColumn(name = "username_id", referencedColumnName = "username", nullable = true, insertable = false, updatable = true)
+       private AccountEnity accountEnitty;
 
        @ManyToOne
        @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false, insertable = false, updatable = true)
@@ -50,7 +53,7 @@ public class TicketEntity {
        @Column(name = "departure_date", nullable = false, columnDefinition = "DATETIME")
        private LocalDate departureDate;
 
-       @Column(name = "price", nullable = false, columnDefinition = "FLOAT", precision = 10, scale = 4 )
+       @Column(name = "price", nullable = false, columnDefinition = "FLOAT", length = 5 )
        private float price;
 
       
@@ -63,6 +66,11 @@ public class TicketEntity {
        @Column(name = "email", nullable = true, columnDefinition = "VARCHAR(30)")
        private String email;  
 
-       @OneToMany(mappedBy = "ticketEntity", orphanRemoval = true)
+       @OneToMany(mappedBy = "ticketEntity", fetch = FetchType.LAZY)
        private List<FeedbackEntity> listFeedbackEntities;
+
+
+       @Enumerated(EnumType.STRING)
+       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
+       private ChoiceEnum isDelete;
 }

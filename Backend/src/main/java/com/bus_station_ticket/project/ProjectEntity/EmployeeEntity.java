@@ -2,6 +2,8 @@ package com.bus_station_ticket.project.ProjectEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,7 +20,7 @@ public class EmployeeEntity {
 
        @Id
        @GeneratedValue(strategy = GenerationType.IDENTITY)
-       @Column(name = "driver_id", columnDefinition = "TEXT")
+       @Column(name = "driver_id", columnDefinition = "VARCHAR(20)")
        private String driverId;
 
        @Column(name = "id_driver", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
@@ -33,6 +35,7 @@ public class EmployeeEntity {
        @Column(name = "phone_number", nullable = false, columnDefinition = "VARCHAR(11)")
        private String phoneNumber;
 
+       @Enumerated(EnumType.STRING)
        @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
        private ChoiceEnum isDelete;
 
@@ -44,82 +47,6 @@ public class EmployeeEntity {
        )
        private List<BusEntity> listBusEntity;
 
-       // Contructor no argument
-       public EmployeeEntity() {
-       }
-
-       // Contructor full arguments
-       public EmployeeEntity(ChoiceEnum isDriver, String driverName, String licenseNumber,
-                     String phoneNumber, ChoiceEnum isDelete, List<BusEntity> listBusEntity) {
-              this.isDriver = isDriver;
-              this.driverName = driverName;
-              this.licenseNumber = licenseNumber;
-              this.phoneNumber = phoneNumber;
-              this.isDelete = isDelete;
-              this.listBusEntity = listBusEntity;
-       }
-
-       public String getDriverId() {
-              return driverId;
-       }
-
-       public void setDriverId(String driverId) {
-              this.driverId = driverId;
-       }
-
-       public ChoiceEnum getIsDriver() {
-              return isDriver;
-       }
-
-       public void setIsDriver(ChoiceEnum isDriver) {
-              this.isDriver = isDriver;
-       }
-
-       public String getDriverName() {
-              return driverName;
-       }
-
-       public void setDriverName(String driverName) {
-              this.driverName = driverName;
-       }
-
-       public String getLicenseNumber() {
-              return licenseNumber;
-       }
-
-       public void setLicenseNumber(String licenseNumber) {
-              this.licenseNumber = licenseNumber;
-       }
-
-       public String getPhoneNumber() {
-              return phoneNumber;
-       }
-
-       public void setPhoneNumber(String phoneNumber) {
-              this.phoneNumber = phoneNumber;
-       }
-
-       public ChoiceEnum getIsDelete() {
-              return isDelete;
-       }
-
-       public void setIsDelete(ChoiceEnum isDelete) {
-              this.isDelete = isDelete;
-       }
-
-       public List<BusEntity> getListBusEntity() {
-              return listBusEntity;
-       }
-
-       public void setListBusEntity(List<BusEntity> listBusEntity) {
-              this.listBusEntity = listBusEntity;
-       }
-
-       @Override
-       public String toString() {
-              return "EmployeeEntity [driverId=" + driverId + ", isDriver=" + isDriver + ", driverName=" + driverName
-                            + ", licenseNumber=" + licenseNumber + ", phoneNumber=" + phoneNumber + ", isDelete="
-                            + isDelete + ", listBusEntity=" + listBusEntity + "]";
-       }
+       
 
 }
