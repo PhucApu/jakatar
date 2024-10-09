@@ -30,7 +30,7 @@ export default function DropdownSearch({...props}) {
         <button
           id='dropdown-button'
           onClick={toggleDropdown}
-          className='inline-flex justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500'
+          className='inline-flex justify-between w-full px-4 py-[10px] text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500'
         >
           <span className='mr-2'>{props.helper}</span>
           <svg
@@ -52,7 +52,7 @@ export default function DropdownSearch({...props}) {
         {isOpen && (
           <div
             id='dropdown-menu'
-            className='absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1'
+            className='absolute z-20 right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1'
           >
             {/* Search Input */}
             <input
