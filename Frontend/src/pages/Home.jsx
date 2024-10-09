@@ -1,34 +1,19 @@
-import { Button, Datepicker, TextInput } from 'flowbite-react';
-import DropdownSearch from '../components/DropdownSearch';
+import SearchBox from "../components/SearchBox";
 
 export default function Home() {
   return (
     <main className='w-[80vw] mx-auto'>
       <img src='/banner.png' className='h-[40vh] object-cover mx-auto rounded-2xl shadow-xl' />
-      <section className='w-full bg-blue-100 p-3 my-8 rounded-xl'>
-        <div className='w-full grid grid-cols-2 lg:grid-cols-4 gap-4 bg-white rounded-xl border border-blue-500 mx-auto px-4 pt-4 pb-8 shadow-sm'>
-          <DropdownSearch label='Điểm đi' helper='Chọn điểm đi' />
-          <DropdownSearch label='Điểm đến' helper='Chọn điểm đến' />
-          <div>
-            <label htmlFor=''>Ngày đi</label>
-            <Datepicker />
-          </div>
-          <div>
-            <label htmlFor=''>Số lượng</label>
-            <TextInput type='number' min={1} />
-          </div>
-        </div>
-        <div className='relative flex items-center justify-center'>
-          <Button size={'lg'} className='absolute'>
-            Tìm kiếm
-          </Button>
-        </div>
-      </section>
-      <section className='bg-white dark:bg-gray-900'>
+      <SearchBox />
+      <section>
         <div className='grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12'>
           <div className='col-span-12 flex flex-col items-center justify-between mb-8'>
-          <h2 className='text-2xl font-bold lg:text-4xl text-teal-700'>ANH BA BUS - CHẤT LƯỢNG LÀ DANH DỰ</h2>
-          <h3 className='text-lg font-semibold lg:text-2xl'>Được khách hàng tin tưởng và lựa chọn</h3>
+            <h2 className='text-2xl font-bold lg:text-4xl text-teal-700'>
+              ANH BA BUS - CHẤT LƯỢNG LÀ DANH DỰ
+            </h2>
+            <h3 className='text-lg font-semibold lg:text-2xl'>
+              Được khách hàng tin tưởng và lựa chọn
+            </h3>
           </div>
           <div className='mr-auto place-self-center lg:col-span-7'>
             <div className='my-2'>
