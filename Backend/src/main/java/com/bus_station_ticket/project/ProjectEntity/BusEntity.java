@@ -19,8 +19,8 @@ public class BusEntity {
 
        @Id
        @GeneratedValue(strategy = GenerationType.IDENTITY)
-       @Column(name = "bus_id", columnDefinition = "VARCHAR(20)")
-       private String busId;
+       @Column(name = "bus_id")
+       private Long busId;
 
        @Column(name = "bus_number", nullable = false, columnDefinition = "VARCHAR(30)")
        private String busNumber;
@@ -39,4 +39,70 @@ public class BusEntity {
        private List<EmployeeEntity> listEmployeeEntities;
 
 
+       public BusEntity() {
+       }
+
+       public BusEntity(String busNumber, int capacity, String brand, ChoiceEnum isDelete,
+                     List<EmployeeEntity> listEmployeeEntities) {
+              this.busNumber = busNumber;
+              this.capacity = capacity;
+              this.brand = brand;
+              this.isDelete = isDelete;
+              this.listEmployeeEntities = listEmployeeEntities;
+       }
+
+       public Long getBusId() {
+              return busId;
+       }
+
+       public void setBusId(Long busId) {
+              this.busId = busId;
+       }
+
+       public String getBusNumber() {
+              return busNumber;
+       }
+
+       public void setBusNumber(String busNumber) {
+              this.busNumber = busNumber;
+       }
+
+       public int getCapacity() {
+              return capacity;
+       }
+
+       public void setCapacity(int capacity) {
+              this.capacity = capacity;
+       }
+
+       public String getBrand() {
+              return brand;
+       }
+
+       public void setBrand(String brand) {
+              this.brand = brand;
+       }
+
+       public ChoiceEnum getIsDelete() {
+              return isDelete;
+       }
+
+       public void setIsDelete(ChoiceEnum isDelete) {
+              this.isDelete = isDelete;
+       }
+
+       public List<EmployeeEntity> getListEmployeeEntities() {
+              return listEmployeeEntities;
+       }
+
+       public void setListEmployeeEntities(List<EmployeeEntity> listEmployeeEntities) {
+              this.listEmployeeEntities = listEmployeeEntities;
+       }
+
+       @Override
+       public String toString() {
+              return "BusEntity [busId=" + busId + ", busNumber=" + busNumber + ", capacity=" + capacity + ", brand="
+                            + brand + ", isDelete=" + isDelete + ", listEmployeeEntities=" + listEmployeeEntities + "]";
+       }
+       
 }

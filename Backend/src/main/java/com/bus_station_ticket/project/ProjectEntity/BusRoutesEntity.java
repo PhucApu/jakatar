@@ -22,8 +22,8 @@ public class BusRoutesEntity {
        
        @Id
        @GeneratedValue(strategy = GenerationType.IDENTITY)
-       @Column(name = "routes_id", columnDefinition = "VARCHAR(20)")
-       private String routesId;
+       @Column(name = "routes_id")
+       private Long routesId;
 
        @Column(name = "departure_location", columnDefinition = "VARCHAR(50)")
        private String departureLocation;
@@ -49,6 +49,95 @@ public class BusRoutesEntity {
 
        @OneToMany(mappedBy = "busRoutesEntity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
+
+
+       public BusRoutesEntity() {
+       }
+
+       public BusRoutesEntity(String departureLocation, String destinationLocation, float distanceKilometer,
+                     LocalDateTime departureTime, LocalDateTime arivalTime, float price, ChoiceEnum isDelete,
+                     List<TicketEntity> listTicketEntities) {
+              this.departureLocation = departureLocation;
+              this.destinationLocation = destinationLocation;
+              this.distanceKilometer = distanceKilometer;
+              this.departureTime = departureTime;
+              this.arivalTime = arivalTime;
+              this.price = price;
+              this.isDelete = isDelete;
+              this.listTicketEntities = listTicketEntities;
+       }
+
+       public Long getRoutesId() {
+              return routesId;
+       }
+
+       public void setRoutesId(Long routesId) {
+              this.routesId = routesId;
+       }
+
+       public String getDepartureLocation() {
+              return departureLocation;
+       }
+
+       public void setDepartureLocation(String departureLocation) {
+              this.departureLocation = departureLocation;
+       }
+
+       public String getDestinationLocation() {
+              return destinationLocation;
+       }
+
+       public void setDestinationLocation(String destinationLocation) {
+              this.destinationLocation = destinationLocation;
+       }
+
+       public float getDistanceKilometer() {
+              return distanceKilometer;
+       }
+
+       public void setDistanceKilometer(float distanceKilometer) {
+              this.distanceKilometer = distanceKilometer;
+       }
+
+       public LocalDateTime getDepartureTime() {
+              return departureTime;
+       }
+
+       public void setDepartureTime(LocalDateTime departureTime) {
+              this.departureTime = departureTime;
+       }
+
+       public LocalDateTime getArivalTime() {
+              return arivalTime;
+       }
+
+       public void setArivalTime(LocalDateTime arivalTime) {
+              this.arivalTime = arivalTime;
+       }
+
+       public float getPrice() {
+              return price;
+       }
+
+       public void setPrice(float price) {
+              this.price = price;
+       }
+
+       public ChoiceEnum getIsDelete() {
+              return isDelete;
+       }
+
+       public void setIsDelete(ChoiceEnum isDelete) {
+              this.isDelete = isDelete;
+       }
+
+       public List<TicketEntity> getListTicketEntities() {
+              return listTicketEntities;
+       }
+
+       public void setListTicketEntities(List<TicketEntity> listTicketEntities) {
+              this.listTicketEntities = listTicketEntities;
+       }
 
        
 }

@@ -21,8 +21,8 @@ import jakarta.persistence.Table;
 public class PaymentEntity {
        @Id
        @GeneratedValue(strategy = GenerationType.IDENTITY)
-       @Column(name = "payment_id" ,columnDefinition = "VARCHAR(20)")
-       private String paymentId;
+       @Column(name = "payment_id")
+       private Long paymentId;
 
        @Column(name = "payment_time", nullable = false, columnDefinition = "DATETIME")
        private LocalDateTime paymentTime;
@@ -36,4 +36,64 @@ public class PaymentEntity {
        @Enumerated(EnumType.STRING)
        @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
        private ChoiceEnum isDelete;
+
+       
+
+       public PaymentEntity() {
+       }
+
+       public PaymentEntity(LocalDateTime paymentTime, String paymentMethod, List<TicketEntity> listTicketEntities,
+                     ChoiceEnum isDelete) {
+              this.paymentTime = paymentTime;
+              this.paymentMethod = paymentMethod;
+              this.listTicketEntities = listTicketEntities;
+              this.isDelete = isDelete;
+       }
+
+       public Long getPaymentId() {
+              return paymentId;
+       }
+
+       public void setPaymentId(Long paymentId) {
+              this.paymentId = paymentId;
+       }
+
+       public LocalDateTime getPaymentTime() {
+              return paymentTime;
+       }
+
+       public void setPaymentTime(LocalDateTime paymentTime) {
+              this.paymentTime = paymentTime;
+       }
+
+       public String getPaymentMethod() {
+              return paymentMethod;
+       }
+
+       public void setPaymentMethod(String paymentMethod) {
+              this.paymentMethod = paymentMethod;
+       }
+
+       public List<TicketEntity> getListTicketEntities() {
+              return listTicketEntities;
+       }
+
+       public void setListTicketEntities(List<TicketEntity> listTicketEntities) {
+              this.listTicketEntities = listTicketEntities;
+       }
+
+       public ChoiceEnum getIsDelete() {
+              return isDelete;
+       }
+
+       public void setIsDelete(ChoiceEnum isDelete) {
+              this.isDelete = isDelete;
+       }
+
+       @Override
+       public String toString() {
+              return "PaymentEntity [paymentId=" + paymentId + ", paymentTime=" + paymentTime + ", paymentMethod="
+                            + paymentMethod + ", listTicketEntities=" + listTicketEntities + ", isDelete=" + isDelete
+                            + "]";
+       }
 }
