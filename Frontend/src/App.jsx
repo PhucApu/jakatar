@@ -8,6 +8,7 @@ import Booking from './pages/Booking';
 import AllRoute from './pages/AllRoute';
 import Contact from './pages/Contact';
 import Ticket from './pages/Ticket';
+import Checkout from './pages/Checkout';
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
       <div className='bg-gray-100 min-h-screen'>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/dat-ve' element={<Booking />} />
+          <Route path='/chon-ve' element={<Booking />} />
+          <Route path='/dat-ve' element={<Checkout />} />
           <Route path='/dang-nhap' element={<Login />} />
           <Route path='/dang-ky' element={<SignUp />} />
           <Route path='/lich-trinh' element={<AllRoute />} />

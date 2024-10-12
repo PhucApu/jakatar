@@ -1,8 +1,11 @@
 import { Button, Timeline, Badge, HR } from 'flowbite-react';
 import { GiPositionMarker } from 'react-icons/gi';
 import { FaClock, FaBus } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 export default function TripInfo() {
+  const navigate = useNavigate();
+
   return (
     <div className='bg-white border border-gray-300 rounded shadow-lg py-2'>
       <div className='w-full flex items-center justify-around pt-6 pb-2 px-2'>
@@ -37,7 +40,7 @@ export default function TripInfo() {
       <HR className='my-3'/>
       <div className='flex items-center justify-between px-10'>
       <p className='text-cyan-600 font-bold text-xl'>69.000đ</p>
-      <Button size='lg'>Đặt vé</Button>
+      <Button size='lg' onClick={() => navigate('/dat-ve')}>Đặt vé</Button>
       </div>
     </div>
   );
