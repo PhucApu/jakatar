@@ -37,7 +37,7 @@ public class FeedbackEntity {
        @Column(name = "rating")
        private int rating;
 
-       @Column(name = "date-comment", nullable = false, columnDefinition = "DATETIME")
+       @Column(name = "date_comment", nullable = false, columnDefinition = "DATETIME")
        private LocalDateTime dateComment ;
 
        @Enumerated(EnumType.STRING)
