@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
 import com.bus_station_ticket.project.ProjectEntity.ChoiceEnum;
 import com.bus_station_ticket.project.ProjectEntity.DiscountEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
