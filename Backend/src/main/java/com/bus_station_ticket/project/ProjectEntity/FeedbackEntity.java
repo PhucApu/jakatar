@@ -25,7 +25,7 @@ public class FeedbackEntity {
 
        @ManyToOne
        @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
-       private AccountEnity accountEnitty;
+       private AccountEnity accountEnity;
 
        @ManyToOne
        @JoinColumn(name = "ticket_id", referencedColumnName = "ticket_id", nullable = false )
@@ -51,7 +51,7 @@ public class FeedbackEntity {
 
        public FeedbackEntity(AccountEnity accountEnitty, TicketEntity ticketEntity, String content, int rating,
                      LocalDateTime dateComment, ChoiceEnum isDelete) {
-              this.accountEnitty = accountEnitty;
+              this.accountEnity = accountEnitty;
               this.ticketEntity = ticketEntity;
               this.content = content;
               this.rating = rating;
@@ -68,11 +68,11 @@ public class FeedbackEntity {
        }
 
        public AccountEnity getAccountEnitty() {
-              return accountEnitty;
+              return accountEnity;
        }
 
        public void setAccountEnitty(AccountEnity accountEnitty) {
-              this.accountEnitty = accountEnitty;
+              this.accountEnity = accountEnitty;
        }
 
        public TicketEntity getTicketEntity() {
@@ -117,7 +117,7 @@ public class FeedbackEntity {
 
        @Override
        public String toString() {
-              return "FeedbackEntity [feedbackId=" + feedbackId + ", accountEnitty=" + accountEnitty + ", ticketEntity="
+              return "FeedbackEntity [feedbackId=" + feedbackId + ", accountEnitty=" + accountEnity + ", ticketEntity="
                             + ticketEntity + ", content=" + content + ", rating=" + rating + ", dateComment="
                             + dateComment + ", isDelete=" + isDelete + "]";
        }

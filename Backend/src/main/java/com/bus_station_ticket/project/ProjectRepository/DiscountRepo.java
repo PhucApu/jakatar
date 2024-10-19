@@ -5,20 +5,39 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.bus_station_ticket.project.ProjectEntity.ChoiceEnum;
 import com.bus_station_ticket.project.ProjectEntity.DiscountEntity;
-import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
+
 
 public interface DiscountRepo extends JpaRepository<DiscountEntity,Long>{
        
        // Truy suất theo thuộc tính
-       public Optional<List<DiscountEntity>> findByDiscountPercentage(float discountPercentage);
-       public Optional<List<DiscountEntity>> findByValidFrom (LocalDateTime validFrom);
-       public Optional<List<DiscountEntity>> findByValidUntil (LocalDateTime validUntil);
-       public Optional<List<DiscountEntity>> findByAmount (float amount);
-       public Optional<List<DiscountEntity>> findByIsDelete (ChoiceEnum isDelete);
-       public Optional<List<TicketEntity>> findByDiscountEntity (DiscountEntity discountEntity);
+       public Optional<DiscountEntity> findByDiscountId (Long discountId);
+       
+       public List<DiscountEntity> findByDiscountPercentage(float discountPercentage);
+       
+       public List<DiscountEntity> findByValidFrom (LocalDateTime validFrom);
+       
+       public List<DiscountEntity> findByValidUntil (LocalDateTime validUntil);
+       
+       public List<DiscountEntity> findByAmount (float amount);
+       
+       public List<DiscountEntity> findByIsDelete (ChoiceEnum isDelete);
+
+
+       @Query(
+              value = """
+                     select *
+                     from discount dc, ticket tk
+                     where dc.discount_id = tk.discount_id and tk.ticket_id = :ticketId
+              """,
+              nativeQuery = true
+
+       )
+       public Optional<DiscountEntity> findByTicketEntity_Id (@Param("ticketId") Long ticketId);
 
        
 }

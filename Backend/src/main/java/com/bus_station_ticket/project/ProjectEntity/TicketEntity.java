@@ -28,7 +28,7 @@ public class TicketEntity {
 
        @ManyToOne
        @JoinColumn(name = "username_id", referencedColumnName = "username", nullable = true, insertable = false, updatable = true)
-       private AccountEnity accountEnitty;
+       private AccountEnity accountEnity;
 
        @ManyToOne
        @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false, insertable = false, updatable = true)
@@ -84,7 +84,7 @@ public class TicketEntity {
                      PaymentEntity paymentEntity, DiscountEntity discountEntity, String seatNumber,
                      LocalDate departureDate, float price, String userName, String phoneNumber, String email,
                      List<FeedbackEntity> listFeedbackEntities, ChoiceEnum isDelete) {
-              this.accountEnitty = accountEnitty;
+              this.accountEnity = accountEnitty;
               this.busEntity = busEntity;
               this.busRoutesEntity = busRoutesEntity;
               this.paymentEntity = paymentEntity;
@@ -111,12 +111,12 @@ public class TicketEntity {
 
 
        public AccountEnity getAccountEnitty() {
-              return accountEnitty;
+              return accountEnity;
        }
 
 
        public void setAccountEnitty(AccountEnity accountEnitty) {
-              this.accountEnitty = accountEnitty;
+              this.accountEnity = accountEnitty;
        }
 
 
@@ -242,7 +242,7 @@ public class TicketEntity {
 
        @Override
        public String toString() {
-              return "TicketEntity [ticketId=" + ticketId + ", accountEnitty=" + accountEnitty + ", busEntity="
+              return "TicketEntity [ticketId=" + ticketId + ", accountEnitty=" + accountEnity + ", busEntity="
                             + busEntity + ", busRoutesEntity=" + busRoutesEntity + ", paymentEntity=" + paymentEntity
                             + ", discountEntity=" + discountEntity + ", seatNumber=" + seatNumber + ", departureDate="
                             + departureDate + ", price=" + price + ", userName=" + userName + ", phoneNumber="

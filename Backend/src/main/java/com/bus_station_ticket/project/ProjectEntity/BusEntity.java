@@ -9,7 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+
 import jakarta.persistence.ManyToMany;
+
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
 
@@ -38,17 +41,20 @@ public class BusEntity {
        @ManyToMany(mappedBy = "listBusEntity", fetch = FetchType.LAZY)
        private List<EmployeeEntity> listEmployeeEntities;
 
+       @OneToMany(mappedBy = "busEntity", fetch = FetchType.LAZY)
+       private List<TicketEntity> listTicketEntities;
 
        public BusEntity() {
        }
 
        public BusEntity(String busNumber, int capacity, String brand, ChoiceEnum isDelete,
-                     List<EmployeeEntity> listEmployeeEntities) {
+                     List<EmployeeEntity> listEmployeeEntities, List<TicketEntity> listTicketEntities) {
               this.busNumber = busNumber;
               this.capacity = capacity;
               this.brand = brand;
               this.isDelete = isDelete;
               this.listEmployeeEntities = listEmployeeEntities;
+              this.listTicketEntities = listTicketEntities;
        }
 
        public Long getBusId() {
@@ -102,7 +108,16 @@ public class BusEntity {
        @Override
        public String toString() {
               return "BusEntity [busId=" + busId + ", busNumber=" + busNumber + ", capacity=" + capacity + ", brand="
-                            + brand + ", isDelete=" + isDelete + ", listEmployeeEntities=" + listEmployeeEntities + "]";
+                            + brand + ", isDelete=" + isDelete + ", listEmployeeEntities=" + listEmployeeEntities
+                            + ", listTicketEntities=" + listTicketEntities + "]";
        }
-       
+
+       public List<TicketEntity> getListTicketEntities() {
+              return listTicketEntities;
+       }
+
+       public void setListTicketEntities(List<TicketEntity> listTicketEntities) {
+              this.listTicketEntities = listTicketEntities;
+       }
+
 }

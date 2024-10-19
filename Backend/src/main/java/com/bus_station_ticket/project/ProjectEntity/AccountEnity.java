@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "account", indexes = @Index(columnList = "username")) // name table is "account", create index on column
                                                                     // "username"
-public class AccountEnity {
+public class  AccountEnity {
 
        @Id // primary key
        @Column(name = "username", columnDefinition = "VARCHAR(20)") // column: username, type: text
@@ -32,7 +32,7 @@ public class AccountEnity {
                                                                                     // null: no
        private String phoneNumber;
 
-       @Column(name = "ROLE", nullable = false, columnDefinition = "ENUM('USER','ADMIN') DEFAULT 'USER'") // column:
+       @Column(name = "ROLE", nullable = false, columnDefinition = "ENUM('ROLE_USER','ROLE_ADMIN') DEFAULT 'ROLE_USER'") // column:
                                                                                                           // ROLE, type:
                                                                                                           // nvarchar
                                                                                                           // (USER,ADMIN),
@@ -49,10 +49,10 @@ public class AccountEnity {
        private ChoiceEnum isBlock;
 
 
-       @OneToMany(mappedBy = "accountEnitty", fetch = FetchType.LAZY)
+       @OneToMany(mappedBy = "accountEnity", fetch = FetchType.LAZY)
        private List<FeedbackEntity> listFeedbackEntities;
 
-       @OneToMany(mappedBy = "accountEnitty", fetch = FetchType.LAZY)
+       @OneToMany(mappedBy = "accountEnity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
 
 
