@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.bus_station_ticket.project.ProjectEntity.ChoiceEnum;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 
@@ -23,7 +22,7 @@ public interface FeedbackRepo extends JpaRepository<FeedbackEntity,Long>{
        
        public List<FeedbackEntity> findByDateComment (LocalDateTime dateComment);
        
-       public List<FeedbackEntity> findByIsDelete (ChoiceEnum isDelete);
+       public List<FeedbackEntity> findByIsDelete (Boolean isDelete);
           
        @Query(
               value = """

@@ -81,5 +81,5 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
        )
        public Optional<TicketEntity> findByFeedbackEntity_Id (@Param("feedbackId") Long feedbackId);
 
-
+       public List<TicketEntity> findByIsDelete (Boolean isDelete);
 }

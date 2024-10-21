@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
-import com.bus_station_ticket.project.ProjectEntity.ChoiceEnum;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
 
 public interface EmployeeRepo extends JpaRepository<EmployeeEntity, Long> {
@@ -16,7 +15,7 @@ public interface EmployeeRepo extends JpaRepository<EmployeeEntity, Long> {
        // Truy suất theo thuộc tính
        public Optional<EmployeeEntity> findByDriverId(Long driverId);
 
-       public List<EmployeeEntity> findByIsDriver(ChoiceEnum isDriver);
+       public List<EmployeeEntity> findByIsDriver(Boolean isDriver);
 
        public List<EmployeeEntity> findByDriverName(String driverName);
 
@@ -24,7 +23,7 @@ public interface EmployeeRepo extends JpaRepository<EmployeeEntity, Long> {
 
        public Optional<EmployeeEntity> findByPhoneNumber(String phoneNumber);
 
-       public List<EmployeeEntity> findByIsDelete(ChoiceEnum isDelete);
+       public List<EmployeeEntity> findByIsDelete(Boolean isDelete);
 
        @Query(
               value = """

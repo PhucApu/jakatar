@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,9 +38,8 @@ public class FeedbackEntity {
        @Column(name = "date_comment", nullable = false, columnDefinition = "DATETIME")
        private LocalDateTime dateComment ;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
 
 
@@ -50,7 +47,7 @@ public class FeedbackEntity {
        }
 
        public FeedbackEntity(AccountEnity accountEnitty, TicketEntity ticketEntity, String content, int rating,
-                     LocalDateTime dateComment, ChoiceEnum isDelete) {
+                     LocalDateTime dateComment, Boolean isDelete) {
               this.accountEnity = accountEnitty;
               this.ticketEntity = ticketEntity;
               this.content = content;
@@ -107,11 +104,11 @@ public class FeedbackEntity {
               this.dateComment = dateComment;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 

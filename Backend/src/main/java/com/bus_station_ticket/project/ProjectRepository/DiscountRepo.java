@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.bus_station_ticket.project.ProjectEntity.ChoiceEnum;
 import com.bus_station_ticket.project.ProjectEntity.DiscountEntity;
 
 
@@ -25,7 +24,7 @@ public interface DiscountRepo extends JpaRepository<DiscountEntity,Long>{
        
        public List<DiscountEntity> findByAmount (float amount);
        
-       public List<DiscountEntity> findByIsDelete (ChoiceEnum isDelete);
+       public List<DiscountEntity> findByIsDelete (Boolean isDelete);
 
 
        @Query(

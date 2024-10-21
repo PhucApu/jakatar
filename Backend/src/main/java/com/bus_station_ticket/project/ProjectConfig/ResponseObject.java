@@ -53,4 +53,33 @@ public class ResponseObject {
        public void addMessage(String key, Object value){
               this.message.put(key, value);
        }
+
+       // get information path to get data
+       public Map<String,String> getPathBasicInfor(String nameEntity, String id){
+
+              Map<String,String> infor = new HashMap<>();
+
+              // lấy tất cả dữ liệu
+              String inforPathGetAllData = "Try send HTTP GET: /" + nameEntity;
+
+              // lấy thông tin một đối tượng
+              String inforPathGetData = "Try send HTTP GET: /" + nameEntity + "/" + id;
+
+              // thêm một đối tượng
+              String inforPathInsertData = "Try send HTTP POST: /" + nameEntity + "/insert" ;
+
+              // sửa một đối tượng
+              String inforPathUpdateData = "Try send HTTP PUT: /" + nameEntity + "/update" ;
+
+              // xóa một đối tượng
+              String inforPathDeleteData = "Try send HTTP DELETE: /" + nameEntity + "/" + id;
+
+              infor.put("getAll", inforPathGetAllData);
+              infor.put("getById", inforPathGetData);
+              infor.put("insert", inforPathInsertData);
+              infor.put("update", inforPathUpdateData);
+              infor.put("delete", inforPathDeleteData);
+
+              return infor;
+       }
 }

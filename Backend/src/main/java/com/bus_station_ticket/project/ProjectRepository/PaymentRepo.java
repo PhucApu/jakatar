@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.bus_station_ticket.project.ProjectEntity.ChoiceEnum;
+
 import com.bus_station_ticket.project.ProjectEntity.PaymentEntity;
 
 
@@ -21,7 +21,7 @@ public interface PaymentRepo extends JpaRepository<PaymentEntity,Long> {
        
        public List<PaymentEntity> findByPaymentMethod (String paymentMethod);
        
-       public List<PaymentEntity> findByIsDelete (ChoiceEnum isDelete);
+       public List<PaymentEntity> findByIsDelete (Boolean isDelete);
 
        @Query(
               value = """

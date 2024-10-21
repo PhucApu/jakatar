@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
-import com.bus_station_ticket.project.ProjectEntity.ChoiceEnum;
 
 @Repository
 public interface BusRepo extends JpaRepository<BusEntity,Long> {
@@ -19,7 +18,7 @@ public interface BusRepo extends JpaRepository<BusEntity,Long> {
        public Optional<BusEntity> findByBusNumber (String busNumber);
        public List<BusEntity> findByCapacity (int capacity);
        public List<BusEntity> findByBrand (String brand);
-       public List<BusEntity> findByIsDelete (ChoiceEnum isDelete);
+       public List<BusEntity> findByIsDelete (Boolean isDelete);
 
        @Query(
               value = """

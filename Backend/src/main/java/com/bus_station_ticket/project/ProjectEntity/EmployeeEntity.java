@@ -2,8 +2,6 @@ package com.bus_station_ticket.project.ProjectEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,8 +21,8 @@ public class EmployeeEntity {
        @Column(name = "driver_id")
        private Long driverId;
 
-       @Column(name = "is_driver", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDriver;
+       @Column(name = "is_driver", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+       private Boolean isDriver;
 
        @Column(name = "driver_name", nullable = false, columnDefinition = "VARCHAR(50)")
        private String driverName;
@@ -35,9 +33,8 @@ public class EmployeeEntity {
        @Column(name = "phone_number", nullable = false, columnDefinition = "VARCHAR(11)")
        private String phoneNumber;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
        @ManyToMany
        @JoinTable(
@@ -52,8 +49,8 @@ public class EmployeeEntity {
        public EmployeeEntity() {
        }
 
-       public EmployeeEntity(ChoiceEnum isDriver, String driverName, String licenseNumber, String phoneNumber,
-                     ChoiceEnum isDelete, List<BusEntity> listBusEntity) {
+       public EmployeeEntity(Boolean isDriver, String driverName, String licenseNumber, String phoneNumber,
+                     Boolean isDelete, List<BusEntity> listBusEntity) {
               this.isDriver = isDriver;
               this.driverName = driverName;
               this.licenseNumber = licenseNumber;
@@ -70,11 +67,11 @@ public class EmployeeEntity {
               this.driverId = driverId;
        }
 
-       public ChoiceEnum getIsDriver() {
+       public Boolean getIsDriver() {
               return isDriver;
        }
 
-       public void setIsDriver(ChoiceEnum isDriver) {
+       public void setIsDriver(Boolean isDriver) {
               this.isDriver = isDriver;
        }
 
@@ -102,11 +99,11 @@ public class EmployeeEntity {
               this.phoneNumber = phoneNumber;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 

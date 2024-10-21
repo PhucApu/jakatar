@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.bus_station_ticket.project.ProjectEntity.AccountEnity;
-import com.bus_station_ticket.project.ProjectEntity.ChoiceEnum;
 
 
 @Repository
@@ -26,9 +25,9 @@ public interface AccountRepo extends JpaRepository<AccountEnity,String> {
        
        public List<AccountEnity> findByRole(String role);
        
-       public List<AccountEnity> findByIsBlock(ChoiceEnum isBlock);
+       public List<AccountEnity> findByIsBlock(Boolean isBlock);
        
-       public List<AccountEnity> findByIsDelete(ChoiceEnum isDelete);
+       public List<AccountEnity> findByIsDelete(Boolean isDelete);
 
 
        @Query(

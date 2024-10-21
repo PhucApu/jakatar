@@ -2,8 +2,6 @@ package com.bus_station_ticket.project.ProjectEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,9 +41,8 @@ public class BusRoutesEntity {
        @Column(name = "price", columnDefinition = "FLOAT", length = 5)
        private float price;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
        @OneToMany(mappedBy = "busRoutesEntity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
@@ -55,7 +52,7 @@ public class BusRoutesEntity {
        }
 
        public BusRoutesEntity(String departureLocation, String destinationLocation, float distanceKilometer,
-                     LocalDateTime departureTime, LocalDateTime arivalTime, float price, ChoiceEnum isDelete,
+                     LocalDateTime departureTime, LocalDateTime arivalTime, float price, Boolean isDelete,
                      List<TicketEntity> listTicketEntities) {
               this.departureLocation = departureLocation;
               this.destinationLocation = destinationLocation;
@@ -123,11 +120,11 @@ public class BusRoutesEntity {
               this.price = price;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 

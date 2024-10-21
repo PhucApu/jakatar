@@ -4,8 +4,6 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
@@ -39,14 +37,14 @@ public class  AccountEnity {
                                                                                                           // null: no
        private String role;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_block", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isBlock;
+       
+       @Column(name = "is_block", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isBlock;
 
 
        @OneToMany(mappedBy = "accountEnity", fetch = FetchType.LAZY)
@@ -62,7 +60,7 @@ public class  AccountEnity {
        public AccountEnity() {}
 
        public AccountEnity(String userName, String passWord, String email, String phoneNumber, String role,
-                     ChoiceEnum isDelete, ChoiceEnum isBlock, List<FeedbackEntity> listFeedbackEntities,
+                     Boolean isDelete, Boolean isBlock, List<FeedbackEntity> listFeedbackEntities,
                      List<TicketEntity> listTicketEntities) {
               this.userName = userName;
               this.passWord = passWord;
@@ -115,19 +113,19 @@ public class  AccountEnity {
               this.role = role;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 
-       public ChoiceEnum getIsBlock() {
+       public Boolean getIsBlock() {
               return isBlock;
        }
 
-       public void setIsBlock(ChoiceEnum isBlock) {
+       public void setIsBlock(Boolean isBlock) {
               this.isBlock = isBlock;
        }
 

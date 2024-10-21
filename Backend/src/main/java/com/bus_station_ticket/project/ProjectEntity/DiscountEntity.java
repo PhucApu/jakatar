@@ -6,8 +6,6 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,9 +36,8 @@ public class DiscountEntity {
        @Column(name = "amount", nullable = false)
        private int amount;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
        @OneToMany(mappedBy = "discountEntity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
@@ -51,7 +48,7 @@ public class DiscountEntity {
        }
 
        public DiscountEntity(float discountPercentage, LocalDateTime validFrom, LocalDateTime validUntil, int amount,
-                     ChoiceEnum isDelete, List<TicketEntity> listTicketEntities) {
+                     Boolean isDelete, List<TicketEntity> listTicketEntities) {
               this.discountPercentage = discountPercentage;
               this.validFrom = validFrom;
               this.validUntil = validUntil;
@@ -100,11 +97,11 @@ public class DiscountEntity {
               this.amount = amount;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 

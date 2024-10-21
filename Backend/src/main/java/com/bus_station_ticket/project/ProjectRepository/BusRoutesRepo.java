@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
-import com.bus_station_ticket.project.ProjectEntity.ChoiceEnum;
 
 @Repository
 public interface BusRoutesRepo extends JpaRepository<BusRoutesEntity,Long> {
@@ -31,7 +30,7 @@ public interface BusRoutesRepo extends JpaRepository<BusRoutesEntity,Long> {
        
        public List<BusRoutesEntity> findByPrice (float price);
        
-       public List<BusRoutesEntity> findByIsDelete (ChoiceEnum isDelete);
+       public List<BusRoutesEntity> findByIsDelete (Boolean isDelete);
 
 
        @Query(
