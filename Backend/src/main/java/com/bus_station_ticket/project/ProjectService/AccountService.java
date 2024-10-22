@@ -55,7 +55,7 @@ public class AccountService {
               return this.repo.findAll();
        }
 
-       // Mapping
+       // Mapping đối tượng List<AccountEnity> --> List<AccountDTO>
        public List<AccountDTO> getAll_toDTO(){
               
               List<AccountEnity> listAccountEnities = this.repo.findAll();

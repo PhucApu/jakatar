@@ -80,8 +80,7 @@ public class AccountController {
               responseObject.setStatus("failure");
               responseObject.setData(accountDTO);
               responseObject.addMessage("mess", "No user found with matching login name");
-
-              responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
+              
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
 
        }
