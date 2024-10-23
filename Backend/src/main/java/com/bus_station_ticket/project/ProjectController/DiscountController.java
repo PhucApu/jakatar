@@ -10,76 +10,77 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
-
-import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
-import com.bus_station_ticket.project.ProjectService.BusRoutesService;
+import com.bus_station_ticket.project.ProjectDTO.DiscountDTO;
+import com.bus_station_ticket.project.ProjectService.DiscountService;
 
 @RestController
-public class BusRoutesController {
+public class DiscountController {
 
-       private BusRoutesService busRoutesService;
+       private DiscountService discountService;
 
        @Autowired
-       public BusRoutesController(BusRoutesService busRoutesService) {
-              this.busRoutesService = busRoutesService;
+       public DiscountController(DiscountService discountService) {
+              this.discountService = discountService;
        }
 
-       // Lấy tất cả các BusRoutesEntity có
-       // path: "/busroutes"
-       @GetMapping("/busroutes")
+       // Lấy tất cả các DiscountEntity có
+       // path: "/discounts"
+
+       @GetMapping("/discounts")
        public ResponseEntity<ResponseObject> getAll() {
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy dữ liệu từ lớp Service
-              List<BusRoutesDTO> listBusRoutesEntities = this.busRoutesService.getAll_toDTO();
+              List<DiscountDTO> listDiscountEntities = this.discountService.getAll_toDTO();
 
               // kiểm tra
               // Nếu mảng không rỗng
-              if (listBusRoutesEntities.isEmpty() == false) {
+              if (listDiscountEntities.isEmpty() == false) {
 
                      responseObject.setStatus("success"); // set status
-                     responseObject.setData(listBusRoutesEntities); // set data
+                     responseObject.setData(listDiscountEntities); // set data
 
                      responseObject.addMessage("mess", "Successfully retrieved data");
-                     responseObject.addMessage("length", listBusRoutesEntities.size());
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("busroutes", "{routesId}"));
+                     responseObject.addMessage("length", listDiscountEntities.size());
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("discounts", "{discountId}"));
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
               responseObject.setStatus("failure");
-              responseObject.setData(listBusRoutesEntities);
+              responseObject.setData(listDiscountEntities);
               responseObject.addMessage("mess", "There is no data in the database");
-              responseObject.addMessage("length", listBusRoutesEntities.size());
+              responseObject.addMessage("length", listDiscountEntities.size());
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
 
-       // Lấy đối tượng BusRoutesEnity dựa vào routesId
-       // path: "/busroutes/{routesId}"
-       @GetMapping("/busroutes/{routesId}")
-       public ResponseEntity<ResponseObject> getByRoutesId(@PathVariable("routesId") Long routesId) {
+       // Lấy đối tượng DiscountEntity dựa vào discountId
+       // path: "/discounts/{discountId}"
+
+       @GetMapping("/discounts/{discountId}")
+       public ResponseEntity<ResponseObject> getByRoutesId(@PathVariable("discountId") Long discountId) {
 
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              BusRoutesDTO busRoutesDTO = busRoutesService.getByRoutesId_toDTO(routesId);
+              DiscountDTO discountDTO = this.discountService.getByDiscountId_toDTO(discountId);
 
               // kiểm tra
-              if (busRoutesDTO != null) {
+              if (discountDTO != null) {
                      responseObject.setStatus("success");
-                     responseObject.setData(busRoutesDTO);
-                     responseObject.addMessage("mess", "Found data with matching bus routes id");
+                     responseObject.setData(discountDTO);
+                     responseObject.addMessage("mess", "Found data with matching discount id");
 
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("busroutes", "{routesId}"));
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("discounts", "{discountId}"));
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus("failure");
-              responseObject.setData(busRoutesDTO);
-              responseObject.addMessage("mess", "No bus routes entity found with matching routes id");
+              responseObject.setData(discountDTO);
+              responseObject.addMessage("mess", "No discount entity found with matching discount id");
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }

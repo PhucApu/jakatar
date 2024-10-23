@@ -34,6 +34,7 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
                      listTicketEntities_Id.add(e.getTicketId());
               }
 
+              busRoutesDTO.setListTicketEntities_Id(listTicketEntities_Id);
               return busRoutesDTO;
        }
 }

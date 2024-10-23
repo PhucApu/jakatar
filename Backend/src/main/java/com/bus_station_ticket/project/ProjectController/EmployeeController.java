@@ -10,78 +10,80 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
-
-import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
-import com.bus_station_ticket.project.ProjectService.BusRoutesService;
+import com.bus_station_ticket.project.ProjectDTO.EmployeeDTO;
+import com.bus_station_ticket.project.ProjectService.EmployeeService;
 
 @RestController
-public class BusRoutesController {
-
-       private BusRoutesService busRoutesService;
+public class EmployeeController {
+       
+       private EmployeeService employeeService;
 
        @Autowired
-       public BusRoutesController(BusRoutesService busRoutesService) {
-              this.busRoutesService = busRoutesService;
+       public EmployeeController(EmployeeService employeeService) {
+              this.employeeService = employeeService;
        }
 
-       // Lấy tất cả các BusRoutesEntity có
-       // path: "/busroutes"
-       @GetMapping("/busroutes")
+       // Lấy tất cả các EmployeeEntity có
+       // path: "/employees"
+
+       @GetMapping("/employees")
        public ResponseEntity<ResponseObject> getAll() {
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy dữ liệu từ lớp Service
-              List<BusRoutesDTO> listBusRoutesEntities = this.busRoutesService.getAll_toDTO();
+              List<EmployeeDTO> listEmployeeEntities = this.employeeService.getAll_toDTO();
 
               // kiểm tra
               // Nếu mảng không rỗng
-              if (listBusRoutesEntities.isEmpty() == false) {
+              if (listEmployeeEntities.isEmpty() == false) {
 
                      responseObject.setStatus("success"); // set status
-                     responseObject.setData(listBusRoutesEntities); // set data
+                     responseObject.setData(listEmployeeEntities); // set data
 
                      responseObject.addMessage("mess", "Successfully retrieved data");
-                     responseObject.addMessage("length", listBusRoutesEntities.size());
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("busroutes", "{routesId}"));
+                     responseObject.addMessage("length", listEmployeeEntities.size());
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
               responseObject.setStatus("failure");
-              responseObject.setData(listBusRoutesEntities);
+              responseObject.setData(listEmployeeEntities);
               responseObject.addMessage("mess", "There is no data in the database");
-              responseObject.addMessage("length", listBusRoutesEntities.size());
+              responseObject.addMessage("length", listEmployeeEntities.size());
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
 
-       // Lấy đối tượng BusRoutesEnity dựa vào routesId
-       // path: "/busroutes/{routesId}"
-       @GetMapping("/busroutes/{routesId}")
-       public ResponseEntity<ResponseObject> getByRoutesId(@PathVariable("routesId") Long routesId) {
+
+       // Lấy đối tượng EmployeeEntity dựa vào driverId
+       // path: "/employees/{driverId}"
+
+       @GetMapping("/employees/{driverId}")
+       public ResponseEntity<ResponseObject> getByRoutesId(@PathVariable("driverId") Long driverId) {
 
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              BusRoutesDTO busRoutesDTO = busRoutesService.getByRoutesId_toDTO(routesId);
+              EmployeeDTO employeeDTO = this.employeeService.getByDriverId_toDTO(driverId);
 
               // kiểm tra
-              if (busRoutesDTO != null) {
+              if (employeeDTO != null) {
                      responseObject.setStatus("success");
-                     responseObject.setData(busRoutesDTO);
-                     responseObject.addMessage("mess", "Found data with matching bus routes id");
+                     responseObject.setData(employeeDTO);
+                     responseObject.addMessage("mess", "Found data with matching driver id");
 
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("busroutes", "{routesId}"));
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus("failure");
-              responseObject.setData(busRoutesDTO);
-              responseObject.addMessage("mess", "No bus routes entity found with matching routes id");
+              responseObject.setData(employeeDTO);
+              responseObject.addMessage("mess", "No employee entity found with matching driver id");
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
-
+       
 }
