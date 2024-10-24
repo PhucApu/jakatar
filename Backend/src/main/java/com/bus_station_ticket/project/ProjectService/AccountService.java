@@ -8,26 +8,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bus_station_ticket.project.ProjectDTO.AccountDTO;
-import com.bus_station_ticket.project.ProjectEntity.AccountEnity;
-import com.bus_station_ticket.project.ProjectMappingEntityToDTO.AccountMapping;
+import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
+import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.AccountMapping;
 import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 
 @Service
 public class AccountService {
 
-       private AccountRepo repo;
-       private AccountMapping accountMapping;
-
        @Autowired
-       public AccountService(AccountRepo repo,AccountMapping accountMapping) {
-              this.repo = repo;
-              this.accountMapping = accountMapping;
-       }
+       private AccountRepo repo;
+       
+       @Autowired
+       private AccountMapping accountMapping;
 
        // Lấy một đối tượng AccountEntity theo giá trị userName
        // Input: userName (String)
        // Output: AccountEnity có giá trị userName tương ứng
-       public AccountEnity getByUserName(String userName) {
+       public AccountEntity getByUserName(String userName) {
 
               return this.repo.findByUserName(userName).orElse(null);
        }
@@ -37,7 +34,7 @@ public class AccountService {
        // Output: AccountEnity có giá trị userName tương ứng
        public AccountDTO getByUserName_toDTO(String userName) {
 
-              AccountEnity accountEnity = this.repo.findByUserName(userName).orElse(null);
+              AccountEntity accountEnity = this.repo.findByUserName(userName).orElse(null);
 
               if(accountEnity != null){
 
@@ -50,7 +47,7 @@ public class AccountService {
        // Lấy tất cả các đối tượng AccountEntity
        // Input:
        // Output: List
-       public List<AccountEnity> getAll() {
+       public List<AccountEntity> getAll() {
 
               return this.repo.findAll();
        }
@@ -58,13 +55,13 @@ public class AccountService {
        // Mapping đối tượng List<AccountEnity> --> List<AccountDTO>
        public List<AccountDTO> getAll_toDTO(){
               
-              List<AccountEnity> listAccountEnities = this.repo.findAll();
+              List<AccountEntity> listAccountEnities = this.repo.findAll();
               List<AccountDTO> listAccountDTOs = new ArrayList<>();
 
               // kiểm tra
               if(listAccountEnities.isEmpty() == false){
 
-                     for (AccountEnity e : listAccountEnities) {
+                     for (AccountEntity e : listAccountEnities) {
                             listAccountDTOs.add(this.accountMapping.toDTO(e));
                      }
                      return listAccountDTOs;
@@ -75,10 +72,10 @@ public class AccountService {
        // Thêm một đối tượng AccountEntity
        // Input: AccountEntity (object)
        // Output: boolean
-       public Boolean save(AccountEnity accountEnity){
+       public Boolean save(AccountEntity accountEnity){
               
               // kiểm tra xem có tồn tại userName chưa
-              Optional<AccountEnity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
+              Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
 
               // Nếu kết quả không có
               if(optionalAccount.isPresent() == false){
@@ -92,10 +89,10 @@ public class AccountService {
        // Sửa một đối tượng AccountEntity
        // Input: AccountEntity (object)
        // Output: boolean
-       public Boolean update(AccountEnity accountEnity){
+       public Boolean update(AccountEntity accountEnity){
               
               // kiểm tra xem có tồn tại userName chưa
-              Optional<AccountEnity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
+              Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
 
               // Nếu kết quả có
               if(optionalAccount.isPresent()){
@@ -112,7 +109,7 @@ public class AccountService {
        public Boolean delete(String userName){
               
               // kiểm tra xem có tồn tại userName chưa
-              Optional<AccountEnity> optionalAccount = this.repo.findByUserName(userName);
+              Optional<AccountEntity> optionalAccount = this.repo.findByUserName(userName);
 
               // Nếu kết quả có
               if(optionalAccount.isPresent()){

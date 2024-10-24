@@ -8,20 +8,18 @@ import org.springframework.stereotype.Service;
 
 import com.bus_station_ticket.project.ProjectDTO.EmployeeDTO;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
-import com.bus_station_ticket.project.ProjectMappingEntityToDTO.EmployeeMapping;
+import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.EmployeeMapping;
 import com.bus_station_ticket.project.ProjectRepository.EmployeeRepo;
 
 @Service
 public class EmployeeService {
 
+       @Autowired
        private EmployeeRepo repo;
+       
+       @Autowired
        private EmployeeMapping employeeMapping;
 
-       @Autowired
-       public EmployeeService(EmployeeRepo repo, EmployeeMapping employeeMapping) {
-              this.repo = repo;
-              this.employeeMapping = employeeMapping;
-       }
 
        // Lấy một đối tượng EmployeeEntity theo giá trị driverId
        // Input: driverId (Long)

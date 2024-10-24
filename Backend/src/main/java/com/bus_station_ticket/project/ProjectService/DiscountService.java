@@ -8,20 +8,19 @@ import org.springframework.stereotype.Service;
 
 import com.bus_station_ticket.project.ProjectDTO.DiscountDTO;
 import com.bus_station_ticket.project.ProjectEntity.DiscountEntity;
-import com.bus_station_ticket.project.ProjectMappingEntityToDTO.DiscountMapping;
+import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.DiscountMapping;
 import com.bus_station_ticket.project.ProjectRepository.DiscountRepo;
 
 @Service
 public class DiscountService {
        
+       @Autowired
        private DiscountRepo repo;
-       private DiscountMapping discountMapping;
        
        @Autowired
-       public DiscountService(DiscountRepo repo, DiscountMapping discountMapping) {
-              this.repo = repo;
-              this.discountMapping = discountMapping;
-       }
+       private DiscountMapping discountMapping;
+       
+       
 
        // Lấy một đối tượng DiscountEntity theo giá trị discountId
        // Input: discountId (Long)

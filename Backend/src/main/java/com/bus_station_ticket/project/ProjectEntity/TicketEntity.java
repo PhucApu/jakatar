@@ -26,7 +26,7 @@ public class TicketEntity {
 
        @ManyToOne
        @JoinColumn(name = "username_id", referencedColumnName = "username", nullable = true, insertable = false, updatable = true)
-       private AccountEnity accountEnity;
+       private AccountEntity accountEnity;
 
        @ManyToOne
        @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false, insertable = false, updatable = true)
@@ -77,7 +77,7 @@ public class TicketEntity {
        }
 
 
-       public TicketEntity(AccountEnity accountEnitty, BusEntity busEntity, BusRoutesEntity busRoutesEntity,
+       public TicketEntity(AccountEntity accountEnitty, BusEntity busEntity, BusRoutesEntity busRoutesEntity,
                      PaymentEntity paymentEntity, DiscountEntity discountEntity, String seatNumber,
                      LocalDate departureDate, float price, String userName, String phoneNumber, String email,
                      List<FeedbackEntity> listFeedbackEntities, Boolean isDelete) {
@@ -107,12 +107,12 @@ public class TicketEntity {
        }
 
 
-       public AccountEnity getAccountEnitty() {
+       public AccountEntity getAccountEnitty() {
               return accountEnity;
        }
 
 
-       public void setAccountEnitty(AccountEnity accountEnitty) {
+       public void setAccountEnitty(AccountEntity accountEnitty) {
               this.accountEnity = accountEnitty;
        }
 

@@ -8,20 +8,17 @@ import org.springframework.stereotype.Service;
 
 import com.bus_station_ticket.project.ProjectDTO.BusDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
-import com.bus_station_ticket.project.ProjectMappingEntityToDTO.BusMapping;
+import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.BusMapping;
 import com.bus_station_ticket.project.ProjectRepository.BusRepo;
 
 @Service
 public class BusService {
        
-       private BusRepo repo;
-       private BusMapping busMapping;
-
        @Autowired
-       public BusService(BusRepo repo, BusMapping busMapping) {
-              this.repo = repo;
-              this.busMapping = busMapping;
-       }
+       private BusRepo repo;
+       
+       @Autowired
+       private BusMapping busMapping;
 
        // Lấy một đối tượng BusEntity theo giá trị busId
        // Input: busId (Long)

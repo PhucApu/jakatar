@@ -8,20 +8,17 @@ import org.springframework.stereotype.Service;
 
 import com.bus_station_ticket.project.ProjectDTO.FeedbackDTO;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
-import com.bus_station_ticket.project.ProjectMappingEntityToDTO.FeedbackMapping;
+import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.FeedbackMapping;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
 
 @Service
 public class FeedbackService {
 
+       @Autowired
        private FeedbackRepo repo;
-       private FeedbackMapping feedbackMapping;
 
        @Autowired
-       public FeedbackService(FeedbackRepo repo, FeedbackMapping feedbackMapping) {
-              this.repo = repo;
-              this.feedbackMapping = feedbackMapping;
-       }
+       private FeedbackMapping feedbackMapping;
 
        // Lấy một đối tượng FeedbackEntity theo giá trị
        // Input: feedbackId (Long)

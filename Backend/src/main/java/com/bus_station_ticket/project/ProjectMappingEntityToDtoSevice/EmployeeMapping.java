@@ -1,16 +1,21 @@
-package com.bus_station_ticket.project.ProjectMappingEntityToDTO;
+package com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.bus_station_ticket.project.ProjectDTO.EmployeeDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
+import com.bus_station_ticket.project.ProjectRepository.BusRepo;
 
 @Component
 public class EmployeeMapping implements MappingInterface<EmployeeEntity, EmployeeDTO> {
+
+       @Autowired
+       private BusRepo busRepo;
 
        @Override
        public EmployeeDTO toDTO(EmployeeEntity entity) {
@@ -35,4 +40,30 @@ public class EmployeeMapping implements MappingInterface<EmployeeEntity, Employe
 
               return employeeDTO;
        }
+
+       @Override
+       public EmployeeEntity toEntity(EmployeeDTO dto) {
+              
+              EmployeeEntity employeeEntity = new EmployeeEntity();
+              // Mapping các thuộc tính đơn giản
+              employeeEntity.setDriverId(dto.getDriverId());
+              employeeEntity.setIsDriver(dto.getIsDriver());
+              employeeEntity.setDriverName(dto.getDriverName());
+              employeeEntity.setLicenseNumber(dto.getLicenseNumber());
+              employeeEntity.setPhoneNumber(dto.getPhoneNumber());
+              employeeEntity.setIsDelete(dto.getIsDelete());
+
+              List<BusEntity> listBusEntity = new ArrayList<>();
+
+              for (Long value : dto.getListBusEntities_Id()){
+                     BusEntity busEntity = this.busRepo.findByBusId(value).orElse(null);
+
+                     listBusEntity.add(busEntity);
+              }
+              employeeEntity.setListBusEntity(listBusEntity);
+
+              return employeeEntity;
+       }
+
+       
 }

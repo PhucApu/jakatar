@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "account", indexes = @Index(columnList = "username")) // name table is "account", create index on column
                                                                     // "username"
-public class  AccountEnity {
+public class  AccountEntity {
 
        @Id // primary key
        @Column(name = "username", columnDefinition = "VARCHAR(20)") // column: username, type: text
@@ -57,9 +57,9 @@ public class  AccountEnity {
        
 
 
-       public AccountEnity() {}
+       public AccountEntity() {}
 
-       public AccountEnity(String userName, String passWord, String email, String phoneNumber, String role,
+       public AccountEntity(String userName, String passWord, String email, String phoneNumber, String role,
                      Boolean isDelete, Boolean isBlock, List<FeedbackEntity> listFeedbackEntities,
                      List<TicketEntity> listTicketEntities) {
               this.userName = userName;

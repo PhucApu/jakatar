@@ -23,7 +23,7 @@ public class FeedbackEntity {
 
        @ManyToOne
        @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
-       private AccountEnity accountEnity;
+       private AccountEntity accountEnity;
 
        @ManyToOne
        @JoinColumn(name = "ticket_id", referencedColumnName = "ticket_id", nullable = false )
@@ -46,7 +46,7 @@ public class FeedbackEntity {
        public FeedbackEntity() {
        }
 
-       public FeedbackEntity(AccountEnity accountEnitty, TicketEntity ticketEntity, String content, int rating,
+       public FeedbackEntity(AccountEntity accountEnitty, TicketEntity ticketEntity, String content, int rating,
                      LocalDateTime dateComment, Boolean isDelete) {
               this.accountEnity = accountEnitty;
               this.ticketEntity = ticketEntity;
@@ -64,11 +64,11 @@ public class FeedbackEntity {
               this.feedbackId = feedbackId;
        }
 
-       public AccountEnity getAccountEnitty() {
+       public AccountEntity getAccountEnitty() {
               return accountEnity;
        }
 
-       public void setAccountEnitty(AccountEnity accountEnitty) {
+       public void setAccountEnitty(AccountEntity accountEnitty) {
               this.accountEnity = accountEnitty;
        }
 
@@ -111,12 +111,21 @@ public class FeedbackEntity {
        public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
+       
 
        @Override
        public String toString() {
               return "FeedbackEntity [feedbackId=" + feedbackId + ", accountEnitty=" + accountEnity + ", ticketEntity="
                             + ticketEntity + ", content=" + content + ", rating=" + rating + ", dateComment="
                             + dateComment + ", isDelete=" + isDelete + "]";
+       }
+
+       public AccountEntity getAccountEnity() {
+              return accountEnity;
+       }
+
+       public void setAccountEnity(AccountEntity accountEnity) {
+              this.accountEnity = accountEnity;
        }
 
 }

@@ -1,16 +1,21 @@
-package com.bus_station_ticket.project.ProjectMappingEntityToDTO;
+package com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
+import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Component
 public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRoutesDTO> {
+
+       @Autowired
+       private TicketRepo ticketRepo;
 
        @Override
        public BusRoutesDTO toDTO(BusRoutesEntity entity) {
@@ -37,4 +42,33 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
               busRoutesDTO.setListTicketEntities_Id(listTicketEntities_Id);
               return busRoutesDTO;
        }
+
+       @Override
+       public BusRoutesEntity toEntity(BusRoutesDTO dto) {
+              
+              BusRoutesEntity busRoutesEntity = new BusRoutesEntity();
+              // Mapping các thuộc tính đơn giản
+              busRoutesEntity.setRoutesId(dto.getRoutesId());
+              busRoutesEntity.setDepartureLocation(dto.getDepartureLocation());
+              busRoutesEntity.setDestinationLocation(dto.getDestinationLocation());
+              busRoutesEntity.setDistanceKilometer(dto.getDistanceKilometer());
+              busRoutesEntity.setDepartureTime(dto.getDepartureTime());
+              busRoutesEntity.setArivalTime(dto.getArivalTime());
+              busRoutesEntity.setPrice(dto.getPrice());
+              busRoutesEntity.setIsDelete(dto.getIsDelete());
+
+              // Mapping cac thuoo tinh list
+              List<TicketEntity> listTicketEntities = new ArrayList<>();
+
+              for (Long value : dto.getListTicketEntities_Id()){
+                     TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
+
+                     listTicketEntities.add(ticketEntity);
+              }
+              busRoutesEntity.setListTicketEntities(listTicketEntities);
+
+              return busRoutesEntity;
+       }
+
+       
 }

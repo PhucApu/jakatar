@@ -8,26 +8,26 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import com.bus_station_ticket.project.ProjectEntity.AccountEnity;
+import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
 
 
 @Repository
-public interface AccountRepo extends JpaRepository<AccountEnity,String> {
+public interface AccountRepo extends JpaRepository<AccountEntity,String> {
        
        // Tìm kiếm theo thuộc tính
-       public Optional<AccountEnity> findByUserName(String userName);
+       public Optional<AccountEntity> findByUserName(String userName);
        
-       public Optional<AccountEnity> findByPassWord(String passWord);
+       public Optional<AccountEntity> findByPassWord(String passWord);
        
-       public Optional<AccountEnity> findByEmail(String email);
+       public Optional<AccountEntity> findByEmail(String email);
        
-       public Optional<AccountEnity> findByPhoneNumber(String phone);
+       public Optional<AccountEntity> findByPhoneNumber(String phone);
        
-       public List<AccountEnity> findByRole(String role);
+       public List<AccountEntity> findByRole(String role);
        
-       public List<AccountEnity> findByIsBlock(Boolean isBlock);
+       public List<AccountEntity> findByIsBlock(Boolean isBlock);
        
-       public List<AccountEnity> findByIsDelete(Boolean isDelete);
+       public List<AccountEntity> findByIsDelete(Boolean isDelete);
 
 
        @Query(
@@ -39,7 +39,7 @@ public interface AccountRepo extends JpaRepository<AccountEnity,String> {
               nativeQuery = true
 
        )
-       public Optional<AccountEnity> findByFeedbackEntity_Id(@Param("feedbackId") Long feedbackId);
+       public Optional<AccountEntity> findByFeedbackEntity_Id(@Param("feedbackId") Long feedbackId);
 
        @Query(
               value = """
@@ -50,5 +50,5 @@ public interface AccountRepo extends JpaRepository<AccountEnity,String> {
               nativeQuery = true
 
        )
-       public Optional<AccountEnity> findByListTicketEntity_Id (@Param("ticketId") Long ticketId);
+       public Optional<AccountEntity> findByListTicketEntity_Id (@Param("ticketId") Long ticketId);
 }
