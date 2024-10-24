@@ -1,5 +1,6 @@
 package com.bus_station_ticket.project.ProjectController;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,82 +11,79 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
-
-import com.bus_station_ticket.project.ProjectDTO.FeedbackDTO;
-
-import com.bus_station_ticket.project.ProjectService.FeedbackService;
+import com.bus_station_ticket.project.ProjectDTO.PaymentDTO;
+import com.bus_station_ticket.project.ProjectService.PaymentService;
 
 @RestController
-public class FeedbackController {
+public class PaymentController {
        
-       private FeedbackService feedbackService;
+       private PaymentService paymentService;
 
        @Autowired
-       public FeedbackController(FeedbackService feedbackService) {
-              this.feedbackService = feedbackService;
+       public PaymentController(PaymentService paymentService) {
+              this.paymentService = paymentService;
        }
 
-       // Lấy tất cả các FeedbackEntity có
-       // path: "/feedbacks"
+       // Lấy tất cả các PaymentEntity có
+       // path: "/payments"
 
-       @GetMapping("/feedbacks")
+       @GetMapping("/payments")
        public ResponseEntity<ResponseObject> getAll() {
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy dữ liệu từ lớp Service
-              List<FeedbackDTO> listFeedbackentities = this.feedbackService.getAll_toDTO();
+              List<PaymentDTO> listPaymentEntities = this.paymentService.getAll_toDTO();
 
               // kiểm tra
               // Nếu mảng không rỗng
-              if (listFeedbackentities.isEmpty() == false) {
+              if (listPaymentEntities.isEmpty() == false) {
 
                      responseObject.setStatus("success"); // set status
-                     responseObject.setData(listFeedbackentities); // set data
+                     responseObject.setData(listPaymentEntities); // set data
 
                      responseObject.addMessage("mess", "Successfully retrieved data");
-                     responseObject.addMessage("length", listFeedbackentities.size());
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("feedbacks", "{feedbackId}"));
+                     responseObject.addMessage("length", listPaymentEntities.size());
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("payments", "{paymentId}"));
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
               responseObject.setStatus("failure");
-              responseObject.setData(listFeedbackentities);
+              responseObject.setData(listPaymentEntities);
               responseObject.addMessage("mess", "There is no data in the database");
-              responseObject.addMessage("length", listFeedbackentities.size());
+              responseObject.addMessage("length", listPaymentEntities.size());
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
 
-       // Lấy đối tượng FeedbackEntity dựa vào feedbackId
-       // path: "/feedbacks/{feedbackId}"
+       // Lấy đối tượng PaymentEntity dựa vào payemntId
+       // path: "/payments/{paymentId}"
 
-       @GetMapping("/feedbacks/{feedbackId}")
-       public ResponseEntity<ResponseObject> getByRoutesId(@PathVariable("feedbackId") Long feedbackId) {
+       @GetMapping("/payments/{paymentId}")
+       public ResponseEntity<ResponseObject> getByRoutesId(@PathVariable("paymentId") Long paymentId) {
 
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              FeedbackDTO feedbackDTO = this.feedbackService.getByFeedbackId_toDTO(feedbackId);
+              PaymentDTO paymentDTO = this.paymentService.getByPaymentId_toDTO(paymentId);
 
               // kiểm tra
-              if (feedbackDTO != null) {
+              if (paymentDTO != null) {
                      responseObject.setStatus("success");
-                     responseObject.setData(feedbackDTO);
-                     responseObject.addMessage("mess", "Found data with matching feedback id");
+                     responseObject.setData(paymentDTO);
+                     responseObject.addMessage("mess", "Found data with matching payment id");
 
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("feedbacks", "{feedbackId}"));
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("payments", "{paymentId}"));
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus("failure");
-              responseObject.setData(feedbackDTO);
-              responseObject.addMessage("mess", "No feedback entity found with matching feedback id");
+              responseObject.setData(paymentDTO);
+              responseObject.addMessage("mess", "No payment entity found with matching payment id");
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
-
        
 }
