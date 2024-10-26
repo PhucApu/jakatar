@@ -2,6 +2,7 @@ package com.bus_station_ticket.project.ProjectService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,4 +64,29 @@ public class BusRoutesService {
               return listBusRoutesDTOs;
        }
 
+       // Thêm một đối tượng BusRoutesEntity vào database
+       // Input: BusRoutesEntity (object)
+       // Output: boolean
+
+       public Boolean save (BusRoutesEntity busRoutesEntity) {
+
+              // Kiểm tra
+              Optional<BusRoutesEntity> optional = this.repo.findByRoutesId(busRoutesEntity.getRoutesId());
+
+              if(optional.isPresent() == false){
+
+                     this.repo.save(busRoutesEntity);
+                     return true;
+              }
+              return false;
+       }
+
+       // Thêm một đối tượng BusRoutesEntity vào database
+       // Input: BusRoutesDTO (object)
+       // Output: boolean
+
+       public Boolean save_toDTO (BusRoutesDTO busRoutesDTO) {
+
+              return false;
+       }
 }

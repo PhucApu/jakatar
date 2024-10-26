@@ -2,6 +2,7 @@ package com.bus_station_ticket.project.ProjectEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,6 +10,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
 
@@ -44,20 +46,29 @@ public class EmployeeEntity {
        )
        private List<BusEntity> listBusEntity;
 
+       @OneToMany(mappedBy = "employeeEntity", fetch = FetchType.LAZY)
+       private List<PenaltyTicketEntity> listPenaltyTicketEntities;
+
 
 
        public EmployeeEntity() {
        }
 
+       
+
        public EmployeeEntity(Boolean isDriver, String driverName, String licenseNumber, String phoneNumber,
-                     Boolean isDelete, List<BusEntity> listBusEntity) {
+                     Boolean isDelete, List<BusEntity> listBusEntity,
+                     List<PenaltyTicketEntity> listPenaltyTicketEntities) {
               this.isDriver = isDriver;
               this.driverName = driverName;
               this.licenseNumber = licenseNumber;
               this.phoneNumber = phoneNumber;
               this.isDelete = isDelete;
               this.listBusEntity = listBusEntity;
+              this.listPenaltyTicketEntities = listPenaltyTicketEntities;
        }
+
+
 
        public Long getDriverId() {
               return driverId;
@@ -114,12 +125,21 @@ public class EmployeeEntity {
        public void setListBusEntity(List<BusEntity> listBusEntity) {
               this.listBusEntity = listBusEntity;
        }
+       
 
        @Override
        public String toString() {
               return "EmployeeEntity [driverId=" + driverId + ", isDriver=" + isDriver + ", driverName=" + driverName
                             + ", licenseNumber=" + licenseNumber + ", phoneNumber=" + phoneNumber + ", isDelete="
                             + isDelete + ", listBusEntity=" + listBusEntity + "]";
+       }
+
+       public List<PenaltyTicketEntity> getListPenaltyTicketEntities() {
+              return listPenaltyTicketEntities;
+       }
+
+       public void setListPenaltyTicketEntities(List<PenaltyTicketEntity> listPenaltyTicketEntities) {
+              this.listPenaltyTicketEntities = listPenaltyTicketEntities;
        }
 
 }

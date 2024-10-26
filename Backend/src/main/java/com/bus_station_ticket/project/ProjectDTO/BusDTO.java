@@ -11,21 +11,25 @@ public class BusDTO {
        private Boolean isDelete;
        private List<Long> listEmployeeEntities_Id;
        private List<Long> listTicketEntities_Id;
+       private List<Long> listPenaltyTicketEntities_Id;
        
        
        public BusDTO() {
        }
 
-       public BusDTO(Long busId, String busNumber, int capacity, String brand, Boolean isDelete,
-                     List<Long> listEmployeeEntities_Id, List<Long> listTicketEntities_Id) {
-              this.busId = busId;
+
+       public BusDTO(String busNumber, int capacity, String brand, Boolean isDelete, List<Long> listEmployeeEntities_Id,
+                     List<Long> listTicketEntities_Id, List<Long> listPenaltyTicketEntities_Id) {
               this.busNumber = busNumber;
               this.capacity = capacity;
               this.brand = brand;
               this.isDelete = isDelete;
               this.listEmployeeEntities_Id = listEmployeeEntities_Id;
               this.listTicketEntities_Id = listTicketEntities_Id;
+              this.listPenaltyTicketEntities_Id = listPenaltyTicketEntities_Id;
        }
+
+       
 
        public Long getBusId() {
               return busId;
@@ -68,6 +72,14 @@ public class BusDTO {
        }
        public void setListTicketEntities_Id(List<Long> listTicketEntities_Id) {
               this.listTicketEntities_Id = listTicketEntities_Id;
+       }
+
+       public List<Long> getListPenaltyTicketEntities_Id() {
+              return listPenaltyTicketEntities_Id;
+       }
+
+       public void setListPenaltyTicketEntities_Id(List<Long> listPenaltyTicketEntities_Id) {
+              this.listPenaltyTicketEntities_Id = listPenaltyTicketEntities_Id;
        }
 
        

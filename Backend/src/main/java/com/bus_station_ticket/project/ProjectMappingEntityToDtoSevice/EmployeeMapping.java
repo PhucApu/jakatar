@@ -9,13 +9,18 @@ import org.springframework.stereotype.Component;
 import com.bus_station_ticket.project.ProjectDTO.EmployeeDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
+import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
 import com.bus_station_ticket.project.ProjectRepository.BusRepo;
+import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
 
 @Component
 public class EmployeeMapping implements MappingInterface<EmployeeEntity, EmployeeDTO> {
 
        @Autowired
        private BusRepo busRepo;
+
+       @Autowired
+       private PenaltyTicketRepo penaltyTicketRepo;
 
        @Override
        public EmployeeDTO toDTO(EmployeeEntity entity) {
@@ -37,6 +42,14 @@ public class EmployeeMapping implements MappingInterface<EmployeeEntity, Employe
               }
 
               employeeDTO.setListBusEntities_Id(listBusEntities_Id);
+
+              List<Long> listPenaltyTicketEntities_Id = new ArrayList<>();
+
+              for (PenaltyTicketEntity e : entity.getListPenaltyTicketEntities()){
+                     listPenaltyTicketEntities_Id.add(e.getPenaltyTicketId());
+              }
+
+              employeeDTO.setListPenaltyTicketEntities_Id(listPenaltyTicketEntities_Id);
 
               return employeeDTO;
        }
@@ -61,6 +74,16 @@ public class EmployeeMapping implements MappingInterface<EmployeeEntity, Employe
                      listBusEntity.add(busEntity);
               }
               employeeEntity.setListBusEntity(listBusEntity);
+
+              List<PenaltyTicketEntity> listPenaltyTicketEntities = new ArrayList<>();
+
+              for (Long value : dto.getListPenaltyTicketEntities_Id()){
+                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketRepo.findByPenaltyTicketId(value).orElse(null);
+
+                     listPenaltyTicketEntities.add(penaltyTicketEntity);
+              }
+
+              employeeEntity.setListPenaltyTicketEntities(listPenaltyTicketEntities);
 
               return employeeEntity;
        }

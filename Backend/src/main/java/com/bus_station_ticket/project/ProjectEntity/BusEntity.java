@@ -42,18 +42,28 @@ public class BusEntity {
        @OneToMany(mappedBy = "busEntity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
 
+       @OneToMany(mappedBy = "busEntity" , fetch = FetchType.LAZY)
+       private List<PenaltyTicketEntity> listPenaltyTicketEntities;
+
        public BusEntity() {
        }
 
+
        public BusEntity(String busNumber, int capacity, String brand, Boolean isDelete,
-                     List<EmployeeEntity> listEmployeeEntities, List<TicketEntity> listTicketEntities) {
+                     List<EmployeeEntity> listEmployeeEntities, List<TicketEntity> listTicketEntities,
+                     List<PenaltyTicketEntity> listPenaltyTicketEntities) {
               this.busNumber = busNumber;
               this.capacity = capacity;
               this.brand = brand;
               this.isDelete = isDelete;
               this.listEmployeeEntities = listEmployeeEntities;
               this.listTicketEntities = listTicketEntities;
+              this.listPenaltyTicketEntities = listPenaltyTicketEntities;
        }
+
+
+
+
 
        public Long getBusId() {
               return busId;
@@ -103,6 +113,8 @@ public class BusEntity {
               this.listEmployeeEntities = listEmployeeEntities;
        }
 
+       
+
        @Override
        public String toString() {
               return "BusEntity [busId=" + busId + ", busNumber=" + busNumber + ", capacity=" + capacity + ", brand="
@@ -116,6 +128,14 @@ public class BusEntity {
 
        public void setListTicketEntities(List<TicketEntity> listTicketEntities) {
               this.listTicketEntities = listTicketEntities;
+       }
+
+       public List<PenaltyTicketEntity> getListPenaltyTicketEntities() {
+              return listPenaltyTicketEntities;
+       }
+
+       public void setListPenaltyTicketEntities(List<PenaltyTicketEntity> listPenaltyTicketEntities) {
+              this.listPenaltyTicketEntities = listPenaltyTicketEntities;
        }
 
 }

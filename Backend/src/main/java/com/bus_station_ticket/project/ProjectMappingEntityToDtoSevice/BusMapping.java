@@ -9,8 +9,10 @@ import org.springframework.stereotype.Component;
 import com.bus_station_ticket.project.ProjectDTO.BusDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
+import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectRepository.EmployeeRepo;
+import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Component
@@ -21,6 +23,9 @@ public class BusMapping implements MappingInterface<BusEntity,BusDTO>{
 
        @Autowired
        private TicketRepo ticketRepo;
+
+       @Autowired
+       private PenaltyTicketRepo penaltyTicketRepo;
 
        @Override
        public BusDTO toDTO(BusEntity entity) {
@@ -36,6 +41,9 @@ public class BusMapping implements MappingInterface<BusEntity,BusDTO>{
               // Mapping các thuộc tính list
               List<Long> listEmployeeEntities_Id = new ArrayList<>();
               List<Long> listTicketEntities_Id = new ArrayList<>();
+              List<Long> listPenaltyTicketEntities_Id = new ArrayList<>();
+
+
 
               for (EmployeeEntity e : entity.getListEmployeeEntities()) {
                      listEmployeeEntities_Id.add(e.getDriverId());
@@ -45,8 +53,13 @@ public class BusMapping implements MappingInterface<BusEntity,BusDTO>{
                      listTicketEntities_Id.add(e.getTicketId());
               }
 
+              for (PenaltyTicketEntity e: entity.getListPenaltyTicketEntities()){
+                     listPenaltyTicketEntities_Id.add(e.getPenaltyTicketId());
+              }
+
               busDTO.setListEmployeeEntities_Id(listEmployeeEntities_Id);
               busDTO.setListTicketEntities_Id(listTicketEntities_Id);
+              busDTO.setListPenaltyTicketEntities_Id(listPenaltyTicketEntities_Id);
 
               return busDTO;
        }
@@ -81,6 +94,17 @@ public class BusMapping implements MappingInterface<BusEntity,BusDTO>{
                      listTicketEntities.add(ticketEntity);
               }
               busEntity.setListTicketEntities(listTicketEntities);
+
+              List<PenaltyTicketEntity> listPenaltyTicketEntities = new ArrayList<>();
+
+              for (Long value : dto.getListPenaltyTicketEntities_Id()){
+                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketRepo.findByPenaltyTicketId(value).orElse(null);
+
+                     listPenaltyTicketEntities.add(penaltyTicketEntity);
+              }
+
+              busEntity.setListPenaltyTicketEntities(listPenaltyTicketEntities);
+              
 
 
               return busEntity;

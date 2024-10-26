@@ -13,20 +13,26 @@ public class EmployeeDTO {
        private String phoneNumber;
        private Boolean isDelete;
        private List<Long> listBusEntities_Id;
+       private List<Long> listPenaltyTicketEntities_Id;
 
        public EmployeeDTO() {
        }
 
-       public EmployeeDTO(Long driverId, Boolean isDriver, String driverName, String licenseNumber, String phoneNumber,
-                     Boolean isDelete, List<Long> listBusEntities_Id) {
-              this.driverId = driverId;
+
+       public EmployeeDTO(Boolean isDriver, String driverName, String licenseNumber, String phoneNumber,
+                     Boolean isDelete, List<Long> listBusEntities_Id, List<Long> listPenaltyTicketEntities_Id) {
               this.isDriver = isDriver;
               this.driverName = driverName;
               this.licenseNumber = licenseNumber;
               this.phoneNumber = phoneNumber;
               this.isDelete = isDelete;
               this.listBusEntities_Id = listBusEntities_Id;
+              this.listPenaltyTicketEntities_Id = listPenaltyTicketEntities_Id;
        }
+
+
+
+
 
        public Long getDriverId() {
               return driverId;
@@ -82,6 +88,14 @@ public class EmployeeDTO {
 
        public void setListBusEntities_Id(List<Long> listBusEntities_Id) {
               this.listBusEntities_Id = listBusEntities_Id;
+       }
+
+       public List<Long> getListPenaltyTicketEntities_Id() {
+              return listPenaltyTicketEntities_Id;
+       }
+
+       public void setListPenaltyTicketEntities_Id(List<Long> listPenaltyTicketEntities_Id) {
+              this.listPenaltyTicketEntities_Id = listPenaltyTicketEntities_Id;
        }
 
 }

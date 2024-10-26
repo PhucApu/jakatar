@@ -69,7 +69,9 @@ public class AccountService {
               return listAccountDTOs;
        }
 
-       // Thêm một đối tượng AccountEntity
+       
+
+       // Thêm một đối tượng AccountEntity vào database
        // Input: AccountEntity (object)
        // Output: boolean
        public Boolean save(AccountEntity accountEnity){
@@ -85,6 +87,20 @@ public class AccountService {
               }
               return false;
        }
+
+       // Thêm một đối tượng AccountEntity vào database
+       // Input: AccountDTO (object)
+       // Output: boolean
+       public Boolean save_toDTO (AccountDTO accountDTO){
+
+              AccountEntity accountEntity = this.accountMapping.toEntity(accountDTO);
+              if(save(accountEntity)){
+                     return true;
+              }
+              return false;
+       }
+
+
 
        // Sửa một đối tượng AccountEntity
        // Input: AccountEntity (object)
