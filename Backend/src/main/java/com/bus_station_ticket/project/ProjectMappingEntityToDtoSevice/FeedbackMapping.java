@@ -11,7 +11,7 @@ import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Component
-public class FeedbackMapping implements MappingInterface <FeedbackEntity,FeedbackDTO> {
+public class FeedbackMapping implements MappingInterface<FeedbackEntity, FeedbackDTO> {
 
        @Autowired
        private AccountRepo accountRepo;
@@ -21,12 +21,14 @@ public class FeedbackMapping implements MappingInterface <FeedbackEntity,Feedbac
 
        @Override
        public FeedbackDTO toDTO(FeedbackEntity entity) {
-              
+
               FeedbackDTO feedbackDTO = new FeedbackDTO();
               // Mapping các thuộc tính đơn giản
               feedbackDTO.setFeedbackId(entity.getFeedbackId());
-              feedbackDTO.setAccountEnity_userName(entity.getAccountEnitty().getUserName());
-              feedbackDTO.setTicketEntity_Id(entity.getTicketEntity().getTicketId());
+              feedbackDTO.setAccountEnity_userName(
+                            (entity.getAccountEnitty() != null) ? entity.getAccountEnitty().getUserName() : null);
+              feedbackDTO.setTicketEntity_Id(
+                            (entity.getTicketEntity() != null) ? entity.getTicketEntity().getTicketId() : null);
               feedbackDTO.setContent(entity.getContent());
               feedbackDTO.setRating(entity.getRating());
               feedbackDTO.setDateComment(entity.getDateComment());
@@ -37,7 +39,7 @@ public class FeedbackMapping implements MappingInterface <FeedbackEntity,Feedbac
 
        @Override
        public FeedbackEntity toEntity(FeedbackDTO dto) {
-              
+
               FeedbackEntity feedbackEntity = new FeedbackEntity();
               // Mapping các thuộc tính cơ bản
               feedbackEntity.setFeedbackId(dto.getFeedbackId());
@@ -47,18 +49,16 @@ public class FeedbackMapping implements MappingInterface <FeedbackEntity,Feedbac
               feedbackEntity.setIsDelete(dto.getIsDelete());
 
               // Mapping các thuộc tính phức tạp
-              AccountEntity accountEntity = this.accountRepo.findByUserName(dto.getAccountEnity_userName()).orElse(null);
+              AccountEntity accountEntity = this.accountRepo.findByUserName(dto.getAccountEnity_userName())
+                            .orElse(null);
 
               feedbackEntity.setAccountEnitty(accountEntity);
-              
-              
+
               TicketEntity ticketEntity = this.ticketRepo.findByTicketId(dto.getTicketEntity_Id()).orElse(null);
 
               feedbackEntity.setTicketEntity(ticketEntity);
 
-
               return feedbackEntity;
        }
 
-       
 }

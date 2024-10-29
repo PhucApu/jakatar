@@ -6,6 +6,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectDTO.AccountDTO;
 import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
@@ -24,6 +27,7 @@ public class AccountService {
        // Lấy một đối tượng AccountEntity theo giá trị userName
        // Input: userName (String)
        // Output: AccountEnity có giá trị userName tương ứng
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
        public AccountEntity getByUserName(String userName) {
 
               return this.repo.findByUserName(userName).orElse(null);
@@ -32,6 +36,7 @@ public class AccountService {
        // Mapping đối tượng AccountEnity --> AccountDTO
        // Input: userName (String)
        // Output: AccountEnity có giá trị userName tương ứng
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
        public AccountDTO getByUserName_toDTO(String userName) {
 
               AccountEntity accountEnity = this.repo.findByUserName(userName).orElse(null);
@@ -47,12 +52,14 @@ public class AccountService {
        // Lấy tất cả các đối tượng AccountEntity
        // Input:
        // Output: List
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
        public List<AccountEntity> getAll() {
 
               return this.repo.findAll();
        }
 
        // Mapping đối tượng List<AccountEnity> --> List<AccountDTO>
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
        public List<AccountDTO> getAll_toDTO(){
               
               List<AccountEntity> listAccountEnities = this.repo.findAll();
@@ -74,6 +81,7 @@ public class AccountService {
        // Thêm một đối tượng AccountEntity vào database
        // Input: AccountEntity (object)
        // Output: boolean
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
        public Boolean save(AccountEntity accountEnity){
               
               // kiểm tra xem có tồn tại userName chưa
@@ -91,6 +99,7 @@ public class AccountService {
        // Thêm một đối tượng AccountEntity vào database
        // Input: AccountDTO (object)
        // Output: boolean
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
        public Boolean save_toDTO (AccountDTO accountDTO){
 
               AccountEntity accountEntity = this.accountMapping.toEntity(accountDTO);
@@ -105,6 +114,7 @@ public class AccountService {
        // Sửa một đối tượng AccountEntity
        // Input: AccountEntity (object)
        // Output: boolean
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
        public Boolean update(AccountEntity accountEnity){
               
               // kiểm tra xem có tồn tại userName chưa
@@ -122,6 +132,7 @@ public class AccountService {
        // Xóa một đối trượng AccountEntity theo giá trị userName
        // Input: userName (string)
        // Output: boolean
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
        public Boolean delete(String userName){
               
               // kiểm tra xem có tồn tại userName chưa

@@ -30,10 +30,11 @@ public class PaymentMapping implements MappingInterface<PaymentEntity, PaymentDT
               // Mapping các thuộc tính List
               List<Long> listTicketEntities_Id = new ArrayList<>();
 
-              for (TicketEntity e : entity.getListTicketEntities()) {
-                     listTicketEntities_Id.add(e.getTicketId());
+              if (entity.getListTicketEntities() != null) {
+                     for (TicketEntity e : entity.getListTicketEntities()) {
+                            listTicketEntities_Id.add(e.getTicketId());
+                     }
               }
-
               paymentDTO.setListTicketEntities_Id(listTicketEntities_Id);
 
               return paymentDTO;
@@ -41,7 +42,7 @@ public class PaymentMapping implements MappingInterface<PaymentEntity, PaymentDT
 
        @Override
        public PaymentEntity toEntity(PaymentDTO dto) {
-              
+
               PaymentEntity paymentEntity = new PaymentEntity();
               // Mapping các thuọc tính cơ bản
               paymentEntity.setPaymentId(dto.getPaymentId());
@@ -52,15 +53,14 @@ public class PaymentMapping implements MappingInterface<PaymentEntity, PaymentDT
               // Mapping các thuộc tính List
               List<TicketEntity> listTicketEntities = new ArrayList<>();
 
-              for (Long value : dto.getListTicketEntities_Id()){
-                     TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
-
-                     listTicketEntities.add(ticketEntity);
+              if (dto.getListTicketEntities_Id() != null) {
+                     for (Long value : dto.getListTicketEntities_Id()) {
+                            TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
+                            listTicketEntities.add(ticketEntity);
+                     }
               }
               paymentEntity.setListTicketEntities(listTicketEntities);
 
               return paymentEntity;
        }
-
-       
 }

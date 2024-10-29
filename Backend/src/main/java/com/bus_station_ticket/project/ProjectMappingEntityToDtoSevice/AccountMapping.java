@@ -39,12 +39,15 @@ public class AccountMapping implements MappingInterface<AccountEntity, AccountDT
               List<Long> listFeedbackEntities_Id = new ArrayList<>();
               List<Long> listTicketEntities_Id = new ArrayList<>();
 
-              for (FeedbackEntity e : entity.getListFeedbackEntities()) {
-                     listFeedbackEntities_Id.add(e.getFeedbackId());
+              if(entity.getListFeedbackEntities() != null){
+                     for (FeedbackEntity e : entity.getListFeedbackEntities()) {
+                            listFeedbackEntities_Id.add(e.getFeedbackId());
+                     }
               }
-
-              for (TicketEntity e : entity.getListTicketEntities()) {
-                     listTicketEntities_Id.add(e.getTicketId());
+              if(entity.getListTicketEntities() != null){
+                     for (TicketEntity e : entity.getListTicketEntities()) {
+                            listTicketEntities_Id.add(e.getTicketId());
+                     }
               }
 
               accountDTO.setListFeedbackEntities_Id(listFeedbackEntities_Id);
@@ -71,20 +74,22 @@ public class AccountMapping implements MappingInterface<AccountEntity, AccountDT
 
               List<FeedbackEntity> listFeedbackEntities = new ArrayList<>();
 
-              for (Long value : dto.getListFeedbackEntities_Id()) {
-                     FeedbackEntity feedbackEntity = this.feedbackRepo.findByFeedbackId(value).orElse(null);
-
-                     listFeedbackEntities.add(feedbackEntity);
+              if(dto.getListFeedbackEntities_Id() != null){
+                     for (Long value : dto.getListFeedbackEntities_Id()) {
+                            FeedbackEntity feedbackEntity = this.feedbackRepo.findByFeedbackId(value).orElse(null);
+       
+                            listFeedbackEntities.add(feedbackEntity);
+                     }
               }
               accountEntity.setListFeedbackEntities(listFeedbackEntities);
 
-              
               List<TicketEntity> listTicketEntities = new ArrayList<>();
-
-              for (Long value : dto.getListTicketEntities_Id()){
-                     TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
-
-                     listTicketEntities.add(ticketEntity);
+              if(dto.getListTicketEntities_Id() != null){
+                     for (Long value : dto.getListTicketEntities_Id()){
+                            TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
+       
+                            listTicketEntities.add(ticketEntity);
+                     }
               }
               accountEntity.setListTicketEntities(listTicketEntities);
 

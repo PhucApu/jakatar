@@ -17,7 +17,7 @@ import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
 import com.bus_station_ticket.project.ProjectRepository.PaymentRepo;
 
 @Component
-public class TicketMapping implements MappingInterface<TicketEntity,TicketDTO> {
+public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> {
 
        @Autowired
        private AccountRepo accountRepo;
@@ -39,15 +39,20 @@ public class TicketMapping implements MappingInterface<TicketEntity,TicketDTO> {
 
        @Override
        public TicketDTO toDTO(TicketEntity entity) {
-              
+
               TicketDTO ticketDTO = new TicketDTO();
               // Mapping cac thuoc tinh co ban
               ticketDTO.setTicketId(entity.getTicketId());
-              ticketDTO.setAccountEnity_Id(entity.getUserName());
-              ticketDTO.setBusEntity_Id(entity.getBusEntity().getBusId());
-              ticketDTO.setBusRoutesEntity_Id(entity.getBusRoutesEntity().getRoutesId());
-              ticketDTO.setPaymentEntity_Id(entity.getPaymentEntity().getPaymentId());
-              ticketDTO.setDiscountEntity_Id(entity.getDiscountEntity().getDiscountId());
+              ticketDTO.setAccountEnity_Id(
+                            (entity.getUserName() != null) ? entity.getAccountEnitty().getUserName() : null);
+              ticketDTO.setBusEntity_Id(
+                            (entity.getBusEntity() != null) ? entity.getBusEntity().getBusId() : null);
+              ticketDTO.setBusRoutesEntity_Id(
+                            (entity.getBusRoutesEntity() != null) ? entity.getBusRoutesEntity().getRoutesId() : null);
+              ticketDTO.setPaymentEntity_Id(
+                            (entity.getPaymentEntity() != null) ? entity.getPaymentEntity().getPaymentId() : null);
+              ticketDTO.setDiscountEntity_Id(
+                            (entity.getDiscountEntity() != null) ? entity.getDiscountEntity().getDiscountId() : null);
               ticketDTO.setSeatNumber(entity.getSeatNumber());
               ticketDTO.setDepartureDate(entity.getDepartureDate());
               ticketDTO.setPrice(entity.getPrice());
@@ -59,9 +64,12 @@ public class TicketMapping implements MappingInterface<TicketEntity,TicketDTO> {
               // Mapping cac thuoc tinh list
               List<Long> listFeedbackEntities_Id = new ArrayList<>();
 
-              for (FeedbackEntity e : entity.getListFeedbackEntities()){
-                     listFeedbackEntities_Id.add(e.getFeedbackId());
+              if(entity.getListFeedbackEntities() != null){
+                     for (FeedbackEntity e : entity.getListFeedbackEntities()) {
+                            listFeedbackEntities_Id.add(e.getFeedbackId());
+                     }
               }
+
               ticketDTO.setListFeedbackEntities_Id(listFeedbackEntities_Id);
 
               return ticketDTO;
@@ -69,20 +77,22 @@ public class TicketMapping implements MappingInterface<TicketEntity,TicketDTO> {
 
        @Override
        public TicketEntity toEntity(TicketDTO dto) {
-              
+
               TicketEntity ticketEntity = new TicketEntity();
               // Mapping cac thuoc tinh co ban
               ticketEntity.setTicketId(dto.getTicketId());
-              
+
               ticketEntity.setAccountEnitty(this.accountRepo.findByUserName(dto.getUserName()).orElse(null));
-              
+
               ticketEntity.setBusEntity(this.busRepo.findByBusId(dto.getBusEntity_Id()).orElse(null));
-              
-              ticketEntity.setBusRoutesEntity(this.busRoutesRepo.findByRoutesId(dto.getBusRoutesEntity_Id()).orElse(null));
+
+              ticketEntity.setBusRoutesEntity(
+                            this.busRoutesRepo.findByRoutesId(dto.getBusRoutesEntity_Id()).orElse(null));
 
               ticketEntity.setPaymentEntity(this.paymentRepo.findByPaymentId(dto.getPaymentEntity_Id()).orElse(null));
 
-              ticketEntity.setDiscountEntity(this.discountRepo.findByDiscountId(dto.getDiscountEntity_Id()).orElse(null));
+              ticketEntity.setDiscountEntity(
+                            this.discountRepo.findByDiscountId(dto.getDiscountEntity_Id()).orElse(null));
 
               ticketEntity.setSeatNumber(dto.getSeatNumber());
 
@@ -101,8 +111,8 @@ public class TicketMapping implements MappingInterface<TicketEntity,TicketDTO> {
               // Mapping cac thuoc tinh List
 
               List<FeedbackEntity> listFeedbackEntities = new ArrayList<>();
-              for (Long value : dto.getListFeedbackEntities_Id()){
-                     
+              for (Long value : dto.getListFeedbackEntities_Id()) {
+
                      FeedbackEntity feedbackEntity = this.feedbackRepo.findByFeedbackId(value).orElse(null);
 
                      listFeedbackEntities.add(feedbackEntity);

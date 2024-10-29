@@ -37,18 +37,19 @@ public class EmployeeMapping implements MappingInterface<EmployeeEntity, Employe
               // Mapping các thuộc tính List
               List<Long> listBusEntities_Id = new ArrayList<>();
 
-              for (BusEntity e : entity.getListBusEntity()) {
-                     listBusEntities_Id.add(e.getBusId());
+              if (entity.getListBusEntity() != null) {
+                     for (BusEntity e : entity.getListBusEntity()) {
+                            listBusEntities_Id.add(e.getBusId());
+                     }
               }
-
               employeeDTO.setListBusEntities_Id(listBusEntities_Id);
 
               List<Long> listPenaltyTicketEntities_Id = new ArrayList<>();
-
-              for (PenaltyTicketEntity e : entity.getListPenaltyTicketEntities()){
-                     listPenaltyTicketEntities_Id.add(e.getPenaltyTicketId());
+              if (entity.getListPenaltyTicketEntities() != null) {
+                     for (PenaltyTicketEntity e : entity.getListPenaltyTicketEntities()) {
+                            listPenaltyTicketEntities_Id.add(e.getPenaltyTicketId());
+                     }
               }
-
               employeeDTO.setListPenaltyTicketEntities_Id(listPenaltyTicketEntities_Id);
 
               return employeeDTO;
@@ -56,7 +57,7 @@ public class EmployeeMapping implements MappingInterface<EmployeeEntity, Employe
 
        @Override
        public EmployeeEntity toEntity(EmployeeDTO dto) {
-              
+
               EmployeeEntity employeeEntity = new EmployeeEntity();
               // Mapping các thuộc tính đơn giản
               employeeEntity.setDriverId(dto.getDriverId());
@@ -68,25 +69,26 @@ public class EmployeeMapping implements MappingInterface<EmployeeEntity, Employe
 
               List<BusEntity> listBusEntity = new ArrayList<>();
 
-              for (Long value : dto.getListBusEntities_Id()){
-                     BusEntity busEntity = this.busRepo.findByBusId(value).orElse(null);
-
-                     listBusEntity.add(busEntity);
+              if (dto.getListBusEntities_Id() != null) {
+                     for (Long value : dto.getListBusEntities_Id()) {
+                            BusEntity busEntity = this.busRepo.findByBusId(value).orElse(null);
+                            listBusEntity.add(busEntity);
+                     }
               }
               employeeEntity.setListBusEntity(listBusEntity);
 
               List<PenaltyTicketEntity> listPenaltyTicketEntities = new ArrayList<>();
-
-              for (Long value : dto.getListPenaltyTicketEntities_Id()){
-                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketRepo.findByPenaltyTicketId(value).orElse(null);
-
-                     listPenaltyTicketEntities.add(penaltyTicketEntity);
+              if (dto.getListPenaltyTicketEntities_Id() != null) {
+                     for (Long value : dto.getListPenaltyTicketEntities_Id()) {
+                            PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketRepo
+                                          .findByPenaltyTicketId(value)
+                                          .orElse(null);
+                            listPenaltyTicketEntities.add(penaltyTicketEntity);
+                     }
               }
-
               employeeEntity.setListPenaltyTicketEntities(listPenaltyTicketEntities);
 
               return employeeEntity;
        }
 
-       
 }

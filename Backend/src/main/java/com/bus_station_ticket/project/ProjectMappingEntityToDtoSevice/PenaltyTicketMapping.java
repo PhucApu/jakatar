@@ -11,11 +11,11 @@ import com.bus_station_ticket.project.ProjectRepository.BusRepo;
 import com.bus_station_ticket.project.ProjectRepository.EmployeeRepo;
 
 @Component
-public class PenaltyTicketMapping implements MappingInterface<PenaltyTicketEntity,PenaltyTicketDTO> {
+public class PenaltyTicketMapping implements MappingInterface<PenaltyTicketEntity, PenaltyTicketDTO> {
 
        @Autowired
        private EmployeeRepo employeeRepo;
-       
+
        @Autowired
        private BusRepo busRepo;
 
@@ -24,8 +24,10 @@ public class PenaltyTicketMapping implements MappingInterface<PenaltyTicketEntit
               PenaltyTicketDTO penaltyTikectDTO = new PenaltyTicketDTO();
               // Mapping các thuộc tính cơ bản
               penaltyTikectDTO.setPenaltyTicketId(entity.getPenaltyTicketId());
-              penaltyTikectDTO.setBusEntity_Id(entity.getBusEntity().getBusId());
-              penaltyTikectDTO.setEmployeeEntity_Id(entity.getEmployeeEntity().getDriverId());
+              penaltyTikectDTO.setBusEntity_Id(
+                            (entity.getBusEntity() != null) ? entity.getBusEntity().getBusId() : null);
+              penaltyTikectDTO.setEmployeeEntity_Id(
+                            (entity.getEmployeeEntity() != null) ? entity.getEmployeeEntity().getDriverId() : null);
               penaltyTikectDTO.setPenaltyDay(entity.getPenaltyDay());
               penaltyTikectDTO.setDescription(entity.getDescription());
               penaltyTikectDTO.setResponsibility(entity.getResponsibility());
@@ -37,7 +39,7 @@ public class PenaltyTicketMapping implements MappingInterface<PenaltyTicketEntit
 
        @Override
        public PenaltyTicketEntity toEntity(PenaltyTicketDTO dto) {
-              
+
               PenaltyTicketEntity penaltyTicketEntity = new PenaltyTicketEntity();
               // Mapping các thuộc tính cơ bản
               penaltyTicketEntity.setPenaltyTicketId(dto.getPenaltyTicketId());
@@ -48,7 +50,7 @@ public class PenaltyTicketMapping implements MappingInterface<PenaltyTicketEntit
               penaltyTicketEntity.setIsDelete(dto.getIsDelete());
 
               BusEntity busEntity = this.busRepo.findByBusId(dto.getBusEntity_Id()).orElse(null);
-              
+
               penaltyTicketEntity.setBusEntity(busEntity);
 
               EmployeeEntity employeeEntity = this.employeeRepo.findByDriverId(dto.getEmployeeEntity_Id()).orElse(null);
@@ -57,6 +59,5 @@ public class PenaltyTicketMapping implements MappingInterface<PenaltyTicketEntit
 
               return penaltyTicketEntity;
        }
-       
-       
+
 }

@@ -35,8 +35,10 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
               // mapping thuộc tính list
               List<Long> listTicketEntities_Id = new ArrayList<>();
 
-              for (TicketEntity e : entity.getListTicketEntities()) {
-                     listTicketEntities_Id.add(e.getTicketId());
+              if (entity.getListTicketEntities() != null) {
+                     for (TicketEntity e : entity.getListTicketEntities()) {
+                            listTicketEntities_Id.add(e.getTicketId());
+                     }
               }
 
               busRoutesDTO.setListTicketEntities_Id(listTicketEntities_Id);
@@ -45,7 +47,7 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
 
        @Override
        public BusRoutesEntity toEntity(BusRoutesDTO dto) {
-              
+
               BusRoutesEntity busRoutesEntity = new BusRoutesEntity();
               // Mapping các thuộc tính đơn giản
               busRoutesEntity.setRoutesId(dto.getRoutesId());
@@ -60,15 +62,16 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
               // Mapping cac thuoo tinh list
               List<TicketEntity> listTicketEntities = new ArrayList<>();
 
-              for (Long value : dto.getListTicketEntities_Id()){
-                     TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
+              if (dto.getListTicketEntities_Id() != null) {
 
-                     listTicketEntities.add(ticketEntity);
+                     for (Long value : dto.getListTicketEntities_Id()) {
+                            TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
+                            listTicketEntities.add(ticketEntity);
+                     }
               }
               busRoutesEntity.setListTicketEntities(listTicketEntities);
 
               return busRoutesEntity;
        }
 
-       
 }

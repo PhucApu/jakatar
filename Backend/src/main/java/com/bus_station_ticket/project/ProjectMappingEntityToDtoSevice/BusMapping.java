@@ -16,7 +16,7 @@ import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Component
-public class BusMapping implements MappingInterface<BusEntity,BusDTO>{
+public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
 
        @Autowired
        private EmployeeRepo employeeRepo;
@@ -29,7 +29,7 @@ public class BusMapping implements MappingInterface<BusEntity,BusDTO>{
 
        @Override
        public BusDTO toDTO(BusEntity entity) {
-              
+
               BusDTO busDTO = new BusDTO();
               // Mapping các thuộc tính cơ bản
               busDTO.setBusId(entity.getBusId());
@@ -43,18 +43,22 @@ public class BusMapping implements MappingInterface<BusEntity,BusDTO>{
               List<Long> listTicketEntities_Id = new ArrayList<>();
               List<Long> listPenaltyTicketEntities_Id = new ArrayList<>();
 
-
-
-              for (EmployeeEntity e : entity.getListEmployeeEntities()) {
-                     listEmployeeEntities_Id.add(e.getDriverId());
+              if (entity.getListEmployeeEntities() != null) {
+                     for (EmployeeEntity e : entity.getListEmployeeEntities()) {
+                            listEmployeeEntities_Id.add(e.getDriverId());
+                     }
               }
 
-              for (TicketEntity e : entity.getListTicketEntities()) {
-                     listTicketEntities_Id.add(e.getTicketId());
+              if (entity.getListTicketEntities() != null) {
+                     for (TicketEntity e : entity.getListTicketEntities()) {
+                            listTicketEntities_Id.add(e.getTicketId());
+                     }
               }
 
-              for (PenaltyTicketEntity e: entity.getListPenaltyTicketEntities()){
-                     listPenaltyTicketEntities_Id.add(e.getPenaltyTicketId());
+              if (entity.getListPenaltyTicketEntities() != null) {
+                     for (PenaltyTicketEntity e : entity.getListPenaltyTicketEntities()) {
+                            listPenaltyTicketEntities_Id.add(e.getPenaltyTicketId());
+                     }
               }
 
               busDTO.setListEmployeeEntities_Id(listEmployeeEntities_Id);
@@ -66,9 +70,9 @@ public class BusMapping implements MappingInterface<BusEntity,BusDTO>{
 
        @Override
        public BusEntity toEntity(BusDTO dto) {
-              
+
               BusEntity busEntity = new BusEntity();
-              
+
               // Mapping các thuộc tính cơ bản
               busEntity.setBusId(dto.getBusId());
               busEntity.setBusNumber(dto.getBusNumber());
@@ -79,37 +83,34 @@ public class BusMapping implements MappingInterface<BusEntity,BusDTO>{
               // Mapping các thộc tính List
               List<EmployeeEntity> listEmployeeEntities = new ArrayList<>();
 
-              for (Long value : dto.getListEmployeeEntities_Id()){
-                     EmployeeEntity employeeEntity = this.employeeRepo.findByDriverId(value).orElse(null);
-
-                     listEmployeeEntities.add(employeeEntity);
+              if (dto.getListEmployeeEntities_Id() != null) {
+                     for (Long value : dto.getListEmployeeEntities_Id()) {
+                            EmployeeEntity employeeEntity = this.employeeRepo.findByDriverId(value).orElse(null);
+                            listEmployeeEntities.add(employeeEntity);
+                     }
               }
               busEntity.setListEmployeeEntities(listEmployeeEntities);
 
               List<TicketEntity> listTicketEntities = new ArrayList<>();
-
-              for (Long value : dto.getListTicketEntities_Id()){
-                     TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
-
-                     listTicketEntities.add(ticketEntity);
+              if (dto.getListTicketEntities_Id() != null) {
+                     for (Long value : dto.getListTicketEntities_Id()) {
+                            TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
+                            listTicketEntities.add(ticketEntity);
+                     }
               }
               busEntity.setListTicketEntities(listTicketEntities);
 
               List<PenaltyTicketEntity> listPenaltyTicketEntities = new ArrayList<>();
-
-              for (Long value : dto.getListPenaltyTicketEntities_Id()){
-                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketRepo.findByPenaltyTicketId(value).orElse(null);
-
-                     listPenaltyTicketEntities.add(penaltyTicketEntity);
+              if (dto.getListPenaltyTicketEntities_Id() != null) {
+                     for (Long value : dto.getListPenaltyTicketEntities_Id()) {
+                            PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketRepo
+                                          .findByPenaltyTicketId(value).orElse(null);
+                            listPenaltyTicketEntities.add(penaltyTicketEntity);
+                     }
               }
-
               busEntity.setListPenaltyTicketEntities(listPenaltyTicketEntities);
-              
-
 
               return busEntity;
        }
 
-       
-       
 }

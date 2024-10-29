@@ -32,10 +32,11 @@ public class DiscountMapping implements MappingInterface<DiscountEntity,Discount
               // Mapping thuộc tính List
               List<Long> listTicketEntities_Id = new ArrayList<>();
 
-              for(TicketEntity e : entity.getListTicketEntities()){
-                     listTicketEntities_Id.add(e.getTicketId());
+              if(entity.getListTicketEntities() != null){
+                     for(TicketEntity e : entity.getListTicketEntities()){
+                            listTicketEntities_Id.add(e.getTicketId());
+                     }
               }
-
               discountDTO.setListTicketEntities_Id(listTicketEntities_Id);
 
               return discountDTO;
@@ -56,13 +57,13 @@ public class DiscountMapping implements MappingInterface<DiscountEntity,Discount
               // Mapping cac thuoc tinh list
               List<TicketEntity> listTicketEntities = new ArrayList<>();
 
-              for (Long value : dto.getListTicketEntities_Id()){
-                     TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
-
-                     listTicketEntities.add(ticketEntity);
+              if(dto.getListTicketEntities_Id() != null){
+                     for (Long value : dto.getListTicketEntities_Id()){
+                            TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
+                            listTicketEntities.add(ticketEntity);
+                     }
               }
               discountEntity.setListTicketEntities(listTicketEntities);
-
 
               return discountEntity;
        }
