@@ -18,8 +18,8 @@ INSERT INTO discount (discount_percentage, valid_from, valid_until, amount, is_d
 
 -- employee
 INSERT INTO employee (is_driver, driver_name, license_number, phone_number, is_delete) VALUES
-(TRUE, 'Nguyen Van A', '123456789', '0987654321', FALSE),
-(TRUE, 'Tran Thi B', '987654321', '0123456789', FALSE);
+(1, 'Nguyen Van A', '123456789', '0987654321', FALSE),
+(2, 'Tran Thi B', '987654321', '0123456789', FALSE);
 
 
 -- bus
@@ -40,6 +40,10 @@ INSERT INTO bus_routes (routes_id, arival_time, departure_time, departure_locati
 (1, '2024-01-05 14:30:00','2024-01-06 14:30:00', 'Hà Nội', 'Hải Phòng', 200, 120.5, FALSE),
 (2, '2024-01-05 14:30:00','2024-01-06 14:30:00', 'Long An', 'TP Hồ Chí Minh', 47, 30.0, FALSE);
 
+--penalty ticket
+INSERT INTO penalty_ticket (penalty_ticket_id,bus_id,driver_id,penalty_day,description,responsibility,price,is_delete) VALUES
+(1,1,1,'2024-01-05 14:30:00', 'Vi phạm quá tốc độ', TRUE,200.0, FALSE),
+(2,1,2,'2024-01-05 14:30:00', 'Vi phạm quá tốc độ', TRUE,200.0, FALSE);
 
 
 -- payment

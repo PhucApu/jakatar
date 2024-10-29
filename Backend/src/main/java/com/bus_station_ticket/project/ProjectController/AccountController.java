@@ -16,12 +16,9 @@ import com.bus_station_ticket.project.ProjectService.AccountService;
 @Controller
 public class AccountController {
 
+       @Autowired
        private AccountService accountService;
 
-       @Autowired
-       public AccountController(AccountService accountService) {
-              this.accountService = accountService;
-       }
 
        // Lấy tất cả các AccountEntity có
        // path: "/accounts"

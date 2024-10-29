@@ -16,12 +16,9 @@ import com.bus_station_ticket.project.ProjectService.EmployeeService;
 @RestController
 public class EmployeeController {
        
+       @Autowired
        private EmployeeService employeeService;
 
-       @Autowired
-       public EmployeeController(EmployeeService employeeService) {
-              this.employeeService = employeeService;
-       }
 
        // Lấy tất cả các EmployeeEntity có
        // path: "/employees"

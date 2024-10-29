@@ -16,12 +16,9 @@ import com.bus_station_ticket.project.ProjectService.DiscountService;
 @RestController
 public class DiscountController {
 
+       @Autowired
        private DiscountService discountService;
 
-       @Autowired
-       public DiscountController(DiscountService discountService) {
-              this.discountService = discountService;
-       }
 
        // Lấy tất cả các DiscountEntity có
        // path: "/discounts"

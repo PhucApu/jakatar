@@ -10,78 +10,71 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
-import com.bus_station_ticket.project.ProjectDTO.BusDTO;
-import com.bus_station_ticket.project.ProjectService.BusService;
+import com.bus_station_ticket.project.ProjectDTO.TicketDTO;
+import com.bus_station_ticket.project.ProjectService.TicketService;
 
 @RestController
-public class BusController {
-
+public class TicketController {
+       
        @Autowired
-       private BusService  busService;
+       private TicketService ticketService;
 
-
-       // Lấy tất cả các BusEntity có
-       // path: "/buses"
-
-       @GetMapping("/buses")
-       public ResponseEntity<ResponseObject> getAll () {
+       @GetMapping("/tickets")
+       public ResponseEntity<ResponseObject> getAll() {
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy dữ liệu từ lớp Service
-              List<BusDTO> listBusEntities = this.busService.getAll_toDTO();
+              List<TicketDTO> listTicketEntities = this.ticketService.getAll_toDTO();
 
               // kiểm tra
               // Nếu mảng không rỗng
-              if (listBusEntities.isEmpty() == false) {
+              if (listTicketEntities.isEmpty() == false) {
 
                      responseObject.setStatus("success"); // set status
-                     responseObject.setData(listBusEntities); // set data
+                     responseObject.setData(listTicketEntities); // set data
 
                      responseObject.addMessage("mess", "Successfully retrieved data");
-                     responseObject.addMessage("length", listBusEntities.size());
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
+                     responseObject.addMessage("length", listTicketEntities.size());
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("tickets", "{ticketId}"));
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
               responseObject.setStatus("failure");
-              responseObject.setData(listBusEntities);
+              responseObject.setData(listTicketEntities);
               responseObject.addMessage("mess", "There is no data in the database");
-              responseObject.addMessage("length", listBusEntities.size());
+              responseObject.addMessage("length", listTicketEntities.size());
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
 
+       // Lấy đối tượng TicketEntity dựa vào ticketId
+       // path: "/tickets/{ticketId}"
 
-       // lấy đối tượng BusEntity dựa vào busId
-       // path: "/buses/{busId}"
-       @GetMapping("/buses/{busId}")
-       public ResponseEntity<ResponseObject> getByBusId(@PathVariable("busId") Long busId) {
+       @GetMapping("/tickets/{ticketId}")
+       public ResponseEntity<ResponseObject> getByRoutesId(@PathVariable("ticketId") Long ticketId) {
 
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              BusDTO busDTO = busService.getByBusId_toDTO(busId);
+              TicketDTO ticketDTO = this.ticketService.getByTicketId_toDTO(ticketId);
 
               // kiểm tra
-              if (busDTO != null) {
+              if (ticketDTO != null) {
                      responseObject.setStatus("success");
-                     responseObject.setData(busDTO);
-                     responseObject.addMessage("mess", "Found data with matching bus id");
+                     responseObject.setData(ticketDTO);
+                     responseObject.addMessage("mess", "Found data with matching ticket id");
 
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("tickets", "{ticketId}"));
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus("failure");
-              responseObject.setData(busDTO);
-              responseObject.addMessage("mess", "No bus entity found with matching bus id");
+              responseObject.setData(ticketDTO);
+              responseObject.addMessage("mess", "No ticket entity found with matching ticket id");
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
-
        }
-
-
 }

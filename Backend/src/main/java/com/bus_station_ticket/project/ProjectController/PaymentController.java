@@ -17,12 +17,9 @@ import com.bus_station_ticket.project.ProjectService.PaymentService;
 @RestController
 public class PaymentController {
        
+       @Autowired
        private PaymentService paymentService;
 
-       @Autowired
-       public PaymentController(PaymentService paymentService) {
-              this.paymentService = paymentService;
-       }
 
        // Lấy tất cả các PaymentEntity có
        // path: "/payments"

@@ -17,12 +17,8 @@ import com.bus_station_ticket.project.ProjectService.BusRoutesService;
 @RestController
 public class BusRoutesController {
 
-       private BusRoutesService busRoutesService;
-
        @Autowired
-       public BusRoutesController(BusRoutesService busRoutesService) {
-              this.busRoutesService = busRoutesService;
-       }
+       private BusRoutesService busRoutesService;
 
        // Lấy tất cả các BusRoutesEntity có
        // path: "/busroutes"

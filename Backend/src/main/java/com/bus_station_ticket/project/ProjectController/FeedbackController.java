@@ -17,13 +17,10 @@ import com.bus_station_ticket.project.ProjectService.FeedbackService;
 
 @RestController
 public class FeedbackController {
-       
-       private FeedbackService feedbackService;
 
        @Autowired
-       public FeedbackController(FeedbackService feedbackService) {
-              this.feedbackService = feedbackService;
-       }
+       private FeedbackService feedbackService;
+
 
        // Lấy tất cả các FeedbackEntity có
        // path: "/feedbacks"
