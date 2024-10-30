@@ -10,10 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "autoprefixer": "^10.4.20",
+    "@chakra-ui/react": "^3.0.2",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.1.5",
+    "@nextui-org/react": "^2.4.8",
     "bus-app": "file:",
     "flowbite-react": "^0.10.1",
-    "postcss": "^8.4.47",
+    "formik": "^2.4.6",
+    "framer-motion": "^11.11.10",
+    "material-ui-popup-state": "^5.3.1",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -24,13 +30,15 @@
     "@eslint/js": "^9.9.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@vitejs/plugin-react-swc": "^3.7.1",
+    "autoprefixer": "^10.4.20",
     "eslint": "^9.9.0",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
-    "tailwindcss": "^3.4.13",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
     "vite": "^5.4.8"
   }
 }

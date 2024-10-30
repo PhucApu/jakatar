@@ -1,8 +1,22 @@
 import { Button, MegaMenu, Navbar } from "flowbite-react";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCreditCard,
+  faUser,
+  faClockRotateLeft,
+  faMapLocation,
+  faKey,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function Header() {
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false); // state to toggle the dropdown
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <MegaMenu className="bg-gray-100">
@@ -21,6 +35,88 @@ export default function Header() {
             Đăng nhập
           </a>
           <Button href="/dang-ky">Đăng ký</Button>
+        </div>
+        {/* Avatar with Dropdown */}
+        <div className="relative order-2 items-center">
+          <img
+            src="/avatar_apu_2.jpg" // Replace with actual user avatar
+            alt="User Avatar"
+            className="w-10 h-10 rounded-full cursor-pointer"
+            onClick={toggleDropdown} // Handle toggle on click
+          />
+
+          {isOpen && (
+            <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div className="py-1">
+                <a
+                  href="/anhba-pay"
+                  className="flex items-center p-2 hover:bg-gray-100"
+                >
+                  <FontAwesomeIcon
+                    icon={faCreditCard}
+                    style={{ color: "#186477" }}
+                    className="mr-2"
+                  />
+                  AnhBa Pay
+                </a>
+                <a
+                  href="/thong-tin-chung"
+                  className="flex items-center p-2 hover:bg-gray-100"
+                >
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    style={{ color: "#4d5b66" }}
+                    className="mr-2"
+                  />
+                  Thông tin tài khoản
+                </a>
+                <a
+                  href="/lich-su-mua-ve"
+                  className="flex items-center p-2 hover:bg-gray-100"
+                >
+                  <FontAwesomeIcon
+                    icon={faClockRotateLeft}
+                    style={{ color: "#74C0FC" }}
+                    className="mr-2"
+                  />
+                  Lịch sử mua vé
+                </a>
+                <a
+                  href="/dia-chi"
+                  className="flex items-center p-2 hover:bg-gray-100"
+                >
+                  <FontAwesomeIcon
+                    icon={faMapLocation}
+                    style={{ color: "#63E6BE" }}
+                    className="mr-2"
+                  />
+                  Địa chỉ của bạn
+                </a>
+                <a
+                  href="/dat-lai-mat-khau"
+                  className="flex items-center p-2 hover:bg-gray-100"
+                >
+                  <FontAwesomeIcon
+                    icon={faKey}
+                    style={{ color: "#FFA726" }}
+                    className="mr-2"
+                  />
+                  Đặt lại mật khẩu
+                </a>
+                <a
+                  href="/logout"
+                  className="flex items-center p-2 hover:bg-gray-100"
+                >
+                  <FontAwesomeIcon
+                    icon={faRightFromBracket}
+                    style={{ color: "#fa003e" }}
+                    className="mr-2"
+                  />
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          )}
         </div>
         <Navbar.Toggle />
         <Navbar.Collapse>
