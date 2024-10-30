@@ -57,7 +57,7 @@ export default function Login() {
               <p className="text-sm font-light text-gray-500 ">
                 Chưa có tài khoản?{" "}
                 <a
-                  href="/signup"
+                  href="/dang-ky"
                   className="font-medium text-teal-600 hover:underline "
                 >
                   Đăng ký

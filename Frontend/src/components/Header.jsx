@@ -27,7 +27,7 @@ export default function Header() {
             AnhBa Bus
           </span>
         </Navbar.Brand>
-        <div className="order-2 hidden items-center md:flex">
+        <div className="relative order-2 items-center md:flex ">
           <a
             href="/dang-nhap"
             className="mr-1 rounded-lg px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800 md:mr-2 md:px-5 md:py-2.5"
@@ -37,7 +37,7 @@ export default function Header() {
           <Button href="/dang-ky">Đăng ký</Button>
         </div>
         {/* Avatar with Dropdown */}
-        <div className="relative order-2 items-center">
+        <div className="relative order-2 items-center ">
           <img
             src="/avatar_apu_2.jpg" // Replace with actual user avatar
             alt="User Avatar"
@@ -118,6 +118,7 @@ export default function Header() {
             </div>
           )}
         </div>
+
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Navbar.Link
@@ -149,6 +150,16 @@ export default function Header() {
             }`}
           >
             Tra cứu vé
+          </Navbar.Link>
+          <Navbar.Link
+            href="/danh-gia-gop-y"
+            className={`${
+              location.pathname === "/danh-gia-gop-y"
+                ? "text-teal-600 overline underline-offset-8 decoration-2"
+                : ""
+            }`}
+          >
+            Đánh giá
           </Navbar.Link>
           <Navbar.Link
             href="/lien-he"

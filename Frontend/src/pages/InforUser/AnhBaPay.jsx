@@ -120,14 +120,17 @@ export default function AnhBaPay() {
         {/* Right Side: Main Content */}
         <div className="w-3/4 pl-8">
           <div className="flex bg-teal-100 p-4 rounded-2xl mb-7 justify-between">
-            <div>
-              Số dư ví <h1>10 đ</h1>
+            <div className="flex flex-col">
+              <h1 className="font-bold mb-3"> Số dư ví</h1>
+              <h1 className="text-red-600 scale-150 m-2">
+                10<u>đ</u>
+              </h1>
             </div>
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-2 flex-col">
               <FontAwesomeIcon
                 icon={faClockRotateLeft}
                 style={{ color: "#74C0FC" }}
-                className="mr-2"
+                className="mr-2 size-9"
               />
               <h2>Giao dịch</h2>
             </div>
@@ -146,10 +149,10 @@ export default function AnhBaPay() {
                     start: parseDate("2024-04-01"),
                     end: parseDate("2024-04-08"),
                   }}
-                  className="max-w-xs rounded-2xl bg-teal-100"
+                  className="max-w-xs rounded-2xl bg-gray-200"
                 />
               </div>
-              <div className="w-1/3 p-4 text-center">
+              <div className="w-1/3 p-4 text-center mt-3">
                 <PopupState variant="popover" popupId="demo-popup-menu">
                   {(popupState) => (
                     <React.Fragment>
@@ -168,8 +171,8 @@ export default function AnhBaPay() {
                   )}
                 </PopupState>
               </div>
-              <div className="w-1/3 p-4 text-center">
-                <button className="bg-teal-600 text-white hover:bg-teal-800 px-4 py-2 rounded">
+              <div className="w-1/3 p-4">
+                <button className="bg-teal-600 text-white hover:bg-teal-800 px-4 py-2 rounded-2xl mt-3">
                   Lọc
                 </button>
               </div>

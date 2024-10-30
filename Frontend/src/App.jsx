@@ -8,6 +8,7 @@ import Booking from "./pages/Booking";
 import AllRoute from "./pages/AllRoute";
 import Contact from "./pages/Contact";
 import Ticket from "./pages/Ticket";
+import FeedBack from "./pages/FeedBack";
 import Checkout from "./pages/Checkout";
 import Aboutus from "./pages/Aboutus";
 import AnhBaPay from "./pages/InforUser/AnhBaPay";
@@ -29,6 +30,7 @@ function App() {
           <Route path="/dang-ky" element={<SignUp />} />
           <Route path="/lich-trinh" element={<AllRoute />} />
           <Route path="/tra-cuu" element={<Ticket />} />
+          <Route path="/danh-gia-gop-y" element={<FeedBack />} />
           <Route path="/lien-he" element={<Contact />} />
           <Route path="/ve-chung-toi" element={<Aboutus />} />
           <Route path="/anhba-pay" element={<AnhBaPay />} />

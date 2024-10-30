@@ -31,34 +31,47 @@ export default function AddressOfAccount() {
           </div>
           <div className="">
             {/* address1 */}
-            <div className="flex bg-teal-100 p-4 rounded-2xl mb-7 justify-between">
+            <div className="flex bg-gray-50 p-4 rounded-2xl mb-7 justify-between">
               <div className="flex flex-col m-4">
                 <h1 className="font-bold">TP HCM</h1>
                 <h2>Loại địa chỉ</h2>
                 <h2>Địa chỉ</h2>
               </div>
-              <div className="flex ">
-                <div className=" bg-teal-600 hover:bg-teal-800 rounded-2xl  ">
+              <div className="flex justify-center items-center text-white">
+                <div className=" bg-teal-600 hover:bg-teal-800  rounded-2xl p-2 mr-2">
                   <a href="/" className="">
-                    <FontAwesomeIcon
-                      icon={faPen}
-                      //   style={{ color: "#186477" }}
-                    />
+                    <FontAwesomeIcon icon={faPen} />
                     Sửa
                   </a>
                 </div>
-                <div className=" bg-teal-600 hover:bg-teal-800 rounded-2xl ">
+                <div className=" bg-teal-600 hover:bg-teal-800 rounded-2xl p-2">
                   <a href="/" className="">
-                    <FontAwesomeIcon
-                      icon={faTrashCan}
-                      //   style={{ color: "#186477" }}
-                    />
-                    Xóa
+                    <FontAwesomeIcon icon={faTrashCan} /> Xóa
                   </a>
                 </div>
               </div>
             </div>
             {/* address2 */}
+            <div className="flex bg-gray-50 p-4 rounded-2xl mb-7 justify-between">
+              <div className="flex flex-col m-4">
+                <h1 className="font-bold">TP HCM</h1>
+                <h2>Loại địa chỉ</h2>
+                <h2>Địa chỉ</h2>
+              </div>
+              <div className="flex justify-center items-center text-white">
+                <div className=" bg-teal-600 hover:bg-teal-800  rounded-2xl p-2 mr-2">
+                  <a href="/" className="">
+                    <FontAwesomeIcon icon={faPen} />
+                    Sửa
+                  </a>
+                </div>
+                <div className=" bg-teal-600 hover:bg-teal-800 rounded-2xl p-2">
+                  <a href="/" className="">
+                    <FontAwesomeIcon icon={faTrashCan} /> Xóa
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

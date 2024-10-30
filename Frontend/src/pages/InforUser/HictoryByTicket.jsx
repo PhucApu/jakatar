@@ -116,29 +116,32 @@ export default function HictoryByTicket() {
             <h1 className="font-bold">Lịch sử giao dịch</h1>
 
             {/* Filter Options */}
-            <div className="flex justify-between border mx-auto rounded-2xl">
-              <div className="w-1/4 p-4 text-center">
+            <div className="flex border rounded-2xl m-2 justify-between">
+              <div className="w-1/5 p-4">
                 {" "}
                 Mã vé
-                <input type="" />
+                <input type="" className="w-full border rounded px-4 py-1" />
               </div>
-              <div className="w-1/4 p-4 text-center">
+              <div className="w-1/5 p-4 ">
                 {" "}
                 Thời gian
-                <input type="date" />
+                <input
+                  type="date"
+                  className="w-full border rounded px-5 py-1"
+                />
               </div>
-              <div className="w-1/4 p-4 text-center">
+              <div className="w-1/5 p-4 ">
                 {" "}
                 Tuyến đường
-                <input type="" />
+                <input type="" className="w-full border rounded px-4 py-1" />
               </div>
-              <div className="w-1/4 p-4 text-center">
+              <div className="w-1/5 p-4 ">
                 {" "}
                 Trạng thái
-                <input type="" />
+                <input type="" className="w-full border rounded px-4 py-1" />
               </div>
-              <div className="w-1/4 p-4 text-center">
-                <button className="bg-teal-600 text-white hover:bg-teal-800 px-4 py-2 rounded-2xl">
+              <div className="w-1/5 p-4 ">
+                <button className="bg-teal-600 text-white hover:bg-teal-800 px-4 py-2 rounded-2xl mt-3">
                   Tìm
                 </button>
               </div>
