@@ -122,8 +122,8 @@ export default function AnhBaPay() {
           <div className="flex bg-teal-100 p-4 rounded-2xl mb-7 justify-between">
             <div className="flex flex-col">
               <h1 className="font-bold mb-3"> Số dư ví</h1>
-              <h1 className="text-red-600 scale-150 m-2">
-                10<u>đ</u>
+              <h1 className="text-red-600 scale-150 m-2 font-bold">
+                10 <u>đ</u>
               </h1>
             </div>
             <div className="ml-auto flex items-center gap-2 flex-col">

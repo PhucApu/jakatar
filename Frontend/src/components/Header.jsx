@@ -38,11 +38,11 @@ export default function Header() {
           <Button href="/dang-ky">Đăng ký</Button>
         </div>
         {/* Avatar with Dropdown */}
-        <div className="relative order-2 items-center ">
+        <div className="relative order-2 items-center">
           <img
             src="/avatar_apu_2.jpg" // Replace with actual user avatar
             alt="User Avatar"
-            className="w-10 h-10 rounded-full cursor-pointer"
+            className=" w-16 h-16 rounded-full cursor-pointer"
             onClick={toggleDropdown} // Handle toggle on click
           />
 
