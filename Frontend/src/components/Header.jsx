@@ -22,7 +22,8 @@ export default function Header() {
     <MegaMenu className="bg-gray-100">
       <div className="mx-auto flex w-full flex-wrap items-center justify-between p-4 md:space-x-8">
         <Navbar.Brand href="/">
-          <img alt="" src="/favicon.svg" className="mr-3 h-6 sm:h-9" />
+          {/* <img alt="" src="/favicon.svg" className="mr-3 h-6 sm:h-9" /> */}
+          <img src="/logo_removebg.png" alt="logo" className="w-15 h-20 ml-2" />
           <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
             AnhBa Bus
           </span>
@@ -103,10 +104,7 @@ export default function Header() {
                   />
                   Đặt lại mật khẩu
                 </a>
-                <a
-                  href="/logout"
-                  className="flex items-center p-2 hover:bg-gray-100"
-                >
+                <a href="/" className="flex items-center p-2 hover:bg-gray-100">
                   <FontAwesomeIcon
                     icon={faRightFromBracket}
                     style={{ color: "#fa003e" }}

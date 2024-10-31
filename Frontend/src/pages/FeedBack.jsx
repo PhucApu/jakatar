@@ -1,6 +1,14 @@
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+
 export default function FeedBack() {
+  const [rating, setRating] = useState(0);
+
+  const handleStarClick = (index) => {
+    setRating(index);
+  };
+
   return (
     <section className="py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -14,7 +22,7 @@ export default function FeedBack() {
                   className="w-full h-full lg:rounded-l-2xl rounded-2xl bg-blend-multiply bg-cyan-700 object-cover"
                 />
                 <h1 className="font-manrope text-white text-4xl font-bold leading-10 absolute top-11 left-11">
-                  Tra cứu vé
+                  Đánh giá / góp ý
                 </h1>
               </div>
             </div>
@@ -27,39 +35,25 @@ export default function FeedBack() {
             <input
               type="text"
               className="w-full h-12 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-10"
-              placeholder="Mã chuyến đi"
+              placeholder="Mã chuyến đi (mã vé)"
             />
             <textarea
-              type="text"
-              className="w-full h-12 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-10 row-span-full"
+              className="w-full h-24 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-2xl border border-gray-200 focus:outline-none pl-4 mb-10"
               placeholder="Nội dung cần góp ý đánh giá trong chuyến đi đó"
             ></textarea>
-            <input className="" />
-            <FontAwesomeIcon
-              icon={faStar}
-              style={{ color: "#ffb02f" }}
-              className="mr-2"
-            />
-            <FontAwesomeIcon
-              icon={faStar}
-              style={{ color: "#ffb02f" }}
-              className="mr-2"
-            />
-            <FontAwesomeIcon
-              icon={faStar}
-              style={{ color: "#ffb02f" }}
-              className="mr-2"
-            />
-            <FontAwesomeIcon
-              icon={faStar}
-              style={{ color: "#ffb02f" }}
-              className="mr-2"
-            />
-            <FontAwesomeIcon
-              icon={faStar}
-              style={{ color: "#ffb02f" }}
-              className="mr-2"
-            />
+
+            <div className="flex mb-10 scale-150 pl-24">
+              {[1, 2, 3, 4, 5].map((index) => (
+                <FontAwesomeIcon
+                  key={index}
+                  icon={faStar}
+                  style={{ color: index <= rating ? "#ffb02f" : "#e4e5e9" }}
+                  className="mr-2 cursor-pointer"
+                  onClick={() => handleStarClick(index)}
+                />
+              ))}
+            </div>
+
             <button className="w-full h-12 text-white text-base font-semibold leading-6 rounded-full transition-all duration-700 hover:bg-cyan-800 bg-cyan-600 shadow-sm">
               Xác nhận đánh giá
             </button>

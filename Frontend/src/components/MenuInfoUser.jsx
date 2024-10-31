@@ -79,10 +79,7 @@ export default function MenuInfoUser() {
           />
           Đặt lại mật khẩu
         </a>
-        <a
-          href="/logout"
-          className="flex items-center p-2 hover:bg-gray-100 mb-7"
-        >
+        <a href="/" className="flex items-center p-2 hover:bg-gray-100 mb-7">
           <FontAwesomeIcon
             icon={faRightFromBracket}
             style={{ color: "#fa003e" }}

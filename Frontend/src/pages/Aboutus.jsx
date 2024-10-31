@@ -3,6 +3,7 @@ export default function AboutUs() {
     <section className="bg-gray-100 text-gray-900 min-h-screen">
       <div className="text-center py-16 px-8 bg-white shadow-lg rounded-lg mx-auto max-w-5xl">
         {/* <div className=""> */}
+
         <h1 className="text-4xl uppercase font-bold text-teal-600">
           ANHBA BUS
         </h1>
