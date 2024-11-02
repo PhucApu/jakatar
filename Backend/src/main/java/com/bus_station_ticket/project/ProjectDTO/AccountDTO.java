@@ -2,7 +2,10 @@ package com.bus_station_ticket.project.ProjectDTO;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class AccountDTO {
+       @NotBlank(message = "")
        private String userName;
        private String passWord;
        private String email;
@@ -103,3 +106,6 @@ public class AccountDTO {
        }
 
 }
+
+
+
