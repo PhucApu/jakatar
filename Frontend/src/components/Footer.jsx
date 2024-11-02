@@ -1,4 +1,4 @@
-import { Footer } from "flowbite-react"
+import { Footer } from "flowbite-react";
 
 export default function Component() {
   return (
