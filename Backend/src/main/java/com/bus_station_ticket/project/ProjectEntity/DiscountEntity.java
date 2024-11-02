@@ -6,8 +6,6 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,12 +33,11 @@ public class DiscountEntity {
        @Column(name = "valid_until", nullable = false, columnDefinition = "DATETIME")
        private LocalDateTime validUntil;
 
-       @Column(name = "ammount", nullable = false)
-       private int ammount;
+       @Column(name = "amount", nullable = false)
+       private int amount;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
        @OneToMany(mappedBy = "discountEntity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
@@ -50,12 +47,12 @@ public class DiscountEntity {
        public DiscountEntity() {
        }
 
-       public DiscountEntity(float discountPercentage, LocalDateTime validFrom, LocalDateTime validUntil, int ammount,
-                     ChoiceEnum isDelete, List<TicketEntity> listTicketEntities) {
+       public DiscountEntity(float discountPercentage, LocalDateTime validFrom, LocalDateTime validUntil, int amount,
+                     Boolean isDelete, List<TicketEntity> listTicketEntities) {
               this.discountPercentage = discountPercentage;
               this.validFrom = validFrom;
               this.validUntil = validUntil;
-              this.ammount = ammount;
+              this.amount = amount;
               this.isDelete = isDelete;
               this.listTicketEntities = listTicketEntities;
        }
@@ -92,19 +89,19 @@ public class DiscountEntity {
               this.validUntil = validUntil;
        }
 
-       public int getAmmount() {
-              return ammount;
+       public int getAmount() {
+              return amount;
        }
 
-       public void setAmmount(int ammount) {
-              this.ammount = ammount;
+       public void setAmount(int amount) {
+              this.amount = amount;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 
@@ -119,7 +116,7 @@ public class DiscountEntity {
        @Override
        public String toString() {
               return "DiscountEntity [discountId=" + discountId + ", discountPercentage=" + discountPercentage
-                            + ", validFrom=" + validFrom + ", validUntil=" + validUntil + ", ammount=" + ammount
+                            + ", validFrom=" + validFrom + ", validUntil=" + validUntil + ", amount=" + amount
                             + ", isDelete=" + isDelete + ", listTicketEntities=" + listTicketEntities + "]";
        }
 

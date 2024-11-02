@@ -2,8 +2,7 @@ package com.bus_station_ticket.project.ProjectEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,6 +10,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
 
@@ -23,8 +23,8 @@ public class EmployeeEntity {
        @Column(name = "driver_id")
        private Long driverId;
 
-       @Column(name = "is_driver", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDriver;
+       @Column(name = "is_driver", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+       private Boolean isDriver;
 
        @Column(name = "driver_name", nullable = false, columnDefinition = "VARCHAR(50)")
        private String driverName;
@@ -35,9 +35,8 @@ public class EmployeeEntity {
        @Column(name = "phone_number", nullable = false, columnDefinition = "VARCHAR(11)")
        private String phoneNumber;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
        @ManyToMany
        @JoinTable(
@@ -47,20 +46,29 @@ public class EmployeeEntity {
        )
        private List<BusEntity> listBusEntity;
 
+       @OneToMany(mappedBy = "employeeEntity", fetch = FetchType.LAZY)
+       private List<PenaltyTicketEntity> listPenaltyTicketEntities;
+
 
 
        public EmployeeEntity() {
        }
 
-       public EmployeeEntity(ChoiceEnum isDriver, String driverName, String licenseNumber, String phoneNumber,
-                     ChoiceEnum isDelete, List<BusEntity> listBusEntity) {
+       
+
+       public EmployeeEntity(Boolean isDriver, String driverName, String licenseNumber, String phoneNumber,
+                     Boolean isDelete, List<BusEntity> listBusEntity,
+                     List<PenaltyTicketEntity> listPenaltyTicketEntities) {
               this.isDriver = isDriver;
               this.driverName = driverName;
               this.licenseNumber = licenseNumber;
               this.phoneNumber = phoneNumber;
               this.isDelete = isDelete;
               this.listBusEntity = listBusEntity;
+              this.listPenaltyTicketEntities = listPenaltyTicketEntities;
        }
+
+
 
        public Long getDriverId() {
               return driverId;
@@ -70,11 +78,11 @@ public class EmployeeEntity {
               this.driverId = driverId;
        }
 
-       public ChoiceEnum getIsDriver() {
+       public Boolean getIsDriver() {
               return isDriver;
        }
 
-       public void setIsDriver(ChoiceEnum isDriver) {
+       public void setIsDriver(Boolean isDriver) {
               this.isDriver = isDriver;
        }
 
@@ -102,11 +110,11 @@ public class EmployeeEntity {
               this.phoneNumber = phoneNumber;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 
@@ -117,12 +125,21 @@ public class EmployeeEntity {
        public void setListBusEntity(List<BusEntity> listBusEntity) {
               this.listBusEntity = listBusEntity;
        }
+       
 
        @Override
        public String toString() {
               return "EmployeeEntity [driverId=" + driverId + ", isDriver=" + isDriver + ", driverName=" + driverName
                             + ", licenseNumber=" + licenseNumber + ", phoneNumber=" + phoneNumber + ", isDelete="
                             + isDelete + ", listBusEntity=" + listBusEntity + "]";
+       }
+
+       public List<PenaltyTicketEntity> getListPenaltyTicketEntities() {
+              return listPenaltyTicketEntities;
+       }
+
+       public void setListPenaltyTicketEntities(List<PenaltyTicketEntity> listPenaltyTicketEntities) {
+              this.listPenaltyTicketEntities = listPenaltyTicketEntities;
        }
 
 }

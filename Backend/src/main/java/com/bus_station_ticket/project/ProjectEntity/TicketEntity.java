@@ -2,8 +2,6 @@ package com.bus_station_ticket.project.ProjectEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,7 +26,7 @@ public class TicketEntity {
 
        @ManyToOne
        @JoinColumn(name = "username_id", referencedColumnName = "username", nullable = true, insertable = false, updatable = true)
-       private AccountEnity accountEnitty;
+       private AccountEntity accountEnity;
 
        @ManyToOne
        @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false, insertable = false, updatable = true)
@@ -70,9 +68,8 @@ public class TicketEntity {
        private List<FeedbackEntity> listFeedbackEntities;
 
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
        
 
@@ -80,11 +77,11 @@ public class TicketEntity {
        }
 
 
-       public TicketEntity(AccountEnity accountEnitty, BusEntity busEntity, BusRoutesEntity busRoutesEntity,
+       public TicketEntity(AccountEntity accountEnitty, BusEntity busEntity, BusRoutesEntity busRoutesEntity,
                      PaymentEntity paymentEntity, DiscountEntity discountEntity, String seatNumber,
                      LocalDate departureDate, float price, String userName, String phoneNumber, String email,
-                     List<FeedbackEntity> listFeedbackEntities, ChoiceEnum isDelete) {
-              this.accountEnitty = accountEnitty;
+                     List<FeedbackEntity> listFeedbackEntities, Boolean isDelete) {
+              this.accountEnity = accountEnitty;
               this.busEntity = busEntity;
               this.busRoutesEntity = busRoutesEntity;
               this.paymentEntity = paymentEntity;
@@ -110,13 +107,13 @@ public class TicketEntity {
        }
 
 
-       public AccountEnity getAccountEnitty() {
-              return accountEnitty;
+       public AccountEntity getAccountEnitty() {
+              return accountEnity;
        }
 
 
-       public void setAccountEnitty(AccountEnity accountEnitty) {
-              this.accountEnitty = accountEnitty;
+       public void setAccountEnitty(AccountEntity accountEnitty) {
+              this.accountEnity = accountEnitty;
        }
 
 
@@ -230,19 +227,19 @@ public class TicketEntity {
        }
 
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 
 
        @Override
        public String toString() {
-              return "TicketEntity [ticketId=" + ticketId + ", accountEnitty=" + accountEnitty + ", busEntity="
+              return "TicketEntity [ticketId=" + ticketId + ", accountEnitty=" + accountEnity + ", busEntity="
                             + busEntity + ", busRoutesEntity=" + busRoutesEntity + ", paymentEntity=" + paymentEntity
                             + ", discountEntity=" + discountEntity + ", seatNumber=" + seatNumber + ", departureDate="
                             + departureDate + ", price=" + price + ", userName=" + userName + ", phoneNumber="
