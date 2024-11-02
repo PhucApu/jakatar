@@ -23,7 +23,7 @@ export default function SearchBox() {
         </div>
       </div>
       <div className='relative flex items-center justify-center'>
-        <Button size={'lg'} className='absolute'  onClick={() => navigate('/dat-ve')}>
+        <Button size={'lg'} className='absolute'  onClick={() => navigate('/chon-ve')}>
           Tìm kiếm
         </Button>
       </div>
