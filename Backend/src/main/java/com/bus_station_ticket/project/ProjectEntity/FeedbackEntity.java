@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,7 +23,7 @@ public class FeedbackEntity {
 
        @ManyToOne
        @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
-       private AccountEnity accountEnitty;
+       private AccountEntity accountEnity;
 
        @ManyToOne
        @JoinColumn(name = "ticket_id", referencedColumnName = "ticket_id", nullable = false )
@@ -37,21 +35,20 @@ public class FeedbackEntity {
        @Column(name = "rating")
        private int rating;
 
-       @Column(name = "date-comment", nullable = false, columnDefinition = "DATETIME")
+       @Column(name = "date_comment", nullable = false, columnDefinition = "DATETIME")
        private LocalDateTime dateComment ;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
 
 
        public FeedbackEntity() {
        }
 
-       public FeedbackEntity(AccountEnity accountEnitty, TicketEntity ticketEntity, String content, int rating,
-                     LocalDateTime dateComment, ChoiceEnum isDelete) {
-              this.accountEnitty = accountEnitty;
+       public FeedbackEntity(AccountEntity accountEnitty, TicketEntity ticketEntity, String content, int rating,
+                     LocalDateTime dateComment, Boolean isDelete) {
+              this.accountEnity = accountEnitty;
               this.ticketEntity = ticketEntity;
               this.content = content;
               this.rating = rating;
@@ -67,12 +64,12 @@ public class FeedbackEntity {
               this.feedbackId = feedbackId;
        }
 
-       public AccountEnity getAccountEnitty() {
-              return accountEnitty;
+       public AccountEntity getAccountEnitty() {
+              return accountEnity;
        }
 
-       public void setAccountEnitty(AccountEnity accountEnitty) {
-              this.accountEnitty = accountEnitty;
+       public void setAccountEnitty(AccountEntity accountEnitty) {
+              this.accountEnity = accountEnitty;
        }
 
        public TicketEntity getTicketEntity() {
@@ -107,19 +104,28 @@ public class FeedbackEntity {
               this.dateComment = dateComment;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
+       
 
        @Override
        public String toString() {
-              return "FeedbackEntity [feedbackId=" + feedbackId + ", accountEnitty=" + accountEnitty + ", ticketEntity="
+              return "FeedbackEntity [feedbackId=" + feedbackId + ", accountEnitty=" + accountEnity + ", ticketEntity="
                             + ticketEntity + ", content=" + content + ", rating=" + rating + ", dateComment="
                             + dateComment + ", isDelete=" + isDelete + "]";
+       }
+
+       public AccountEntity getAccountEnity() {
+              return accountEnity;
+       }
+
+       public void setAccountEnity(AccountEntity accountEnity) {
+              this.accountEnity = accountEnity;
        }
 
 }

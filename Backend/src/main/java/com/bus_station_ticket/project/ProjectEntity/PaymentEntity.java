@@ -5,8 +5,6 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,9 +31,8 @@ public class PaymentEntity {
        @OneToMany(mappedBy = "paymentEntity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
        
 
@@ -43,7 +40,7 @@ public class PaymentEntity {
        }
 
        public PaymentEntity(LocalDateTime paymentTime, String paymentMethod, List<TicketEntity> listTicketEntities,
-                     ChoiceEnum isDelete) {
+                     Boolean isDelete) {
               this.paymentTime = paymentTime;
               this.paymentMethod = paymentMethod;
               this.listTicketEntities = listTicketEntities;
@@ -82,11 +79,11 @@ public class PaymentEntity {
               this.listTicketEntities = listTicketEntities;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 

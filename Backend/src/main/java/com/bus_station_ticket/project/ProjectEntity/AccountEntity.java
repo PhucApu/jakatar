@@ -4,8 +4,6 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
@@ -15,7 +13,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "account", indexes = @Index(columnList = "username")) // name table is "account", create index on column
                                                                     // "username"
-public class AccountEnity {
+public class  AccountEntity {
 
        @Id // primary key
        @Column(name = "username", columnDefinition = "VARCHAR(20)") // column: username, type: text
@@ -32,37 +30,37 @@ public class AccountEnity {
                                                                                     // null: no
        private String phoneNumber;
 
-       @Column(name = "ROLE", nullable = false, columnDefinition = "ENUM('USER','ADMIN') DEFAULT 'USER'") // column:
+       @Column(name = "ROLE", nullable = false, columnDefinition = "ENUM('ROLE_USER','ROLE_ADMIN') DEFAULT 'ROLE_USER'") // column:
                                                                                                           // ROLE, type:
                                                                                                           // nvarchar
                                                                                                           // (USER,ADMIN),
                                                                                                           // null: no
        private String role;
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_delete", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isDelete;
+       
+       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isDelete;
 
 
-       @Enumerated(EnumType.STRING)
-       @Column(name = "is_block", nullable = false, columnDefinition = "ENUM('YES','NO') DEFAULT 'NO'")
-       private ChoiceEnum isBlock;
+       
+       @Column(name = "is_block", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+       private Boolean isBlock;
 
 
-       @OneToMany(mappedBy = "accountEnitty", fetch = FetchType.LAZY)
+       @OneToMany(mappedBy = "accountEnity", fetch = FetchType.LAZY)
        private List<FeedbackEntity> listFeedbackEntities;
 
-       @OneToMany(mappedBy = "accountEnitty", fetch = FetchType.LAZY)
+       @OneToMany(mappedBy = "accountEnity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
 
 
        
 
 
-       public AccountEnity() {}
+       public AccountEntity() {}
 
-       public AccountEnity(String userName, String passWord, String email, String phoneNumber, String role,
-                     ChoiceEnum isDelete, ChoiceEnum isBlock, List<FeedbackEntity> listFeedbackEntities,
+       public AccountEntity(String userName, String passWord, String email, String phoneNumber, String role,
+                     Boolean isDelete, Boolean isBlock, List<FeedbackEntity> listFeedbackEntities,
                      List<TicketEntity> listTicketEntities) {
               this.userName = userName;
               this.passWord = passWord;
@@ -115,19 +113,19 @@ public class AccountEnity {
               this.role = role;
        }
 
-       public ChoiceEnum getIsDelete() {
+       public Boolean getIsDelete() {
               return isDelete;
        }
 
-       public void setIsDelete(ChoiceEnum isDelete) {
+       public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 
-       public ChoiceEnum getIsBlock() {
+       public Boolean getIsBlock() {
               return isBlock;
        }
 
-       public void setIsBlock(ChoiceEnum isBlock) {
+       public void setIsBlock(Boolean isBlock) {
               this.isBlock = isBlock;
        }
 

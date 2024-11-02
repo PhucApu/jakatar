@@ -32,4 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
+
+#### File in Project
 .env
+/logs/*

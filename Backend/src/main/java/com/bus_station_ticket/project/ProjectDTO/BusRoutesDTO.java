@@ -1,59 +1,27 @@
-package com.bus_station_ticket.project.ProjectEntity;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
+package com.bus_station_ticket.project.ProjectDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "bus_routes", indexes = @Index(columnList = "routes_id"))
-public class BusRoutesEntity {
-       
-       @Id
-       @GeneratedValue(strategy = GenerationType.IDENTITY)
-       @Column(name = "routes_id")
+public class BusRoutesDTO {
+
        private Long routesId;
-
-       @Column(name = "departure_location", columnDefinition = "VARCHAR(50)")
        private String departureLocation;
-
-       @Column(name = "destination_location", columnDefinition = "VARCHAR(50)")
        private String destinationLocation;
-
-       @Column(name = "distance_location", columnDefinition = "FLOAT", length = 5)
        private float distanceKilometer;
-
-       @Column(name = "departure_time", columnDefinition = "DATETIME")
        private LocalDateTime departureTime;
-
-       @Column(name = "arival_time", columnDefinition = "DATETIME")
        private LocalDateTime arivalTime;
-
-       @Column(name = "price", columnDefinition = "FLOAT", length = 5)
        private float price;
-
-       @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
        private Boolean isDelete;
+       private List<Long> listTicketEntities_Id;
 
-       @OneToMany(mappedBy = "busRoutesEntity", fetch = FetchType.LAZY)
-       private List<TicketEntity> listTicketEntities;
-
-
-       public BusRoutesEntity() {
+       public BusRoutesDTO() {
        }
 
-       public BusRoutesEntity(String departureLocation, String destinationLocation, float distanceKilometer,
+       public BusRoutesDTO(Long routesId, String departureLocation, String destinationLocation, float distanceKilometer,
                      LocalDateTime departureTime, LocalDateTime arivalTime, float price, Boolean isDelete,
-                     List<TicketEntity> listTicketEntities) {
+                     List<Long> listTicketEntities_Id) {
+              this.routesId = routesId;
               this.departureLocation = departureLocation;
               this.destinationLocation = destinationLocation;
               this.distanceKilometer = distanceKilometer;
@@ -61,7 +29,7 @@ public class BusRoutesEntity {
               this.arivalTime = arivalTime;
               this.price = price;
               this.isDelete = isDelete;
-              this.listTicketEntities = listTicketEntities;
+              this.listTicketEntities_Id = listTicketEntities_Id;
        }
 
        public Long getRoutesId() {
@@ -128,13 +96,12 @@ public class BusRoutesEntity {
               this.isDelete = isDelete;
        }
 
-       public List<TicketEntity> getListTicketEntities() {
-              return listTicketEntities;
+       public List<Long> getListTicketEntities_Id() {
+              return listTicketEntities_Id;
        }
 
-       public void setListTicketEntities(List<TicketEntity> listTicketEntities) {
-              this.listTicketEntities = listTicketEntities;
+       public void setListTicketEntities_Id(List<Long> listTicketEntities_Id) {
+              this.listTicketEntities_Id = listTicketEntities_Id;
        }
 
-       
 }
