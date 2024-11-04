@@ -1,6 +1,6 @@
 import { Checkbox, HR, Label } from 'flowbite-react';
-import TripInfo from '../components/TripInfo';
-import SearchBox from '../components/SearchBox';
+import TripInfo from '../../components/user/TripInfo';
+import SearchBox from '../../components/user/SearchBox';
 
 export default function Booking() {
   return (

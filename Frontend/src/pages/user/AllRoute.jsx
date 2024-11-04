@@ -1,4 +1,4 @@
-import SearchBoxOfRoute from '../components/SearchBoxOfRoute';
+import SearchBoxOfRoute from '../../components/user/SearchBoxOfRoute';
 import { useNavigate } from 'react-router-dom';
 export default function Routes() {
   const navigate = useNavigate();
