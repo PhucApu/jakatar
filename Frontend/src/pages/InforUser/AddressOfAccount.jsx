@@ -1,6 +1,6 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { FaPen, FaTrashAlt } from "react-icons/fa";
 import MenuInfoUser from "../../components/MenuInfoUser";
+
 export default function AddressOfAccount() {
   return (
     <section className="flex justify-center items-center p-6 mt-10">
@@ -38,15 +38,15 @@ export default function AddressOfAccount() {
                 <h2>Địa chỉ</h2>
               </div>
               <div className="flex justify-center items-center text-white">
-                <div className=" bg-teal-600 hover:bg-teal-800  rounded-2xl p-2 mr-2">
-                  <a href="/" className="">
-                    <FontAwesomeIcon icon={faPen} />
+                <div className="bg-teal-600 hover:bg-teal-800 rounded-2xl p-2 mr-2">
+                  <a href="/" className="flex items-center">
+                    <FaPen className="mr-1" />
                     Sửa
                   </a>
                 </div>
-                <div className=" bg-teal-600 hover:bg-teal-800 rounded-2xl p-2">
-                  <a href="/" className="">
-                    <FontAwesomeIcon icon={faTrashCan} /> Xóa
+                <div className="bg-teal-600 hover:bg-teal-800 rounded-2xl p-2">
+                  <a href="/" className="flex items-center">
+                    <FaTrashAlt className="mr-1" /> Xóa
                   </a>
                 </div>
               </div>
@@ -59,15 +59,15 @@ export default function AddressOfAccount() {
                 <h2>Địa chỉ</h2>
               </div>
               <div className="flex justify-center items-center text-white">
-                <div className=" bg-teal-600 hover:bg-teal-800  rounded-2xl p-2 mr-2">
-                  <a href="/" className="">
-                    <FontAwesomeIcon icon={faPen} />
+                <div className="bg-teal-600 hover:bg-teal-800 rounded-2xl p-2 mr-2">
+                  <a href="/" className="flex items-center">
+                    <FaPen className="mr-1" />
                     Sửa
                   </a>
                 </div>
-                <div className=" bg-teal-600 hover:bg-teal-800 rounded-2xl p-2">
-                  <a href="/" className="">
-                    <FontAwesomeIcon icon={faTrashCan} /> Xóa
+                <div className="bg-teal-600 hover:bg-teal-800 rounded-2xl p-2">
+                  <a href="/" className="flex items-center">
+                    <FaTrashAlt className="mr-1" /> Xóa
                   </a>
                 </div>
               </div>

@@ -1,95 +1,33 @@
-import MenuInfoUser from "../../components/MenuInfoUser";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import MenuInfoUser from '../../components/MenuInfoUser';
+import { useState } from 'react';
+import { Datepicker, Select } from 'flowbite-react';
 
 const columns = [
-  { id: "code", label: "Mã vé", minWidth: 100 },
-  { id: "numberof", label: "Số vé", minWidth: 100 },
-  { id: "router", label: "Tuyến đường", minWidth: 170 },
-  { id: "date", label: "Ngày đi", minWidth: 170 },
+  { id: 'code', label: 'Mã vé' },
+  { id: 'router', label: 'Tuyến đường' },
+  { id: 'numberof', label: 'Số vé' },
+  { id: 'date', label: 'Ngày đi' },
   {
-    id: "money",
-    label: "Số tiền",
-    minWidth: 100,
-    format: (value) =>
-      value.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
+    id: 'money',
+    label: 'Số tiền',
+    format: (value) => value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
   },
-  { id: "payment", label: "Thanh toán", minWidth: 100 },
-  { id: "status", label: "Trạng thái", minWidth: 100 },
-  { id: "action", label: "Thao tác", minWidth: 100 },
+  { id: 'payment', label: 'Thanh toán' },
+  { id: 'status', label: 'Trạng thái' },
 ];
 
-// Cập nhật hàm tạo dữ liệu
-function createData(
-  code,
-  numberof,
-  router,
-  date,
-  money,
-  payment,
-  status,
-  action
-) {
-  return { code, numberof, router, date, money, payment, status, action };
-}
-
-// Cập nhật giá trị thanh toán trong mảng rows
 const rows = [
-  createData(
-    "V001",
-    2,
-    "Hà Nội - Hải Phòng",
-    "2024-10-30",
-    300000,
-    "ZaloPay",
-    "Đã thanh toán",
-    "Xem"
-  ),
-  createData(
-    "V002",
-    1,
-    "Hà Nội - Đà Nẵng",
-    "2024-10-31",
-    800000,
-    "Chuyển khoản",
-    "Đã thanh toán",
-    "Xem"
-  ),
-  createData(
-    "V003",
-    3,
-    "Hà Nội - TP.HCM",
-    "2024-11-01",
-    1500000,
-    "AnhBaPay",
-    "Chưa thanh toán",
-    "Xem"
-  ),
+  { code: 'V001', numberof: 2, router: 'Hà Nội - Hải Phòng', date: '2024-10-30', money: 300000, payment: 'ZaloPay', status: 'Đã thanh toán' },
+  { code: 'V002', numberof: 1, router: 'Hà Nội - Đà Nẵng', date: '2024-10-31', money: 800000, payment: 'Chuyển khoản', status: 'Đã thanh toán' },
+  { code: 'V003', numberof: 3, router: 'Hà Nội - TP.HCM', date: '2024-11-01', money: 1500000, payment: 'AnhBaPay', status: 'Chưa thanh toán' },
 ];
+
 export default function HictoryByTicket() {
-  const navigate = useNavigate();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedStatus, setSelectedStatus] = useState('All');
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
   return (
-    <section className="flex justify-center items-center p-6 mt-10">
-      <div className="flex w-full max-w-5xl">
+    <section className="flex justify-center items-center w-[90%] px-4 py-8 mx-auto">
+      <div className="flex w-full gap-4 justify-between">
         {/* Left Side: Menu */}
         <div className="w-1/4">
           <MenuInfoUser />
@@ -98,17 +36,12 @@ export default function HictoryByTicket() {
         {/* Right Side: Main Content */}
         <div className="w-3/4 pl-8">
           <div className="flex bg-teal-100 p-4 rounded-2xl mb-7 justify-between">
-            <div>
-              <h1 className="font-bold">Lịch sử mua vé</h1>
+            <div className="flex flex-col">
+              <h1 className="font-bold mb-3">Lịch sử mua vé</h1>
               <h2>Theo dõi và quản lý quá trình lịch sử mua vé của bạn</h2>
             </div>
             <div className="bg-teal-600 hover:bg-teal-800 rounded-2xl">
-              <button
-                className="m-4 px-7 text-white"
-                onClick={() => navigate("/")}
-              >
-                Đặt vé
-              </button>
+              <button className="m-4 px-7 text-white">Đặt vé</button>
             </div>
           </div>
 
@@ -116,96 +49,58 @@ export default function HictoryByTicket() {
             <h1 className="font-bold">Lịch sử giao dịch</h1>
 
             {/* Filter Options */}
-            <div className="flex border rounded-2xl m-2 justify-between">
-              <div className="w-1/5 p-4">
-                {" "}
-                Mã vé
-                <input type="" className="w-full border rounded px-4 py-1" />
+            <div className="flex justify-between border rounded-2xl p-4">
+              <div className="flex items-center gap-2">
+                <span className="mx-2">Từ</span>
+                <Datepicker placeholder="Chọn ngày" />
+                <span className="mx-2">đến</span>
+                <Datepicker placeholder="Chọn ngày" />
               </div>
-              <div className="w-1/5 p-4 ">
-                {" "}
-                Thời gian
-                <input
-                  type="date"
-                  className="w-full border rounded px-5 py-1"
-                />
+              <div className="text-center">
+                <Select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                >
+                  <option value="All">Chọn trạng thái...</option>
+                  <option value="Khởi tạo">Khởi tạo</option>
+                  <option value="Chờ duyệt">Chờ duyệt</option>
+                  <option value="Hủy bỏ">Hủy bỏ</option>
+                  <option value="Đã duyệt">Đã duyệt</option>
+                </Select>
               </div>
-              <div className="w-1/5 p-4 ">
-                {" "}
-                Tuyến đường
-                <input type="" className="w-full border rounded px-4 py-1" />
-              </div>
-              <div className="w-1/5 p-4 ">
-                {" "}
-                Trạng thái
-                <input type="" className="w-full border rounded px-4 py-1" />
-              </div>
-              <div className="w-1/5 p-4 ">
-                <button className="bg-teal-600 text-white hover:bg-teal-800 px-4 py-2 rounded-2xl mt-3">
+              <div className="text-center">
+                <button className="bg-teal-600 text-white hover:bg-teal-800 px-4 py-2 rounded-2xl">
                   Tìm
                 </button>
               </div>
             </div>
 
             {/* Transaction Table */}
-            <div className="">
-              <Paper sx={{ width: "100%", overflow: "hidden" }}>
-                <TableContainer sx={{ maxHeight: 440 }}>
-                  <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                      <TableRow>
-                        {columns.map((column) => (
-                          <TableCell
-                            key={column.id}
-                            align={column.align || "left"}
-                            style={{ minWidth: column.minWidth }}
-                          >
-                            {column.label}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rows
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((row) => (
-                          <TableRow
-                            hover
-                            role="checkbox"
-                            tabIndex={-1}
-                            key={row.code}
-                          >
-                            {columns.map((column) => {
-                              const value = row[column.id];
-                              return (
-                                <TableCell
-                                  key={column.id}
-                                  align={column.align || "left"}
-                                >
-                                  {column.format && typeof value === "number"
-                                    ? column.format(value)
-                                    : value}
-                                </TableCell>
-                              );
-                            })}
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <TablePagination
-                  rowsPerPageOptions={[10, 25, 100]}
-                  component="div"
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-              </Paper>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white rounded-2xl shadow-md">
+                <thead>
+                  <tr className="bg-teal-700 text-white">
+                    {columns.map((column) => (
+                      <th key={column.id} className="p-4 text-left font-bold">
+                        {column.label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, index) => (
+                    <tr key={row.code} className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} border-b`}>
+                      <td className="p-4">{row.code}</td>
+                      <td className="p-4">{row.router}</td>
+                      <td className="p-4">{row.numberof}</td>
+                      <td className="p-4">{row.date}</td>
+                      <td className="p-4">{columns[4].format(row.money)}</td>
+                      <td className="p-4">{row.payment}</td>
+                      <td className="p-4">{row.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
