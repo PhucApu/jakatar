@@ -49,35 +49,35 @@ export default function Header() {
             <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
               <div className="py-1">
                 <a
-                  href="/anhba-pay"
+                  href="/thong-tin/anhba-pay"
                   className="flex items-center p-2 hover:bg-gray-100"
                 >
                   <FaCreditCard className="mr-2 text-[#186477]" />
                   AnhBa Pay
                 </a>
                 <a
-                  href="/thong-tin-chung"
+                  href="/thong-tin/chung"
                   className="flex items-center p-2 hover:bg-gray-100"
                 >
                   <FaUser className="mr-2 text-[#4d5b66]" />
                   Thông tin tài khoản
                 </a>
                 <a
-                  href="/lich-su-mua-ve"
+                  href="/thong-tin/lich-su-mua-ve"
                   className="flex items-center p-2 hover:bg-gray-100"
                 >
                   <FaHistory className="mr-2 text-[#74C0FC]" />
                   Lịch sử mua vé
                 </a>
                 <a
-                  href="/dia-chi"
+                  href="/thong-tin/dia-chi"
                   className="flex items-center p-2 hover:bg-gray-100"
                 >
                   <FaMapMarkerAlt className="mr-2 text-[#63E6BE]" />
                   Địa chỉ của bạn
                 </a>
                 <a
-                  href="/dat-lai-mat-khau"
+                  href="/thong-tin/dat-lai-mat-khau"
                   className="flex items-center p-2 hover:bg-gray-100"
                 >
                   <FaKey className="mr-2 text-[#FFA726]" />
