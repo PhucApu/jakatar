@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { FaStar } from "react-icons/fa";
 
 export default function FeedBack() {
   const [rating, setRating] = useState(0);
@@ -44,11 +43,11 @@ export default function FeedBack() {
 
             <div className="flex mb-10 scale-150 pl-24">
               {[1, 2, 3, 4, 5].map((index) => (
-                <FontAwesomeIcon
+                <FaStar
                   key={index}
-                  icon={faStar}
-                  style={{ color: index <= rating ? "#ffb02f" : "#e4e5e9" }}
-                  className="mr-2 cursor-pointer"
+                  className={`mr-2 cursor-pointer ${
+                    index <= rating ? "text-[#ffb02f]" : "text-[#e4e5e9]"
+                  }`}
                   onClick={() => handleStarClick(index)}
                 />
               ))}
