@@ -44,7 +44,7 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
               // Mapping cac thuoc tinh co ban
               ticketDTO.setTicketId(entity.getTicketId());
               ticketDTO.setAccountEnity_Id(
-                            (entity.getUserName() != null) ? entity.getAccountEnitty().getUserName() : null);
+                            (entity.getAccountEnitty() != null) ? entity.getAccountEnitty().getUserName() : null);
               ticketDTO.setBusEntity_Id(
                             (entity.getBusEntity() != null) ? entity.getBusEntity().getBusId() : null);
               ticketDTO.setBusRoutesEntity_Id(
@@ -56,9 +56,8 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
               ticketDTO.setSeatNumber(entity.getSeatNumber());
               ticketDTO.setDepartureDate(entity.getDepartureDate());
               ticketDTO.setPrice(entity.getPrice());
-              ticketDTO.setUserName(entity.getUserName());
               ticketDTO.setPhoneNumber(entity.getPhoneNumber());
-              ticketDTO.setEmail(entity.getEmail());
+              ticketDTO.setStatus(entity.getStatus());
               ticketDTO.setIsDelete(entity.getIsDelete());
 
               // Mapping cac thuoc tinh list
@@ -82,7 +81,7 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
               // Mapping cac thuoc tinh co ban
               ticketEntity.setTicketId(dto.getTicketId());
 
-              ticketEntity.setAccountEnitty(this.accountRepo.findByUserName(dto.getUserName()).orElse(null));
+              ticketEntity.setAccountEnitty(this.accountRepo.findByUserName(dto.getAccountEnity_Id()).orElse(null));
 
               ticketEntity.setBusEntity(this.busRepo.findByBusId(dto.getBusEntity_Id()).orElse(null));
 
@@ -100,11 +99,9 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
 
               ticketEntity.setPrice(dto.getPrice());
 
-              ticketEntity.setUserName(dto.getUserName());
-
               ticketEntity.setPhoneNumber(dto.getPhoneNumber());
 
-              ticketEntity.setEmail(dto.getEmail());
+              ticketEntity.setStatus(dto.getStatus());
 
               ticketEntity.setIsDelete(dto.getIsDelete());
 

@@ -24,7 +24,7 @@ public class PaymentService {
        // Input: paymentId (Long)
        // Output: PaymentEntity có giá trị paymentId tương ứng
 
-       public PaymentEntity getByPaymentId(Long paymentId) {
+       public PaymentEntity getById(Long paymentId) {
               return this.repo.findByPaymentId(paymentId).orElse(null);
        }
 
@@ -32,7 +32,7 @@ public class PaymentService {
        // Input: paymentId (Long)
        // Output: PaymentDTO có giá trị paymentId tương ứng
 
-       public PaymentDTO getByPaymentId_toDTO(Long paymentId) {
+       public PaymentDTO getById_toDTO(Long paymentId) {
               PaymentEntity paymentEntity = this.repo.findByPaymentId(paymentId).orElse(null);
 
               if (paymentEntity != null) {

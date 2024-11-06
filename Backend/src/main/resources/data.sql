@@ -47,15 +47,15 @@ INSERT INTO penalty_ticket (penalty_ticket_id,bus_id,driver_id,penalty_day,descr
 
 
 -- payment
-INSERT INTO payment (payment_time, payment_method, is_delete) VALUES
-('2024-01-01 12:00:00', 'Credit Card', FALSE),
-('2024-01-02 13:30:00', 'Cash', FALSE);
+INSERT INTO payment (payment_time,original_amount, discount_amount, final_amount, payment_method,status, is_delete) VALUES
+('2024-01-01 12:00:00',100.0,30.0,70.0,  'Credit Card','success', FALSE),
+('2024-01-01 12:00:00',150.0,30.0,120.0,  'Credit Card','success', FALSE);
 
 
 -- ticket
-INSERT INTO ticket (username_id, bus_id, routes_id, payment_id, discount_id, seat_number, departure_date, price, userName, phone, email, is_delete) VALUES
-('john_doe', 1, 1, 1, 1, 'A1', '2024-10-12', 50.0, 'Nguyen Van A', '0987654321', 'a@example.com', FALSE),
-('user', 2, 2, 2, NULL, 'B2', '2024-10-13', 75.0, 'Tran Thi B', '0123456789', 'b@example.com', FALSE);
+INSERT INTO ticket (username_id, bus_id, routes_id, payment_id, discount_id, seat_number, departure_date, price, phone,status, is_delete) VALUES
+('john_doe', 1, 1, 1, 1, 'A1', '2024-10-12', 100.0, '0987654321', 'success', FALSE),
+('user', 1, 1, 1, 1, 'A2', '2024-10-12', 150.0, '0987654321', 'success', FALSE);
 
 -- feedback
 INSERT INTO feedback (feedback_id, username, content, ticket_id, date_comment, rating, is_delete) VALUES

@@ -26,7 +26,7 @@ public class FeedbackEntity {
        private AccountEntity accountEnity;
 
        @ManyToOne
-       @JoinColumn(name = "ticket_id", referencedColumnName = "ticket_id", nullable = false )
+       @JoinColumn(name = "ticket_id", referencedColumnName = "ticket_id", nullable = false)
        private TicketEntity ticketEntity;
 
        @Column(name = "content", columnDefinition = "TEXT")
@@ -36,12 +36,10 @@ public class FeedbackEntity {
        private int rating;
 
        @Column(name = "date_comment", nullable = false, columnDefinition = "DATETIME")
-       private LocalDateTime dateComment ;
+       private LocalDateTime dateComment;
 
        @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
        private Boolean isDelete;
-
-
 
        public FeedbackEntity() {
        }
@@ -111,7 +109,6 @@ public class FeedbackEntity {
        public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
-       
 
        @Override
        public String toString() {

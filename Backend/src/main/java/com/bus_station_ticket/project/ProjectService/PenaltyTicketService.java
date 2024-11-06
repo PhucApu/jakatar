@@ -25,7 +25,7 @@ public class PenaltyTicketService {
        // Input: penaltyTicketId (Long)
        // Output: PenaltyTicketEntity có giá trị penaltyTicketId tương ứng
 
-       public PenaltyTicketEntity getByPenaltyTicketId (Long penaltyTicketId) {
+       public PenaltyTicketEntity getById (Long penaltyTicketId) {
               return this.repo.findByPenaltyTicketId(penaltyTicketId).orElse(null);
        }
 
@@ -33,7 +33,7 @@ public class PenaltyTicketService {
        // Input: penaltyTicketId (Long)
        // Output: PenaltyTicketDTO có giá trị penaltyTicketId tương ứng
 
-       public PenaltyTicketDTO getByPenaltyTicketId_toDTO (Long penaltyTicketId){
+       public PenaltyTicketDTO getById_toDTO (Long penaltyTicketId){
               PenaltyTicketEntity penaltyTicketEntity = this.repo.findByPenaltyTicketId(penaltyTicketId).orElse(null);
 
               if(penaltyTicketEntity != null){

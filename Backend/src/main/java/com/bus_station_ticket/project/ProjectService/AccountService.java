@@ -16,7 +16,7 @@ import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.AccountMap
 import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 
 @Service
-public class AccountService {
+public class AccountService implements SimpleServiceInf<AccountEntity, AccountDTO, String> {
 
        @Autowired
        private AccountRepo repo;
@@ -28,7 +28,8 @@ public class AccountService {
        // Input: userName (String)
        // Output: AccountEnity có giá trị userName tương ứng
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public AccountEntity getByUserName(String userName) {
+       @Override
+       public AccountEntity getById(String userName) {
 
               return this.repo.findByUserName(userName).orElse(null);
        }
@@ -37,7 +38,8 @@ public class AccountService {
        // Input: userName (String)
        // Output: AccountEnity có giá trị userName tương ứng
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public AccountDTO getByUserName_toDTO(String userName) {
+       @Override
+       public AccountDTO getById_toDTO(String userName) {
 
               AccountEntity accountEnity = this.repo.findByUserName(userName).orElse(null);
 
@@ -53,6 +55,7 @@ public class AccountService {
        // Input:
        // Output: List
        @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
+       @Override
        public List<AccountEntity> getAll() {
 
               return this.repo.findAll();
@@ -60,6 +63,7 @@ public class AccountService {
 
        // Mapping đối tượng List<AccountEnity> --> List<AccountDTO>
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       @Override
        public List<AccountDTO> getAll_toDTO() {
 
               List<AccountEntity> listAccountEnities = this.repo.findAll();
@@ -80,6 +84,7 @@ public class AccountService {
        // Input: AccountEntity (object)
        // Output: boolean
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       @Override
        public Boolean save(AccountEntity accountEnity) {
 
               // kiểm tra xem có tồn tại userName chưa
@@ -98,6 +103,7 @@ public class AccountService {
        // Input: AccountDTO (object)
        // Output: boolean
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       @Override
        public Boolean save_toDTO(AccountDTO accountDTO) {
 
               AccountEntity accountEntity = this.accountMapping.toEntity(accountDTO);
@@ -111,6 +117,7 @@ public class AccountService {
        // Input: AccountEntity (object)
        // Output: boolean
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
+       @Override
        public Boolean update(AccountEntity accountEnity) {
 
               // kiểm tra xem có tồn tại userName chưa
@@ -118,7 +125,28 @@ public class AccountService {
 
               // Nếu kết quả có
               if (optionalAccount.isPresent()) {
-                     // Thêm AccountEntity vào
+                     // sửa AccountEntity vào
+                     this.repo.save(accountEnity);
+                     return true;
+              }
+              return false;
+       }
+
+       // Mapping thành đối tượng accountDTO
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
+       @Override
+       public Boolean update_toDTO(AccountDTO accountDTO) {
+
+              // kiểm tra xem có tồn tại userName chưa
+              Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountDTO.getUserName());
+
+              // Nếu kết quả có
+              if (optionalAccount.isPresent()) {
+
+                     // Mapping thanh doi tuong AccountEntity
+                     AccountEntity accountEnity = this.accountMapping.toEntity(accountDTO);
+
+                     // sửa AccountEntity vào
                      this.repo.save(accountEnity);
                      return true;
               }
@@ -129,6 +157,7 @@ public class AccountService {
        // Input: userName (string)
        // Output: boolean
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       @Override
        public Boolean delete(String userName) {
 
               // kiểm tra xem có tồn tại userName chưa

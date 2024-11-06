@@ -24,7 +24,7 @@ public class TicketService {
        // Input: ticketId (Long)
        // Output: TicketEntity có giá trị ticketId tương ứng
 
-       public TicketEntity getByTicketId (Long ticketId) {
+       public TicketEntity getById (Long ticketId) {
               return this.repo.findByTicketId(ticketId).orElse(null);
        }
 
@@ -32,7 +32,7 @@ public class TicketService {
        // Input: ticketId (Long)
        // Output: TicketDTO có giá trị ticketId tương ứng
 
-       public TicketDTO getByTicketId_toDTO (Long ticketId) {
+       public TicketDTO getById_toDTO (Long ticketId) {
               TicketEntity ticketEntity = this.repo.findByTicketId(ticketId).orElse(null);
 
               if(ticketEntity != null){

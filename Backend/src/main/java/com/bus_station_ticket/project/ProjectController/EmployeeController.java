@@ -64,7 +64,7 @@ public class EmployeeController {
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              EmployeeDTO employeeDTO = this.employeeService.getByDriverId_toDTO(driverId);
+              EmployeeDTO employeeDTO = this.employeeService.getById_toDTO(driverId);
 
               // kiểm tra
               if (employeeDTO != null) {

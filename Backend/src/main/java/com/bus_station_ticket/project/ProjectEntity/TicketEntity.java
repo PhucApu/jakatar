@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "ticket" , indexes = @Index(columnList = "ticket_id"))
+@Table(name = "ticket", indexes = @Index(columnList = "ticket_id"))
 public class TicketEntity {
 
        @Id
@@ -43,7 +43,6 @@ public class TicketEntity {
        @ManyToOne
        @JoinColumn(name = "discount_id", referencedColumnName = "discount_id", nullable = true, insertable = false, updatable = true)
        private DiscountEntity discountEntity;
-       
 
        @Column(name = "seat_number", nullable = false, columnDefinition = "VARCHAR(10)")
        private String seatNumber;
@@ -51,35 +50,27 @@ public class TicketEntity {
        @Column(name = "departure_date", nullable = false, columnDefinition = "DATETIME")
        private LocalDate departureDate;
 
-       @Column(name = "price", nullable = false, columnDefinition = "FLOAT", length = 5 )
+       @Column(name = "price", nullable = false, columnDefinition = "FLOAT", length = 5)
        private float price;
-
-      
-       @Column(name = "username", nullable = true, columnDefinition = "VARCHAR(20)")
-       private String userName;
 
        @Column(name = "phone", nullable = true, columnDefinition = "VARCHAR(11)")
        private String phoneNumber;
 
-       @Column(name = "email", nullable = true, columnDefinition = "VARCHAR(30)")
-       private String email;  
-
        @OneToMany(mappedBy = "ticketEntity", fetch = FetchType.LAZY)
        private List<FeedbackEntity> listFeedbackEntities;
 
+       @Column(name = "status", nullable = false, columnDefinition = "VARCHAR(20)")
+       private String status;
 
        @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
        private Boolean isDelete;
 
-       
-
        public TicketEntity() {
        }
 
-
        public TicketEntity(AccountEntity accountEnitty, BusEntity busEntity, BusRoutesEntity busRoutesEntity,
                      PaymentEntity paymentEntity, DiscountEntity discountEntity, String seatNumber,
-                     LocalDate departureDate, float price, String userName, String phoneNumber, String email,
+                     LocalDate departureDate, float price, String phoneNumber,
                      List<FeedbackEntity> listFeedbackEntities, Boolean isDelete) {
               this.accountEnity = accountEnitty;
               this.busEntity = busEntity;
@@ -89,161 +80,131 @@ public class TicketEntity {
               this.seatNumber = seatNumber;
               this.departureDate = departureDate;
               this.price = price;
-              this.userName = userName;
               this.phoneNumber = phoneNumber;
-              this.email = email;
+
               this.listFeedbackEntities = listFeedbackEntities;
               this.isDelete = isDelete;
        }
-
 
        public Long getTicketId() {
               return ticketId;
        }
 
-
        public void setTicketId(Long ticketId) {
               this.ticketId = ticketId;
        }
-
 
        public AccountEntity getAccountEnitty() {
               return accountEnity;
        }
 
-
        public void setAccountEnitty(AccountEntity accountEnitty) {
               this.accountEnity = accountEnitty;
        }
-
 
        public BusEntity getBusEntity() {
               return busEntity;
        }
 
-
        public void setBusEntity(BusEntity busEntity) {
               this.busEntity = busEntity;
        }
-
 
        public BusRoutesEntity getBusRoutesEntity() {
               return busRoutesEntity;
        }
 
-
        public void setBusRoutesEntity(BusRoutesEntity busRoutesEntity) {
               this.busRoutesEntity = busRoutesEntity;
        }
-
 
        public PaymentEntity getPaymentEntity() {
               return paymentEntity;
        }
 
-
        public void setPaymentEntity(PaymentEntity paymentEntity) {
               this.paymentEntity = paymentEntity;
        }
-
 
        public DiscountEntity getDiscountEntity() {
               return discountEntity;
        }
 
-
        public void setDiscountEntity(DiscountEntity discountEntity) {
               this.discountEntity = discountEntity;
        }
-
 
        public String getSeatNumber() {
               return seatNumber;
        }
 
-
        public void setSeatNumber(String seatNumber) {
               this.seatNumber = seatNumber;
        }
-
 
        public LocalDate getDepartureDate() {
               return departureDate;
        }
 
-
        public void setDepartureDate(LocalDate departureDate) {
               this.departureDate = departureDate;
        }
-
 
        public float getPrice() {
               return price;
        }
 
-
        public void setPrice(float price) {
               this.price = price;
        }
-
-
-       public String getUserName() {
-              return userName;
-       }
-
-
-       public void setUserName(String userName) {
-              this.userName = userName;
-       }
-
 
        public String getPhoneNumber() {
               return phoneNumber;
        }
 
-
        public void setPhoneNumber(String phoneNumber) {
               this.phoneNumber = phoneNumber;
        }
-
-
-       public String getEmail() {
-              return email;
-       }
-
-
-       public void setEmail(String email) {
-              this.email = email;
-       }
-
 
        public List<FeedbackEntity> getListFeedbackEntities() {
               return listFeedbackEntities;
        }
 
-
        public void setListFeedbackEntities(List<FeedbackEntity> listFeedbackEntities) {
               this.listFeedbackEntities = listFeedbackEntities;
        }
-
 
        public Boolean getIsDelete() {
               return isDelete;
        }
 
-
        public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
 
-
        @Override
        public String toString() {
-              return "TicketEntity [ticketId=" + ticketId + ", accountEnitty=" + accountEnity + ", busEntity="
+              return "TicketEntity [ticketId=" + ticketId + ", accountEnity=" + accountEnity + ", busEntity="
                             + busEntity + ", busRoutesEntity=" + busRoutesEntity + ", paymentEntity=" + paymentEntity
                             + ", discountEntity=" + discountEntity + ", seatNumber=" + seatNumber + ", departureDate="
-                            + departureDate + ", price=" + price + ", userName=" + userName + ", phoneNumber="
-                            + phoneNumber + ", email=" + email + ", listFeedbackEntities=" + listFeedbackEntities
-                            + ", isDelete=" + isDelete + "]";
+                            + departureDate + ", price=" + price + ", phoneNumber=" + phoneNumber
+                            + ", listFeedbackEntities=" + listFeedbackEntities + ", status=" + status + ", isDelete="
+                            + isDelete + "]";
+       }
+
+       public AccountEntity getAccountEnity() {
+              return accountEnity;
+       }
+
+       public void setAccountEnity(AccountEntity accountEnity) {
+              this.accountEnity = accountEnity;
+       }
+
+       public String getStatus() {
+              return status;
+       }
+
+       public void setStatus(String status) {
+              this.status = status;
        }
 }

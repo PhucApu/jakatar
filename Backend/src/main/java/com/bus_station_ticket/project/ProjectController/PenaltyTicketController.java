@@ -63,7 +63,7 @@ public class PenaltyTicketController {
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              PenaltyTicketDTO penaltyTicketDTO = this.penaltyTicketService.getByPenaltyTicketId_toDTO(penaltyTicketId);
+              PenaltyTicketDTO penaltyTicketDTO = this.penaltyTicketService.getById_toDTO(penaltyTicketId);
 
               // kiểm tra
               if (penaltyTicketDTO != null) {

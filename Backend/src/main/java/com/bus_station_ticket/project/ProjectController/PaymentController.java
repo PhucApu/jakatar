@@ -64,7 +64,7 @@ public class PaymentController {
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              PaymentDTO paymentDTO = this.paymentService.getByPaymentId_toDTO(paymentId);
+              PaymentDTO paymentDTO = this.paymentService.getById_toDTO(paymentId);
 
               // kiểm tra
               if (paymentDTO != null) {
