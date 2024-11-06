@@ -63,7 +63,7 @@ public class DiscountController {
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              DiscountDTO discountDTO = this.discountService.getByDiscountId_toDTO(discountId);
+              DiscountDTO discountDTO = this.discountService.getById_toDTO(discountId);
 
               // kiểm tra
               if (discountDTO != null) {

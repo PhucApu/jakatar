@@ -59,7 +59,7 @@ public class TicketController {
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              TicketDTO ticketDTO = this.ticketService.getByTicketId_toDTO(ticketId);
+              TicketDTO ticketDTO = this.ticketService.getById_toDTO(ticketId);
 
               // kiểm tra
               if (ticketDTO != null) {

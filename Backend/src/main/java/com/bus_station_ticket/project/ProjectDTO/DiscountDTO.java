@@ -3,14 +3,32 @@ package com.bus_station_ticket.project.ProjectDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public class DiscountDTO {
 
+       @NotNull(message = "Discount ID cannot be null")
        private Long discountId;
+
+       @Min(value = 0, message = "Discount percentage must be 0 or greater")
+       @Max(value = 100, message = "Discount percentage must be 100 or less")
        private float discountPercentage;
+
+       @NotNull(message = "Valid from date cannot be null")
        private LocalDateTime validFrom;
+
+       @NotNull(message = "Valid until date cannot be null")
        private LocalDateTime validUntil;
+
+       @Min(value = 1, message = "Amount must be at least 1")
        private int amount;
+
+       @NotNull(message = "Delete status cannot be null")
        private Boolean isDelete;
+
+       @NotNull(message = "Ticket entity IDs cannot be null")
        private List<Long> listTicketEntities_Id;
 
        public DiscountDTO() {

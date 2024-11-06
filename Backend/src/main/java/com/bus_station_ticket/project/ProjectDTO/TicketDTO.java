@@ -3,30 +3,66 @@ package com.bus_station_ticket.project.ProjectDTO;
 import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 
 public class TicketDTO {
 
+       @NotBlank(message = "ticketId cannot be blank")
        private Long ticketId;
+
+       @NotBlank(message = "accountEnity_Id cannot be blank")
        private String accountEnity_Id;
+       
+       @NotBlank(message = "busEntity_Id cannot be blank")
        private Long busEntity_Id;
+
+       @NotBlank(message = "busRoutesEntity_Id cannot be blank")
        private Long busRoutesEntity_Id;
+       
+       @NotBlank(message = "paymentEntity_Id cannot be blank")
        private Long paymentEntity_Id;
+
+       @NotBlank(message = "discountEntity_Id cannot be blank")
        private Long discountEntity_Id;
+
+       @NotBlank(message = "seatNumber cannot be blank")
+       @Size(max = 3, message = "The seat number cannot exceed 3 characters")
        private String seatNumber;
+
+       @NotNull(message = "departureDate cannot be null")
        private LocalDate departureDate;
+
+       @NotNull(message = "price cannot be null")
+       @Min(value = 0, message = "Price must be greater than or equal to 0")
        private float price;
-       private String userName;
+
+       @NotNull(message = "phoneNumber cannot be null")
+       @Pattern(regexp = "^(03|05|07|08|09)[0-9]{8}$", message = "Your phone number is not valid")
        private String phoneNumber;
-       private String email; 
+
+       @NotBlank(message = "Status cannot be blank")
+       @Pattern(regexp = "^(success|pending|failure)$", message = "There are only 3 status values: success, pending and failure")
+       private String status;
+
+       @NotNull(message = "List of ticket IDs cannot be null")
        private List<Long> listFeedbackEntities_Id;
+
+       @NotNull(message = "Delete status cannot be null")
        private Boolean isDelete;
 
        public TicketDTO() {
        }
        
+       
+
        public TicketDTO(Long ticketId, String accountEnity_Id, Long busEntity_Id, Long busRoutesEntity_Id,
                      Long paymentEntity_Id, Long discountEntity_Id, String seatNumber, LocalDate departureDate,
-                     float price, String userName, String phoneNumber, String email, List<Long> listFeedbackEntities_Id,
+                     float price, String phoneNumber, String status, List<Long> listFeedbackEntities_Id,
                      Boolean isDelete) {
               this.ticketId = ticketId;
               this.accountEnity_Id = accountEnity_Id;
@@ -37,12 +73,13 @@ public class TicketDTO {
               this.seatNumber = seatNumber;
               this.departureDate = departureDate;
               this.price = price;
-              this.userName = userName;
               this.phoneNumber = phoneNumber;
-              this.email = email;
+              this.status = status;
               this.listFeedbackEntities_Id = listFeedbackEntities_Id;
               this.isDelete = isDelete;
        }
+
+       
 
        public Long getTicketId() {
               return ticketId;
@@ -98,24 +135,14 @@ public class TicketDTO {
        public void setPrice(float price) {
               this.price = price;
        }
-       public String getUserName() {
-              return userName;
-       }
-       public void setUserName(String userName) {
-              this.userName = userName;
-       }
+       
        public String getPhoneNumber() {
               return phoneNumber;
        }
        public void setPhoneNumber(String phoneNumber) {
               this.phoneNumber = phoneNumber;
        }
-       public String getEmail() {
-              return email;
-       }
-       public void setEmail(String email) {
-              this.email = email;
-       }
+       
        public List<Long> getListFeedbackEntities_Id() {
               return listFeedbackEntities_Id;
        }
@@ -127,6 +154,18 @@ public class TicketDTO {
        }
        public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
+       }
+
+
+
+       public String getStatus() {
+              return status;
+       }
+
+
+
+       public void setStatus(String status) {
+              this.status = status;
        }
 
        

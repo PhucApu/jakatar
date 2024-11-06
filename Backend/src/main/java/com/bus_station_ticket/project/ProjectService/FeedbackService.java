@@ -24,7 +24,7 @@ public class FeedbackService {
        // Input: feedbackId (Long)
        // Output: FeedbackEntity có giá trị feedbackId tương ứng
 
-       public FeedbackEntity getByFeedbackId(Long feedbackId) {
+       public FeedbackEntity getById(Long feedbackId) {
               return this.repo.findByFeedbackId(feedbackId).orElse(null);
        }
 
@@ -32,7 +32,7 @@ public class FeedbackService {
        // Input: feedbackId (Long)
        // Output: FeedbackDTO có giá trị feedbackId tương ứng
 
-       public FeedbackDTO getByFeedbackId_toDTO(Long feedbackId) {
+       public FeedbackDTO getById_toDTO(Long feedbackId) {
               FeedbackEntity feedbackEntity = this.repo.findByFeedbackId(feedbackId).orElse(null);
 
               if (feedbackEntity != null) {

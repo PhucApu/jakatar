@@ -3,16 +3,40 @@ package com.bus_station_ticket.project.ProjectDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class BusRoutesDTO {
 
+       @NotNull(message = "Routes ID cannot be null")
        private Long routesId;
+
+       @NotBlank(message = "Departure location cannot be blank")
+       @Size(max = 100, message = "Departure location must be less than 100 characters")
        private String departureLocation;
+
+       @NotBlank(message = "Destination location cannot be blank")
+       @Size(max = 100, message = "Destination location must be less than 100 characters")
        private String destinationLocation;
+
+       @Min(value = 1, message = "Distance must be at least 1 kilometer")
        private float distanceKilometer;
+
+       @NotNull(message = "Departure time cannot be null")
        private LocalDateTime departureTime;
+
+       @NotNull(message = "Arrival time cannot be null")
        private LocalDateTime arivalTime;
+
+       @Min(value = 0, message = "Price must be greater than or equal to 0")
        private float price;
+
+       @NotNull(message = "Delete status cannot be null")
        private Boolean isDelete;
+
+       @NotNull(message = "Ticket entity IDs cannot be null")
        private List<Long> listTicketEntities_Id;
 
        public BusRoutesDTO() {

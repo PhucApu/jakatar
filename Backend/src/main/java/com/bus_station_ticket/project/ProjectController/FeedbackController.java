@@ -65,7 +65,7 @@ public class FeedbackController {
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              FeedbackDTO feedbackDTO = this.feedbackService.getByFeedbackId_toDTO(feedbackId);
+              FeedbackDTO feedbackDTO = this.feedbackService.getById_toDTO(feedbackId);
 
               // kiểm tra
               if (feedbackDTO != null) {

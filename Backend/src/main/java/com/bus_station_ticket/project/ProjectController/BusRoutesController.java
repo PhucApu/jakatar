@@ -61,7 +61,7 @@ public class BusRoutesController {
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              BusRoutesDTO busRoutesDTO = busRoutesService.getByRoutesId_toDTO(routesId);
+              BusRoutesDTO busRoutesDTO = busRoutesService.getById_toDTO(routesId);
 
               // kiểm tra
               if (busRoutesDTO != null) {

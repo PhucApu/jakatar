@@ -25,7 +25,7 @@ public class EmployeeService {
        // Input: driverId (Long)
        // Output: EmployeeEntity có giá trị driverId tương ứng
 
-       public EmployeeEntity getByDriverId(Long driverId) {
+       public EmployeeEntity getById(Long driverId) {
               return this.repo.findByDriverId(driverId).orElse(null);
        }
 
@@ -33,7 +33,7 @@ public class EmployeeService {
        // Input: driverId (Long)
        // Output: EmployeeDTO có giá trị driverId tương ứng
 
-       public EmployeeDTO getByDriverId_toDTO(Long driverId) {
+       public EmployeeDTO getById_toDTO(Long driverId) {
               EmployeeEntity employeeEntity = this.repo.findByDriverId(driverId).orElse(null);
 
               if (employeeEntity != null) {
