@@ -12,7 +12,7 @@ import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.TicketMapp
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
-public class TicketService {
+public class TicketService implements SimpleServiceInf<TicketEntity,TicketDTO,Long>{
        
        @Autowired
        private TicketRepo repo;
@@ -64,5 +64,37 @@ public class TicketService {
               }
               return listTicketDTOs;
        }
+
+       @Override
+       public Boolean delete(Long id) {
+              // TODO Auto-generated method stub
+              return null;
+       }
+
+       @Override
+       public Boolean save(TicketEntity entityObj) {
+              // TODO Auto-generated method stub
+              return null;
+       }
+
+       @Override
+       public Boolean save_toDTO(TicketDTO dtoObj) {
+              // TODO Auto-generated method stub
+              return null;
+       }
+
+       @Override
+       public Boolean update(TicketEntity entityObj) {
+              // TODO Auto-generated method stub
+              return null;
+       }
+
+       @Override
+       public Boolean update_toDTO(TicketDTO dtoObj) {
+              // TODO Auto-generated method stub
+              return null;
+       }
+
+       
 
 }
