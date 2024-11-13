@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.AccountDTO;
 import com.bus_station_ticket.project.ProjectService.AccountService;
@@ -30,6 +31,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
        // Lấy tất cả các AccountEntity có
        // path: "/accounts" http:localhost:8080/accounts
        @GetMapping
+       @Override
        public ResponseEntity<ResponseObject> getAll() {
 
               // Tạo một đối tượng phản hồi ResponseObject
@@ -42,7 +44,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
               // Nếu mảng không rỗng
               if (listAccountEnities.isEmpty() == false) {
 
-                     responseObject.setStatus("success"); // set status
+                     responseObject.setStatus(MESS_SUCCESS); // set status
                      responseObject.setData(listAccountEnities); // set data
 
                      responseObject.addMessage("mess", "Successfully retrieved data");
@@ -52,7 +54,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
-              responseObject.setStatus("failure");
+              responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(listAccountEnities);
               responseObject.addMessage("mess", "There is no data in the database");
               responseObject.addMessage("length", listAccountEnities.size());
@@ -70,7 +72,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
 
               // kiểm tra giá trị id
               if(isValidId(id) == false){
-                     responseObject.setStatus("failure");
+                     responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Incorrect path variable value");     
                      responseObject.setData(id);
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
@@ -81,7 +83,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
 
               // kiểm tra
               if (accountDTO != null) {
-                     responseObject.setStatus("success");
+                     responseObject.setStatus(MESS_SUCCESS);
                      responseObject.setData(accountDTO);
                      responseObject.addMessage("mess", "Found data with matching login name");
 
@@ -89,7 +91,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
-              responseObject.setStatus("failure");
+              responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(accountDTO);
               responseObject.addMessage("mess", "No user found with matching login name");
 
@@ -100,23 +102,26 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
        // lưu một đối tượng account
        // path: "/insert"
        @PostMapping("/insert")
+       @Override
        public ResponseEntity<ResponseObject> save(@Valid @RequestBody AccountDTO accountDTO) {
 
               ResponseObject responseObject = new ResponseObject();
 
-              if (this.accountService.save_toDTO(accountDTO)) {
-                     responseObject.setStatus("success");
+              ResponseBoolAndMess responseBoolAndMess = this.accountService.save_toDTO(accountDTO);
+
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
                      responseObject.setData(accountDTO);
-                     responseObject.addMessage("mess", "Save data successfully");
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
                      
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
-              responseObject.setStatus("failure");
+              responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(accountDTO);
-              responseObject.addMessage("mess", "Save data not successfully");
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
@@ -131,7 +136,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
 
               // kiểm tra giá trị id
               if(isValidId(id) == false){
-                     responseObject.setStatus("failure");
+                     responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");     
                      responseObject.setData(id);
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
@@ -141,21 +146,59 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
               AccountDTO accountDTO = accountService.getById_toDTO(id);
 
               // xóa đối tượng
-              Boolean checkDelete = accountService.delete(id);
+              ResponseBoolAndMess responseBoolAndMess = accountService.delete(id);
 
               // kiểm tra
-              if (checkDelete) {
-                     responseObject.setStatus("success");
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
                      responseObject.setData(accountDTO);
-                     responseObject.addMessage("mess", "Deleted data with matching login name");
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
-              responseObject.setStatus("failure");
+              responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(accountDTO);
-              responseObject.addMessage("mess", "No user found with matching login name");
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       }
+
+       @DeleteMapping("/hidden/{username-id}")
+       @Override
+       public ResponseEntity<ResponseObject> hidden(@PathVariable("username-id") String id) {
+              
+              // Tạo một đối tượng phản hồi ResponseObject
+              ResponseObject responseObject = new ResponseObject();
+
+              // kiểm tra giá trị id
+              if(isValidId(id) == false){
+                     responseObject.setStatus(MESS_FAILURE);
+                     responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");     
+                     responseObject.setData(id);
+                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+              }
+
+              // ẩn đối tượng
+              ResponseBoolAndMess responseBoolAndMess = accountService.invisibleWithoutDelete(id);
+
+              // Lấy đối tượng AccountEntity dựa vào username
+              AccountDTO accountDTO = accountService.getById_toDTO(id);
+
+              // kiểm tra
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
+                     responseObject.setData(accountDTO);
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+
+              responseObject.setStatus(MESS_FAILURE);
+              responseObject.setData(accountDTO);
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -166,24 +209,24 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
               
               ResponseObject responseObject = new ResponseObject();
 
-              if (this.accountService.update_toDTO(accountDTO)) {
-                     responseObject.setStatus("success");
+              ResponseBoolAndMess responseBoolAndMess = this.accountService.update_toDTO(accountDTO);
+
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
                      responseObject.setData(accountDTO);
-                     responseObject.addMessage("mess", "Update data successfully");
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
                      
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
-              responseObject.setStatus("failure");
+              responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(accountDTO);
-              responseObject.addMessage("mess", "Update data not successfully");
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
 
        }
-
-       
 }

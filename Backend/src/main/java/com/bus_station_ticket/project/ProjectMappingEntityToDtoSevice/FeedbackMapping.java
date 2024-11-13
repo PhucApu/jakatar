@@ -26,7 +26,7 @@ public class FeedbackMapping implements MappingInterface<FeedbackEntity, Feedbac
               // Mapping các thuộc tính đơn giản
               feedbackDTO.setFeedbackId(entity.getFeedbackId());
               feedbackDTO.setAccountEnity_userName(
-                            (entity.getAccountEnitty() != null) ? entity.getAccountEnitty().getUserName() : null);
+                            (entity.getAccountEntity() != null) ? entity.getAccountEntity().getUserName() : null);
               feedbackDTO.setTicketEntity_Id(
                             (entity.getTicketEntity() != null) ? entity.getTicketEntity().getTicketId() : null);
               feedbackDTO.setContent(entity.getContent());
@@ -52,7 +52,7 @@ public class FeedbackMapping implements MappingInterface<FeedbackEntity, Feedbac
               AccountEntity accountEntity = this.accountRepo.findByUserName(dto.getAccountEnity_userName())
                             .orElse(null);
 
-              feedbackEntity.setAccountEnitty(accountEntity);
+              feedbackEntity.setAccountEntity(accountEntity);
 
               TicketEntity ticketEntity = this.ticketRepo.findByTicketId(dto.getTicketEntity_Id()).orElse(null);
 

@@ -10,16 +10,22 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.FeedbackDTO;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
+import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.FeedbackMapping;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
+import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
-public class FeedbackService implements SimpleServiceInf<FeedbackEntity,FeedbackDTO,Long> {
+public class FeedbackService implements SimpleServiceInf<FeedbackEntity, FeedbackDTO, Long> {
 
        @Autowired
        private FeedbackRepo repo;
+
+       @Autowired
+       private TicketRepo ticketRepo;
 
        @Autowired
        private FeedbackMapping feedbackMapping;
@@ -31,6 +37,7 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity,Feedback
        @Override
        public FeedbackEntity getById(Long feedbackId) {
               return this.repo.findByFeedbackId(feedbackId).orElse(null);
+              
        }
 
        // Mapping đối tượng FeedbackEntity --> FeedbackDTO
@@ -69,100 +76,124 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity,Feedback
                      for (FeedbackEntity e : listFeedbackEntities) {
                             listFeedbackDTOs.add(this.feedbackMapping.toDTO(e));
                      }
-                     return listFeedbackDTOs;
+                     return  listFeedbackDTOs;
               }
-              return listFeedbackDTOs;
+              return  listFeedbackDTOs;
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean delete(Long id) {
-              
-              // kiem tra
+       public ResponseBoolAndMess delete(Long id) {
+
               Optional<FeedbackEntity> optional = this.repo.findByFeedbackId(id);
 
-              // neu co kq
-              if(optional.isPresent()){
-                     // xoa
-                     this.repo.delete(optional.get());
-                     return true;
+              if (optional.isPresent()) {
+                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+
+                     if (check) {
+                            this.repo.delete(optional.get());
+                            return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_DELETE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
               }
 
-              return false;
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save(FeedbackEntity entityObj) {
-              
+       public ResponseBoolAndMess save(FeedbackEntity entityObj) {
+
               Optional<FeedbackEntity> optional = this.repo.findByFeedbackId(entityObj.getFeedbackId());
 
-              // neu khong co ket qua
-              if(optional.isPresent() == false){
-                     // them
+              if (optional.isPresent() == false) {
                      this.repo.save(entityObj);
-                     return true;
+                     return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
-
-              return false;
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save_toDTO(FeedbackDTO dtoObj) {
-              
-              // kiem tra ket qua
-              Optional<FeedbackEntity> optional = this.repo.findByFeedbackId(dtoObj.getFeedbackId());
+       public ResponseBoolAndMess save_toDTO(FeedbackDTO dtoObj) {
+              FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
 
-              // neu kq khong co
-              if(optional.isPresent() == false){
-
-                     // mapping
-                     FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
-                     
-                     // them
-                     this.repo.save(feedbackEntity);
-                     return true; 
-              }
-              return false;
+              return save(feedbackEntity);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update(FeedbackEntity entityObj) {
-       
-              // kiem tra ket qua
+       public ResponseBoolAndMess update(FeedbackEntity entityObj) {
               Optional<FeedbackEntity> optional = this.repo.findByFeedbackId(entityObj.getFeedbackId());
 
-              // neu co ton tai
-              if(optional.isPresent()){
-                     //sua
-                     this.repo.save(optional.get());
-                     return true;
+              if (optional.isPresent()) {
+                     this.save(entityObj);
+                     return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
 
-              return false;
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update_toDTO(FeedbackDTO dtoObj) {
-       
-              // kiem tra ket qua
-              Optional<FeedbackEntity> optional = this.repo.findByFeedbackId(dtoObj.getFeedbackId());
+       public ResponseBoolAndMess update_toDTO(FeedbackDTO dtoObj) {
 
-              // neu co kq
-              if(optional.isPresent()){
-                     // mapping
-                     FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
+              FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
 
-                     // sua
-                     this.repo.save(feedbackEntity);
-                     return true;
-              }
-
-              return false;
+              return update(feedbackEntity);
        }
 
-       
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       @Override
+       public ResponseBoolAndMess invisibleWithoutDelete(Long id) {
+
+              Optional<FeedbackEntity> optional = this.repo.findByFeedbackId(id);
+
+              if (optional.isPresent()) {
+                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+
+                     if (check) {
+                            FeedbackEntity feedbackEntity = optional.get();
+
+                            feedbackEntity.setIsDelete(true);
+                            this.repo.save(feedbackEntity);
+                            return new ResponseBoolAndMess(true, MESS_HIDDEN_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_HIDDEN_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              }
+
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfDelete(FeedbackEntity entityObj) {
+
+              // Feedback foreign key ticket
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByFeedbackEntity_Id(entityObj.getFeedbackId());
+
+              if (ticketEntities.isEmpty() == false) {
+                     return false;
+              }
+              return true;
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfHidden(FeedbackEntity entityObj) {
+              // Feedback foreign key ticket
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByFeedbackEntity_Id(entityObj.getFeedbackId());
+
+              if (ticketEntities.isEmpty() == false) {
+
+                     for (TicketEntity e : ticketEntities) {
+                            if (e.getIsDelete() == false) {
+                                   return false;
+                            }
+                     }
+                     return true;
+              }
+              return true;
+       }
+
 }

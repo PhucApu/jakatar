@@ -17,7 +17,12 @@ import jakarta.validation.Valid;
 // POST: save(obj)
 // PUT: update(obj)
 // DELETE: delete(id)
+// DELETE: hidden(id)
 public interface RestApiSimpleControllerInf<T,ID> {
+
+       public final String MESS_SUCCESS = "success";
+       public final String MESS_FAILURE = "failure";
+
 
        public ResponseEntity<ResponseObject> getAll();
        
@@ -28,6 +33,8 @@ public interface RestApiSimpleControllerInf<T,ID> {
        public ResponseEntity<ResponseObject> update(@Valid @RequestBody T obj);
 
        public ResponseEntity<ResponseObject> delete(@PathVariable ID id);
+
+       public ResponseEntity<ResponseObject> hidden(@PathVariable ID id);
 
        default Boolean isValidId (ID id){
               if(id != null){
@@ -50,6 +57,5 @@ public interface RestApiSimpleControllerInf<T,ID> {
               }
               return false;
        }
-       
 
 }

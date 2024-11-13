@@ -25,7 +25,7 @@ public interface PaymentRepo extends JpaRepository<PaymentEntity,Long> {
 
        @Query(
               value = """
-                     select *
+                     select p.payment_id, p.original_amount, p.discount_amount, p.final_amount, p.payment_method, p.status
                      from payment p, ticket tk
                      where p.payment_id = tk.payment_id and tk.ticket_id = :ticketId
               """,

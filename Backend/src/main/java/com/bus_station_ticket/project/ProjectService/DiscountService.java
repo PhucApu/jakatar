@@ -10,16 +10,22 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.DiscountDTO;
 import com.bus_station_ticket.project.ProjectEntity.DiscountEntity;
+import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.DiscountMapping;
 import com.bus_station_ticket.project.ProjectRepository.DiscountRepo;
+import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
 public class DiscountService implements SimpleServiceInf<DiscountEntity, DiscountDTO, Long> {
 
        @Autowired
        private DiscountRepo repo;
+
+       @Autowired
+       private TicketRepo ticketRepo;
 
        @Autowired
        private DiscountMapping discountMapping;
@@ -43,6 +49,7 @@ public class DiscountService implements SimpleServiceInf<DiscountEntity, Discoun
 
               if (discountEntity != null) {
                      return this.discountMapping.toDTO(discountEntity);
+
               }
               return null;
        }
@@ -75,93 +82,116 @@ public class DiscountService implements SimpleServiceInf<DiscountEntity, Discoun
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean delete(Long id) {
+       public ResponseBoolAndMess delete(Long id) {
 
-              // Kiem tra xem co ton tai chua
               Optional<DiscountEntity> optional = this.repo.findByDiscountId(id);
 
-              // neu ket qua co
               if (optional.isPresent()) {
-                     // xoa
-                     this.repo.delete(optional.get());
-                     return true;
+                     // Kiem tra khoa ngoai
+                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+
+                     if (check) {
+                            this.repo.delete(optional.get());
+                            return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_DELETE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
               }
-              return false;
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save(DiscountEntity entityObj) {
-
-              // Kiem tra xem da co ton tai chua
+       public ResponseBoolAndMess save(DiscountEntity entityObj) {
               Optional<DiscountEntity> optional = this.repo.findByDiscountId(entityObj.getDiscountId());
 
-              // neu ket qua khong co
               if (optional.isPresent() == false) {
-
-                     // them
                      this.repo.save(entityObj);
-                     return true;
+                     return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
-
-              return false;
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save_toDTO(DiscountDTO dtoObj) {
+       public ResponseBoolAndMess save_toDTO(DiscountDTO dtoObj) {
+              DiscountEntity discountEntity = this.discountMapping.toEntity(dtoObj);
 
-              // Kiem tra xem da co ton tai chua
-              Optional<DiscountEntity> optional = this.repo.findByDiscountId(dtoObj.getDiscountId());
-
-              // neu ket qua khong co
-              if (optional.isPresent() == false) {
-
-                     // Mapping
-                     DiscountEntity discountEntity = this.discountMapping.toEntity(dtoObj);
-                     // them
-                     this.repo.save(discountEntity);
-                     return true;
-              }
-
-              return false;
+              return save(discountEntity);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update(DiscountEntity entityObj) {
+       public ResponseBoolAndMess update(DiscountEntity entityObj) {
 
-              // kiem tra xem co ton tai chua
               Optional<DiscountEntity> optional = this.repo.findByDiscountId(entityObj.getDiscountId());
 
-              // neu co ton tai kq
               if (optional.isPresent()) {
-                     // sua
-                     this.repo.save(entityObj);
-                     return true;
+                     this.save(entityObj);
+                     return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
 
-              return false;
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update_toDTO(DiscountDTO dtoObj) {
+       public ResponseBoolAndMess update_toDTO(DiscountDTO dtoObj) {
 
-              // kiem tra co ton tai chua
-              Optional<DiscountEntity> optional = this.repo.findByDiscountId(dtoObj.getDiscountId());
+              DiscountEntity discountEntity = this.discountMapping.toEntity(dtoObj);
 
-              // neu co kq
+              return update(discountEntity);
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       @Override
+       public ResponseBoolAndMess invisibleWithoutDelete(Long id) {
+
+              Optional<DiscountEntity> optional = this.repo.findByDiscountId(id);
+
               if (optional.isPresent()) {
-                     // Mapping
-                     DiscountEntity discountEntity = this.discountMapping.toEntity(dtoObj);
+                     // kierm tra
+                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
 
-                     // sua 
-                     this.repo.save(discountEntity);
-                     return true;
+                     if (check) {
+                            DiscountEntity discountEntity = optional.get();
+                            discountEntity.setIsDelete(true);
+                            this.repo.save(discountEntity);
+                            return new ResponseBoolAndMess(true, MESS_HIDDEN_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_HIDDEN_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
               }
 
-              return false;
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfDelete(DiscountEntity entityObj) {
+
+              // Discount foreign key ticket
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByDiscountEntity_Id(entityObj.getDiscountId());
+
+              if (ticketEntities.isEmpty() == false) {
+                     return false;
+              }
+              return true;
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfHidden(DiscountEntity entityObj) {
+              // Discount foreign key ticket
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByDiscountEntity_Id(entityObj.getDiscountId());
+
+              if (ticketEntities.isEmpty() == false) {
+                     for (TicketEntity e : ticketEntities) {
+                            if (e.getIsDelete() == false) {
+                                   return false;
+                            }
+                     }
+                     return true;
+              }
+              return true;
        }
 
 }

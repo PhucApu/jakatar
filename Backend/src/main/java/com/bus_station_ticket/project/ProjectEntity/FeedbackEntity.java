@@ -23,7 +23,7 @@ public class FeedbackEntity {
 
        @ManyToOne
        @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
-       private AccountEntity accountEnity;
+       private AccountEntity accountEntity;
 
        @ManyToOne
        @JoinColumn(name = "ticket_id", referencedColumnName = "ticket_id", nullable = false)
@@ -46,7 +46,7 @@ public class FeedbackEntity {
 
        public FeedbackEntity(AccountEntity accountEnitty, TicketEntity ticketEntity, String content, int rating,
                      LocalDateTime dateComment, Boolean isDelete) {
-              this.accountEnity = accountEnitty;
+              this.accountEntity = accountEnitty;
               this.ticketEntity = ticketEntity;
               this.content = content;
               this.rating = rating;
@@ -60,14 +60,6 @@ public class FeedbackEntity {
 
        public void setFeedbackId(Long feedbackId) {
               this.feedbackId = feedbackId;
-       }
-
-       public AccountEntity getAccountEnitty() {
-              return accountEnity;
-       }
-
-       public void setAccountEnitty(AccountEntity accountEnitty) {
-              this.accountEnity = accountEnitty;
        }
 
        public TicketEntity getTicketEntity() {
@@ -112,17 +104,17 @@ public class FeedbackEntity {
 
        @Override
        public String toString() {
-              return "FeedbackEntity [feedbackId=" + feedbackId + ", accountEnitty=" + accountEnity + ", ticketEntity="
+              return "FeedbackEntity [feedbackId=" + feedbackId + ", accountEnitty=" + accountEntity + ", ticketEntity="
                             + ticketEntity + ", content=" + content + ", rating=" + rating + ", dateComment="
                             + dateComment + ", isDelete=" + isDelete + "]";
        }
 
-       public AccountEntity getAccountEnity() {
-              return accountEnity;
+       public AccountEntity getAccountEntity() {
+              return accountEntity;
        }
 
-       public void setAccountEnity(AccountEntity accountEnity) {
-              this.accountEnity = accountEnity;
+       public void setAccountEntity(AccountEntity accountEntity) {
+              this.accountEntity = accountEntity;
        }
 
 }
