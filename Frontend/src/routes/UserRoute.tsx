@@ -19,6 +19,7 @@ import ResetPassWord from '../components/user/ResetPassWord';
 import AddressOfAccount from '../components/user/AddressOfAccount';
 import Checkout from '../pages/user/Checkout';
 import Dashboard from '../pages/user/Dashboard';
+import NotFound from '../pages/shared/NotFound';
 
 function UserRoute() {
   return (
@@ -44,6 +45,8 @@ function UserRoute() {
             <Route path='dat-lai-mat-khau' element={<ResetPassWord />} />
             <Route path='dia-chi' element={<AddressOfAccount />} />
           </Route>
+
+          <Route path='*' element = {<NotFound />} />
         </Routes>
       </div>
       <Footer />
