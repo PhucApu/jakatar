@@ -10,16 +10,27 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.AccountDTO;
 import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
+import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
+import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.AccountMapping;
 import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
+import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
+import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
 public class AccountService implements SimpleServiceInf<AccountEntity, AccountDTO, String> {
 
        @Autowired
        private AccountRepo repo;
+
+       @Autowired
+       private FeedbackRepo feedbackRepo;
+
+       @Autowired
+       private TicketRepo ticketRepo;
 
        @Autowired
        private AccountMapping accountMapping;
@@ -32,6 +43,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        public AccountEntity getById(String userName) {
 
               return this.repo.findByUserName(userName).orElse(null);
+
        }
 
        // Mapping đối tượng AccountEnity --> AccountDTO
@@ -44,7 +56,6 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               AccountEntity accountEnity = this.repo.findByUserName(userName).orElse(null);
 
               if (accountEnity != null) {
-
                      return this.accountMapping.toDTO(accountEnity);
               }
 
@@ -59,6 +70,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        public List<AccountEntity> getAll() {
 
               return this.repo.findAll();
+
        }
 
        // Mapping đối tượng List<AccountEnity> --> List<AccountDTO>
@@ -85,7 +97,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        // Output: boolean
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save(AccountEntity accountEnity) {
+       public ResponseBoolAndMess save(AccountEntity accountEnity) {
 
               // kiểm tra xem có tồn tại userName chưa
               Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
@@ -94,9 +106,10 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               if (optionalAccount.isPresent() == false) {
                      // Thêm AccountEntity vào
                      this.repo.save(accountEnity);
-                     return true;
+                     return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
-              return false;
+
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        // Thêm một đối tượng AccountEntity vào database
@@ -104,13 +117,11 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        // Output: boolean
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save_toDTO(AccountDTO accountDTO) {
+       public ResponseBoolAndMess save_toDTO(AccountDTO accountDTO) {
 
               AccountEntity accountEntity = this.accountMapping.toEntity(accountDTO);
-              if (save(accountEntity)) {
-                     return true;
-              }
-              return false;
+
+              return save(accountEntity);
        }
 
        // Sửa một đối tượng AccountEntity
@@ -118,7 +129,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        // Output: boolean
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update(AccountEntity accountEnity) {
+       public ResponseBoolAndMess update(AccountEntity accountEnity) {
 
               // kiểm tra xem có tồn tại userName chưa
               Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
@@ -127,30 +138,22 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               if (optionalAccount.isPresent()) {
                      // sửa AccountEntity vào
                      this.repo.save(accountEnity);
-                     return true;
+
+                     return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
-              return false;
+
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
        }
 
        // Mapping thành đối tượng accountDTO
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update_toDTO(AccountDTO accountDTO) {
-
-              // kiểm tra xem có tồn tại userName chưa
-              Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountDTO.getUserName());
+       public ResponseBoolAndMess update_toDTO(AccountDTO accountDTO) {
+              // Mapping
+              AccountEntity accountEntity = this.accountMapping.toEntity(accountDTO);
 
               // Nếu kết quả có
-              if (optionalAccount.isPresent()) {
-
-                     // Mapping thanh doi tuong AccountEntity
-                     AccountEntity accountEnity = this.accountMapping.toEntity(accountDTO);
-
-                     // sửa AccountEntity vào
-                     this.repo.save(accountEnity);
-                     return true;
-              }
-              return false;
+              return update(accountEntity);
        }
 
        // Xóa một đối trượng AccountEntity theo giá trị userName
@@ -158,19 +161,101 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        // Output: boolean
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean delete(String userName) {
+       public ResponseBoolAndMess delete(String userName) {
 
               // kiểm tra xem có tồn tại userName chưa
               Optional<AccountEntity> optionalAccount = this.repo.findByUserName(userName);
 
               // Nếu kết quả có
               if (optionalAccount.isPresent()) {
+                     // kiem tra khoa ngoai trước khi xóa
+                     Boolean checkForeignKey = isForeignKeyViolationIfDelete(optionalAccount.get());
 
-                     // Xóa
-                     this.repo.delete(optionalAccount.get());
-                     return true;
+                     if (checkForeignKey) {
+                            // Xóa
+                            this.repo.delete(optionalAccount.get());
+                            return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_DELETE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+
               }
-              return false;
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
        }
 
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       @Override
+       public ResponseBoolAndMess invisibleWithoutDelete(String id) {
+
+              // kiem ta kq
+              Optional<AccountEntity> optional = this.repo.findByUserName(id);
+
+              if (optional.isPresent()) {
+                     // kiem tra khoa ngoai truoc khi an
+                     Boolean checkForeignKey = isForeignKeyViolationIfHidden(optional.get());
+
+                     if (checkForeignKey) {
+                            AccountEntity accountEntity = optional.get();
+                            accountEntity.setIsDelete(true);
+                            // cap nhat lai
+                            this.save(accountEntity);
+                            return new ResponseBoolAndMess(true, MESS_HIDDEN_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_HIDDEN_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+
+              }
+
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfDelete(AccountEntity entityObj) {
+
+              // Accounnt foreign key Feedback and Ticket
+
+              // lấy những đối tượng ticket và feedback tham chiếu khóa ngoại đến account
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByAccountEntity_userName(entityObj.getUserName());
+
+              List<FeedbackEntity> feedbackEntities = this.feedbackRepo
+                            .findByAccountEntity_userName(entityObj.getUserName());
+
+              // kiểm tra
+              // Nếu có thực thể tham chiếu khóa ngoại
+              if (ticketEntities.isEmpty() == false && feedbackEntities.isEmpty() == false) {
+                     return false;
+              }
+              return true;
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfHidden(AccountEntity entityObj) {
+
+              // Accounnt foreign key Feedback and Ticket
+
+              // lấy những đối tượng ticket và feedback tham chiếu khóa ngoại đến account
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByAccountEntity_userName(entityObj.getUserName());
+
+              List<FeedbackEntity> feedbackEntities = this.feedbackRepo
+                            .findByAccountEntity_userName(entityObj.getUserName());
+
+              // kiểm tra
+              // Nếu có thực thể tham chiếu khóa ngoại
+              if (ticketEntities.isEmpty() == false && feedbackEntities.isEmpty() == false) {
+
+                     for (FeedbackEntity feedbackEntity : feedbackEntities) {
+                            if (feedbackEntity.getIsDelete() == false) {
+                                   return false;
+                            }
+                     }
+
+                     for (TicketEntity ticketEntity : ticketEntities) {
+                            if (ticketEntity.getIsDelete() == false) {
+                                   return false;
+                            }
+                     }
+                     return true;
+              }
+              return true;
+       }
 }

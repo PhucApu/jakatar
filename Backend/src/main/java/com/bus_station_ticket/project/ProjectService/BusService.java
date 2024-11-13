@@ -10,17 +10,33 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.BusDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
+import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
+import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
+import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.BusMapping;
 import com.bus_station_ticket.project.ProjectRepository.BusRepo;
+import com.bus_station_ticket.project.ProjectRepository.EmployeeRepo;
+import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
+import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
-public class BusService implements SimpleServiceInf<BusEntity,BusDTO,Long> {
-       
+public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
+
        @Autowired
        private BusRepo repo;
-       
+
+       @Autowired
+       private EmployeeRepo employeeRepo;
+
+       @Autowired
+       private PenaltyTicketRepo penaltyTicketRepo;
+
+       @Autowired
+       private TicketRepo ticketRepo;
+
        @Autowired
        private BusMapping busMapping;
 
@@ -29,8 +45,9 @@ public class BusService implements SimpleServiceInf<BusEntity,BusDTO,Long> {
        // Output: BusEntity có giá trị busId tương ứng
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
        @Override
-       public BusEntity getById (Long busIs){
-              return this.repo.findByBusId(busIs).orElse(null);
+       public BusEntity getById(Long busIs) {
+              return  this.repo.findByBusId(busIs).orElse(null);
+              
        }
 
        // Mapping đối tượng BusEntity --> BusDTO
@@ -38,124 +55,186 @@ public class BusService implements SimpleServiceInf<BusEntity,BusDTO,Long> {
        // Output: BusDTO có giá trị busId tương ứng
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
        @Override
-       public BusDTO getById_toDTO (Long busId){
+       public BusDTO getById_toDTO(Long busId) {
 
               BusEntity busEntity = this.repo.findByBusId(busId).orElse(null);
 
-              if(busEntity != null){
+              if (busEntity != null) {
                      return this.busMapping.toDTO(busEntity);
+                     
               }
               return null;
        }
-       
+
        // Lấy tất cả các đối tượng BusEntity
        // Input:
        // Output: List
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
        @Override
-       public List<BusEntity> getAll (){
+       public List<BusEntity>  getAll() {
               return this.repo.findAll();
+              
        }
 
        // Mapping đối tượng List<BusEntity> --> List<BusEntity>
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
        @Override
-       public List<BusDTO> getAll_toDTO (){
+       public List<BusDTO> getAll_toDTO() {
               List<BusEntity> listBusEntities = this.repo.findAll();
               List<BusDTO> listBusDTOs = new ArrayList<>();
 
-              if(listBusEntities.isEmpty() == false){
+              if (listBusEntities.isEmpty() == false) {
                      for (BusEntity e : listBusEntities) {
                             listBusDTOs.add(this.busMapping.toDTO(e));
                      }
+                     return  listBusDTOs;
               }
-              return listBusDTOs;
+              return  listBusDTOs;
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean delete(Long id) {
-              
-              // Kiem tra xem co ton tai chua
+       public ResponseBoolAndMess delete(Long id) {
+
               Optional<BusEntity> optional = this.repo.findByBusId(id);
 
-              if(optional.isPresent()){
-                     // xoa
-                     this.repo.delete(optional.get());
-                     return true;
+              if (optional.isPresent()) {
+                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+
+                     if (check) {
+                            // xoa
+                            this.repo.delete(optional.get());
+                            return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_DELETE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
               }
-              return false;
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save(BusEntity entityObj) {
-              
-              // Kiem ta xem co ton tai chua
+       public ResponseBoolAndMess save(BusEntity entityObj) {
+
               Optional<BusEntity> optional = this.repo.findByBusId(entityObj.getBusId());
 
-              // neu khong co kq
-              if(optional.isPresent() == false){
-                     // them
+              if (optional.isPresent() == false) {
                      this.repo.save(entityObj);
-                     return true;
+                     return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
-
-              return false;
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save_toDTO(BusDTO dtoObj) {
-              
+       public ResponseBoolAndMess save_toDTO(BusDTO dtoObj) {
+
               BusEntity busEntity = this.busMapping.toEntity(dtoObj);
 
-              // Kiem ta xem co ton tai chua
-              Optional<BusEntity> optional = this.repo.findByBusId(busEntity.getBusId());
-
-              // neu khong co kq
-              if(optional.isPresent() == false){
-                     // them
-                     this.repo.save(busEntity);
-                     return true;
-              }
-
-              return false;
+              return save(busEntity);
 
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update(BusEntity entityObj) {
-              // kiem tra xem co ton tai chua
+       public ResponseBoolAndMess update(BusEntity entityObj) {
               Optional<BusEntity> optional = this.repo.findByBusId(entityObj.getBusId());
 
-              // neu co ket qua
-              if(optional.isPresent()){
-                     // sua doi tuong
+              if (optional.isPresent()) {
                      this.repo.save(entityObj);
-                     return true;
+                     return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
-              return false;
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update_toDTO(BusDTO dtoObj) {
-              
-              // Kiem tra xem co ton tai chua
-              Optional<BusEntity> optional = this.repo.findByBusId(dtoObj.getBusId());
+       public ResponseBoolAndMess update_toDTO(BusDTO dtoObj) {
 
-              // neu co ket qua
-              if(optional.isPresent()){
-                     // Mapping
-                     BusEntity busEntity = this.busMapping.toEntity(dtoObj);
+              BusEntity busEntity = this.busMapping.toEntity(dtoObj);
 
-                     // sua doi tuong
-                     this.repo.save(busEntity);
+              return update(busEntity);
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       @Override
+       public ResponseBoolAndMess invisibleWithoutDelete(Long id) {
+
+              Optional<BusEntity> optional = this.repo.findByBusId(id);
+
+              if (optional.isPresent()) {
+                     // kiem tra
+                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+
+                     if (check) {
+                            BusEntity busEntity = optional.get();
+                            busEntity.setIsDelete(true);
+
+                            this.repo.save(busEntity);
+                            return new ResponseBoolAndMess(true, MESS_HIDDEN_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_HIDDEN_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              }
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
+
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfDelete(BusEntity entityObj) {
+
+              // Bus foreign key employee, ticket, penalty_tiket
+
+              List<EmployeeEntity> employeeEntities = this.employeeRepo.findByBusEntityId(entityObj.getBusId());
+
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusEntity_Id(entityObj.getBusId());
+
+              List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
+                            .findByBusEntity_Id(entityObj.getBusId());
+
+              // kiem tra
+              if (employeeEntities.isEmpty() == false && ticketEntities.isEmpty() == false
+                            && penaltyTicketEntities.isEmpty() == false) {
+                     return false;
+              }
+              return true;
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfHidden(BusEntity entityObj) {
+              // Bus foreign key employee, ticket, penalty_tiket
+
+              List<EmployeeEntity> employeeEntities = this.employeeRepo.findByBusEntityId(entityObj.getBusId());
+
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusEntity_Id(entityObj.getBusId());
+
+              List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
+                            .findByBusEntity_Id(entityObj.getBusId());
+
+              // kiem tra
+              if (employeeEntities.isEmpty() == false && ticketEntities.isEmpty() == false
+                            && penaltyTicketEntities.isEmpty() == false) {
+                     
+                     for (PenaltyTicketEntity penaltyTicketEntity : penaltyTicketEntities) {
+                            if(penaltyTicketEntity.getIsDelete() == false){
+                                   return false;
+                            }
+                     }
+
+                     for(TicketEntity e :  ticketEntities){
+                            if(e.getIsDelete() == false){
+                                   return false;
+                            }
+                     }
+                     
+                     for(EmployeeEntity e : employeeEntities){
+                            if(e.getIsDelete() == false){
+                                   return false;
+                            }
+                     }
                      return true;
               }
-              return false;
+              return true;
        }
 
 }

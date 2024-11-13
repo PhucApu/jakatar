@@ -7,7 +7,7 @@
 INSERT INTO account (username, password, email, phone, ROLE, is_delete, is_block) 
 VALUES 
 ('john_doe', 'mypassword123', 'john.doe@example.com', '0123456789', 'ROLE_ADMIN', FALSE, FALSE),
-('user', '123123', 'john.doe@example.com', '0123456789', 'ROLE_USER', FALSE, FALSE);
+('user1', '123123', 'john.doe@example.com', '0123456789', 'ROLE_USER', FALSE, FALSE);
 
 
 -- Thêm dữ liệu vào discount
@@ -55,12 +55,12 @@ INSERT INTO payment (payment_time,original_amount, discount_amount, final_amount
 -- ticket
 INSERT INTO ticket (username_id, bus_id, routes_id, payment_id, discount_id, seat_number, departure_date, price, phone,status, is_delete) VALUES
 ('john_doe', 1, 1, 1, 1, 'A1', '2024-10-12', 100.0, '0987654321', 'success', FALSE),
-('user', 1, 1, 1, 1, 'A2', '2024-10-12', 150.0, '0987654321', 'success', FALSE);
+('user1', 1, 1, 1, 1, 'A2', '2024-10-12', 150.0, '0987654321', 'success', FALSE);
 
 -- feedback
 INSERT INTO feedback (feedback_id, username, content, ticket_id, date_comment, rating, is_delete) VALUES
 (1,'john_doe', 'Dịch vụ tốt', 1, '2024-01-05 14:30:00', 5, FALSE),
-(2,'user', 'Cần cải thiện', 2, '2024-01-06 15:45:00', 5,FALSE);
+(2,'user1', 'Cần cải thiện', 2, '2024-01-06 15:45:00', 5,FALSE);
 
 
 

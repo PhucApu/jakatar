@@ -47,10 +47,10 @@ public class  AccountEntity {
        private Boolean isBlock;
 
 
-       @OneToMany(mappedBy = "accountEnity", fetch = FetchType.LAZY)
+       @OneToMany(mappedBy = "accountEntity", fetch = FetchType.LAZY)
        private List<FeedbackEntity> listFeedbackEntities;
 
-       @OneToMany(mappedBy = "accountEnity", fetch = FetchType.LAZY)
+       @OneToMany(mappedBy = "accountEntity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
 
 
@@ -157,3 +157,4 @@ public class  AccountEntity {
        
 
 }
+

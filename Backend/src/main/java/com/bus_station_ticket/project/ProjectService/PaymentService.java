@@ -10,16 +10,22 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.PaymentDTO;
 import com.bus_station_ticket.project.ProjectEntity.PaymentEntity;
+import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.PaymentMapping;
 import com.bus_station_ticket.project.ProjectRepository.PaymentRepo;
+import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
 public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDTO, Long> {
 
        @Autowired
        private PaymentRepo repo;
+
+       @Autowired
+       private TicketRepo ticketRepo;
 
        @Autowired
        private PaymentMapping paymentMapping;
@@ -73,90 +79,118 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
               return listPaymentDTOs;
        }
 
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean delete(Long id) {
+       public ResponseBoolAndMess delete(Long id) {
 
-              // kierm tra
               Optional<PaymentEntity> optional = this.repo.findByPaymentId(id);
 
-              // neu co kq
               if (optional.isPresent()) {
-                     // xoa
-                     this.repo.delete(optional.get());
-                     return true;
-              }
+                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
 
-              return false;
+                     if (check) {
+                            this.repo.delete(optional.get());
+                            return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_DELETE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              }
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save(PaymentEntity entityObj) {
-              // kierm tra
+       public ResponseBoolAndMess save(PaymentEntity entityObj) {
+
               Optional<PaymentEntity> optional = this.repo.findByPaymentId(entityObj.getPaymentId());
 
-              // neu co kq
               if (optional.isPresent() == false) {
-                     // them
                      this.repo.save(entityObj);
-                     return true;
+                     return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
 
-              return false;
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save_toDTO(PaymentDTO dtoObj) {
-              // kierm tra
-              Optional<PaymentEntity> optional = this.repo.findByPaymentId(dtoObj.getPaymentId());
+       public ResponseBoolAndMess save_toDTO(PaymentDTO dtoObj) {
+              PaymentEntity paymentEntity = this.paymentMapping.toEntity(dtoObj);
 
-              // neu kq khong co
-              if (optional.isPresent() == false) {
-                     // mapping
-                     PaymentEntity paymentEntity = this.paymentMapping.toEntity(dtoObj);
-
-                     // them
-                     this.repo.save(paymentEntity);
-                     return true;
-              }
-
-              return false;
+              return save(paymentEntity);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update(PaymentEntity entityObj) {
+       public ResponseBoolAndMess update(PaymentEntity entityObj) {
 
-              // kierm tra
               Optional<PaymentEntity> optional = this.repo.findByPaymentId(entityObj.getPaymentId());
 
               if (optional.isPresent()) {
-                     // sua
-                     this.repo.save(optional.get());
-                     return true;
+                     this.save(entityObj);
+                     return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
 
-              return false;
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
+
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update_toDTO(PaymentDTO dtoObj) {
-              // kierm tra
-              Optional<PaymentEntity> optional = this.repo.findByPaymentId(dtoObj.getPaymentId());
+       public ResponseBoolAndMess update_toDTO(PaymentDTO dtoObj) {
+              PaymentEntity paymentEntity = this.paymentMapping.toEntity(dtoObj);
+
+              return update(paymentEntity);
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       @Override
+       public ResponseBoolAndMess invisibleWithoutDelete(Long id) {
+
+              Optional<PaymentEntity> optional = this.repo.findByPaymentId(id);
 
               if (optional.isPresent()) {
+                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
 
-                     // mapping
-                     PaymentEntity paymentEntity = this.paymentMapping.toEntity(dtoObj);
+                     if (check) {
+                            PaymentEntity paymentEntity = optional.get();
+                            paymentEntity.setIsDelete(true);
+                            this.repo.save(paymentEntity);
+                            return new ResponseBoolAndMess(true, MESS_HIDDEN_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_HIDDEN_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              }
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
+       }
 
-                     // sua
-                     this.repo.save(paymentEntity);
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfDelete(PaymentEntity entityObj) {
+
+              // Payment foreign key Ticket
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByPaymentEntity_Id(entityObj.getPaymentId());
+
+              if (ticketEntities.isEmpty() == false) {
+                     return false;
+              }
+              return true;
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfHidden(PaymentEntity entityObj) {
+
+              // Payment foreign key Ticket
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByPaymentEntity_Id(entityObj.getPaymentId());
+
+              if (ticketEntities.isEmpty() == false) {
+                     for (TicketEntity e : ticketEntities) {
+                            if (e.getIsDelete() == false) {
+                                   return false;
+                            }
+                     }
                      return true;
               }
-
-              return false;
+              return true;
        }
 
 }

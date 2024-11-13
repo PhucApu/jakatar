@@ -25,8 +25,8 @@ public class TicketEntity {
        private Long ticketId;
 
        @ManyToOne
-       @JoinColumn(name = "username_id", referencedColumnName = "username", nullable = true, insertable = false, updatable = true)
-       private AccountEntity accountEnity;
+       @JoinColumn(name = "username_id", referencedColumnName = "username", nullable = false, insertable = false, updatable = true)
+       private AccountEntity accountEntity;
 
        @ManyToOne
        @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false, insertable = false, updatable = true)
@@ -72,7 +72,7 @@ public class TicketEntity {
                      PaymentEntity paymentEntity, DiscountEntity discountEntity, String seatNumber,
                      LocalDate departureDate, float price, String phoneNumber,
                      List<FeedbackEntity> listFeedbackEntities, Boolean isDelete) {
-              this.accountEnity = accountEnitty;
+              this.accountEntity = accountEnitty;
               this.busEntity = busEntity;
               this.busRoutesEntity = busRoutesEntity;
               this.paymentEntity = paymentEntity;
@@ -94,12 +94,12 @@ public class TicketEntity {
               this.ticketId = ticketId;
        }
 
-       public AccountEntity getAccountEnitty() {
-              return accountEnity;
+       public AccountEntity getAccountEntity() {
+              return accountEntity;
        }
 
-       public void setAccountEnitty(AccountEntity accountEnitty) {
-              this.accountEnity = accountEnitty;
+       public void setAccountEntity(AccountEntity accountEntity) {
+              this.accountEntity = accountEntity;
        }
 
        public BusEntity getBusEntity() {
@@ -184,20 +184,12 @@ public class TicketEntity {
 
        @Override
        public String toString() {
-              return "TicketEntity [ticketId=" + ticketId + ", accountEnity=" + accountEnity + ", busEntity="
+              return "TicketEntity [ticketId=" + ticketId + ", accountEntity=" + accountEntity + ", busEntity="
                             + busEntity + ", busRoutesEntity=" + busRoutesEntity + ", paymentEntity=" + paymentEntity
                             + ", discountEntity=" + discountEntity + ", seatNumber=" + seatNumber + ", departureDate="
                             + departureDate + ", price=" + price + ", phoneNumber=" + phoneNumber
                             + ", listFeedbackEntities=" + listFeedbackEntities + ", status=" + status + ", isDelete="
                             + isDelete + "]";
-       }
-
-       public AccountEntity getAccountEnity() {
-              return accountEnity;
-       }
-
-       public void setAccountEnity(AccountEntity accountEnity) {
-              this.accountEnity = accountEnity;
        }
 
        public String getStatus() {

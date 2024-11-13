@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.PenaltyTicketDTO;
 import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.PenaltyTicketMapping;
@@ -75,86 +76,98 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean delete(Long id) {
-              
-              // kiem tra
+       public ResponseBoolAndMess delete(Long id) {
+
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(id);
 
-              // neu co kq
-              if(optional.isPresent()){
-                     // xoa
-                     this.repo.delete(optional.get());
-                     return true;
-              }
+              if (optional.isPresent()) {
+                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
 
-              return false;
+                     if (check) {
+                            this.repo.delete(optional.get());
+                            return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_DELETE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              }
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save(PenaltyTicketEntity entityObj) {
+       public ResponseBoolAndMess save(PenaltyTicketEntity entityObj) {
+
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
 
-              // neu co kq
-              if(optional.isPresent() == false){
-                     // them
+              if (optional.isPresent() == false) {
                      this.repo.save(entityObj);
-                     return true;
+                     return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
-              
-              return false;
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
-       public Boolean save_toDTO(PenaltyTicketDTO dtoObj) {
-              Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(dtoObj.getPenaltyTicketId());
+       public ResponseBoolAndMess save_toDTO(PenaltyTicketDTO dtoObj) {
+              PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
 
-              // neu co kq
-              if(optional.isPresent() == false){
-
-                     // mapping
-                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
-
-                     // them
-                     this.repo.save(penaltyTicketEntity);
-                     return true;
-              }
-              
-              return false;
+              return save(penaltyTicketEntity);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update(PenaltyTicketEntity entityObj) {
-              
+       public ResponseBoolAndMess update(PenaltyTicketEntity entityObj) {
+
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
 
-              if(optional.isPresent()){
-                     // sua
-                     this.repo.save(entityObj);
-                     return true;
+              if (optional.isPresent()) {
+                     this.save(entityObj);
+                     return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
-
-              return false;
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
-       public Boolean update_toDTO(PenaltyTicketDTO dtoObj) {
+       public ResponseBoolAndMess update_toDTO(PenaltyTicketDTO dtoObj) {
 
-              Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(dtoObj.getPenaltyTicketId());
+              PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
 
-              if(optional.isPresent()){
+              return update(penaltyTicketEntity);
+       }
 
-                     // mapping
-                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
-                     // sua
-                     this.repo.save(penaltyTicketEntity);
-                     return true;
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       @Override
+       public ResponseBoolAndMess invisibleWithoutDelete(Long id) {
+
+              Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(id);
+
+              if (optional.isPresent()) {
+                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+
+                     if (check) {
+                            PenaltyTicketEntity penaltyTicketEntity = optional.get();
+                            penaltyTicketEntity.setIsDelete(true);
+                            this.repo.save(penaltyTicketEntity);
+                            return new ResponseBoolAndMess(true, MESS_HIDDEN_SUCCESS);
+                     }
+                     return new ResponseBoolAndMess(false, MESS_HIDDEN_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
               }
+              return new ResponseBoolAndMess(false, MESS_OBJECT_NOT_EXIST);
+       }
 
-              return false;
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfDelete(PenaltyTicketEntity entityObj) {
+
+              // PenaltyTicket has no foreign key
+              return true;
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyViolationIfHidden(PenaltyTicketEntity entityObj) {
+
+              return true;
        }
 
 }

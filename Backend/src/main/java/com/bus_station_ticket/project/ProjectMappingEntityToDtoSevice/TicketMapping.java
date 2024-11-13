@@ -44,7 +44,7 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
               // Mapping cac thuoc tinh co ban
               ticketDTO.setTicketId(entity.getTicketId());
               ticketDTO.setAccountEnity_Id(
-                            (entity.getAccountEnitty() != null) ? entity.getAccountEnitty().getUserName() : null);
+                            (entity.getAccountEntity() != null) ? entity.getAccountEntity().getUserName() : null);
               ticketDTO.setBusEntity_Id(
                             (entity.getBusEntity() != null) ? entity.getBusEntity().getBusId() : null);
               ticketDTO.setBusRoutesEntity_Id(
@@ -81,7 +81,7 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
               // Mapping cac thuoc tinh co ban
               ticketEntity.setTicketId(dto.getTicketId());
 
-              ticketEntity.setAccountEnitty(this.accountRepo.findByUserName(dto.getAccountEnity_Id()).orElse(null));
+              ticketEntity.setAccountEntity(this.accountRepo.findByUserName(dto.getAccountEnity_Id()).orElse(null));
 
               ticketEntity.setBusEntity(this.busRepo.findByBusId(dto.getBusEntity_Id()).orElse(null));
 
