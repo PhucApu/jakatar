@@ -41,8 +41,9 @@ public interface SimpleServiceInf<ENTITY,DTO,ID> {
        public ResponseBoolAndMess update_toDTO (DTO dtoObj);
 
        //
-       public Boolean isForeignKeyViolationIfDelete(ENTITY entityObj);
-       public Boolean isForeignKeyViolationIfHidden(ENTITY entityObj);
+       public Boolean foreignKeyViolationIfDelete(ENTITY entityObj);
+       public Boolean foreignKeyViolationIfHidden(ENTITY entityObj);
+       public Boolean isForeignKeyEmpty(ENTITY entityObj);
 
        default <T> Boolean compareId (T id1, T id2){
               

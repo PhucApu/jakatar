@@ -12,7 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.TicketDTO;
+import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
+import com.bus_station_ticket.project.ProjectEntity.BusEntity;
+import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
+import com.bus_station_ticket.project.ProjectEntity.DiscountEntity;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
+import com.bus_station_ticket.project.ProjectEntity.PaymentEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.TicketMapping;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
@@ -20,8 +25,6 @@ import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
 public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, Long> {
-
-       
 
        @Autowired
        private TicketRepo repo;
@@ -54,7 +57,7 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               }
               return null;
        }
-       
+
        // Lấy tất cả các đối tượng TicketEntity
        // Input:
        // Output: List
@@ -87,10 +90,10 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
               Optional<TicketEntity> optional = this.repo.findByTicketId(id);
 
-              if(optional.isPresent()){
-                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+              if (optional.isPresent()) {
+                     Boolean check = foreignKeyViolationIfDelete(optional.get());
 
-                     if(check){
+                     if (check) {
                             this.repo.delete(optional.get());
                             return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
                      }
@@ -102,10 +105,10 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess save(TicketEntity entityObj) {
-              
+
               Optional<TicketEntity> optional = this.repo.findByTicketId(entityObj.getTicketId());
 
-              if(optional.isPresent() == false){
+              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -116,21 +119,21 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        @Override
        public ResponseBoolAndMess save_toDTO(TicketDTO dtoObj) {
               TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
-              
+
               return save(ticketEntity);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess update(TicketEntity entityObj) {
-              
+
               Optional<TicketEntity> optional = this.repo.findByTicketId(entityObj.getTicketId());
 
-              if(optional.isPresent()){
-                     this.save(entityObj);
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+                     this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -138,20 +141,20 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        public ResponseBoolAndMess update_toDTO(TicketDTO dtoObj) {
 
               TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
-              
+
               return update(ticketEntity);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess invisibleWithoutDelete(Long id) {
-              // 
+              //
               Optional<TicketEntity> optional = this.repo.findByTicketId(id);
 
-              if(optional.isPresent()){
-                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+              if (optional.isPresent()) {
+                     Boolean check = foreignKeyViolationIfHidden(optional.get());
 
-                     if(check){
+                     if (check) {
                             TicketEntity ticketEntity = optional.get();
                             ticketEntity.setIsDelete(true);
                             this.save(ticketEntity);
@@ -164,12 +167,12 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfDelete(TicketEntity entityObj) {
-              
+       public Boolean foreignKeyViolationIfDelete(TicketEntity entityObj) {
+
               // Ticket foreign key Feedback
               List<FeedbackEntity> feedbackEntities = this.feedbackRepo.findByTicketEntity_Id(entityObj.getTicketId());
 
-              if(feedbackEntities.isEmpty() == false){
+              if (feedbackEntities.isEmpty() == false) {
                      return false;
               }
 
@@ -178,14 +181,14 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfHidden(TicketEntity entityObj) {
-              
+       public Boolean foreignKeyViolationIfHidden(TicketEntity entityObj) {
+
               // Ticket foreign key Feedback
               List<FeedbackEntity> feedbackEntities = this.feedbackRepo.findByTicketEntity_Id(entityObj.getTicketId());
 
-              if(feedbackEntities.isEmpty() == false){
-                     for(FeedbackEntity e : feedbackEntities){
-                            if(e.getIsDelete() == false){
+              if (feedbackEntities.isEmpty() == false) {
+                     for (FeedbackEntity e : feedbackEntities) {
+                            if (e.getIsDelete() == false) {
                                    return false;
                             }
                      }
@@ -195,6 +198,26 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               return true;
        }
 
-       
+       @Transactional
+       @Override
+       public Boolean isForeignKeyEmpty(TicketEntity entityObj) {
+              // Ticket co 5 thuoc tinh khoa ngoai: account_name, bus_id, route_id,
+              // payment_id, discount_id
+              // kiem tra
+              AccountEntity accountEntity = entityObj.getAccountEntity();
+              BusEntity busEntity = entityObj.getBusEntity();
+              BusRoutesEntity busRoutesEntity = entityObj.getBusRoutesEntity();
+              PaymentEntity paymentEntity = entityObj.getPaymentEntity();
+              DiscountEntity discountEntity = entityObj.getDiscountEntity();
+
+              if (accountEntity != null
+                            && busEntity != null
+                            && busRoutesEntity != null
+                            && paymentEntity != null
+                            && discountEntity != null) {
+                     return false;
+              }
+              return true;
+       }
 
 }

@@ -109,7 +109,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
 
               Optional<EmployeeEntity> optional = this.repo.findByDriverId(entityObj.getDriverId());
 
-              if (optional.isPresent() == false) {
+              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -122,7 +122,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
        public ResponseBoolAndMess save_toDTO(EmployeeDTO dtoObj) {
               EmployeeEntity employeeEntity = this.employeeMapping.toEntity(dtoObj);
 
-              return update(employeeEntity);
+              return save(employeeEntity);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -130,11 +130,11 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
        public ResponseBoolAndMess update(EmployeeEntity entityObj) {
               Optional<EmployeeEntity> optional = this.repo.findByDriverId(entityObj.getDriverId());
 
-              if (optional.isPresent()) {
-                     this.save(entityObj);
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+                     this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -210,5 +210,13 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
 
               return true;
        }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyEmpty(EmployeeEntity entityObj) {
+              // Employee khong co thuoc tinh khoa ngoai
+              return false;
+       }
+       
 
 }

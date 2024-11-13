@@ -92,7 +92,7 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               // Kiểm tra
               Optional<BusRoutesEntity> optional = this.repo.findByRoutesId(busRoutesEntity.getRoutesId());
 
-              if (optional.isPresent() == false) {
+              if (optional.isPresent() == false && isForeignKeyEmpty(busRoutesEntity) == false) {
 
                      this.repo.save(busRoutesEntity);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
@@ -143,14 +143,14 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               // Kiem tra
               Optional<BusRoutesEntity> optional = this.repo.findByRoutesId(entityObj.getRoutesId());
 
-              if (optional.isPresent()) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
 
                      this.repo.save(entityObj);
 
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
 
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -223,5 +223,14 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
 
               return true;
        }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyEmpty(BusRoutesEntity entityObj) {
+              // BusRouter khong co thuoc tinh khoa ngoai
+              return false;
+       }
+
+       
 
 }

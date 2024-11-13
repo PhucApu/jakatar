@@ -79,7 +79,7 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
               """,
               nativeQuery = true
        )
-       public List<TicketEntity> findByFeedbackEntity_Id (@Param("feedbackId") Long feedbackId);
+       public Optional<TicketEntity> findByFeedbackEntity_Id (@Param("feedbackId") Long feedbackId);
 
        public List<TicketEntity> findByIsDelete (Boolean isDelete);
 }
