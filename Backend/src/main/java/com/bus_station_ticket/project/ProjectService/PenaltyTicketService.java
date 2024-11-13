@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.PenaltyTicketDTO;
+import com.bus_station_ticket.project.ProjectEntity.BusEntity;
+import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
 import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.PenaltyTicketMapping;
 import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
@@ -98,7 +100,7 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
 
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
 
-              if (optional.isPresent() == false) {
+              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -119,11 +121,11 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
 
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
 
-              if (optional.isPresent()) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
                      this.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -167,6 +169,20 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
        @Override
        public Boolean isForeignKeyViolationIfHidden(PenaltyTicketEntity entityObj) {
 
+              return true;
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyEmpty(PenaltyTicketEntity entityObj) {
+              // PenaltyTicket co 2 thuocj tinh khoa ngoai bus_number va driverId
+              // kiem tra
+              BusEntity busEntity = entityObj.getBusEntity();
+              EmployeeEntity employeeEntity = entityObj.getEmployeeEntity();
+
+              if (busEntity != null && employeeEntity != null) {
+                     return false;
+              }
               return true;
        }
 

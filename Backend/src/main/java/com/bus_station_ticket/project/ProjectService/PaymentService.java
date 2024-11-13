@@ -86,7 +86,7 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
               Optional<PaymentEntity> optional = this.repo.findByPaymentId(id);
 
               if (optional.isPresent()) {
-                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+                     Boolean check = foreignKeyViolationIfDelete(optional.get());
 
                      if (check) {
                             this.repo.delete(optional.get());
@@ -103,7 +103,7 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
 
               Optional<PaymentEntity> optional = this.repo.findByPaymentId(entityObj.getPaymentId());
 
-              if (optional.isPresent() == false) {
+              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -125,12 +125,13 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
 
               Optional<PaymentEntity> optional = this.repo.findByPaymentId(entityObj.getPaymentId());
 
-              if (optional.isPresent()) {
-                     this.save(entityObj);
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+                     this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
 
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
+              return new ResponseBoolAndMess(false,
+                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
 
        }
 
@@ -149,7 +150,7 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
               Optional<PaymentEntity> optional = this.repo.findByPaymentId(id);
 
               if (optional.isPresent()) {
-                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+                     Boolean check = foreignKeyViolationIfHidden(optional.get());
 
                      if (check) {
                             PaymentEntity paymentEntity = optional.get();
@@ -164,7 +165,7 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfDelete(PaymentEntity entityObj) {
+       public Boolean foreignKeyViolationIfDelete(PaymentEntity entityObj) {
 
               // Payment foreign key Ticket
               List<TicketEntity> ticketEntities = this.ticketRepo.findByPaymentEntity_Id(entityObj.getPaymentId());
@@ -177,7 +178,7 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfHidden(PaymentEntity entityObj) {
+       public Boolean foreignKeyViolationIfHidden(PaymentEntity entityObj) {
 
               // Payment foreign key Ticket
               List<TicketEntity> ticketEntities = this.ticketRepo.findByPaymentEntity_Id(entityObj.getPaymentId());
@@ -191,6 +192,13 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
                      return true;
               }
               return true;
+       }
+
+       @Transactional
+       @Override
+       public Boolean isForeignKeyEmpty(PaymentEntity entityObj) {
+              // payment khong co thuoc tinh khoa ngoai
+              return false;
        }
 
 }

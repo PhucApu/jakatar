@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 
 public class PaymentDTO {
 
-       @NotBlank(message = "paymentId cannot be blank")
+       @NotNull(message = "paymentId cannot be blank")
        private Long paymentId;
 
        @NotNull(message = "Payment time cannot be null")

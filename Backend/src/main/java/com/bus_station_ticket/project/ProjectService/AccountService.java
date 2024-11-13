@@ -103,7 +103,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
 
               // Nếu kết quả không có
-              if (optionalAccount.isPresent() == false) {
+              if (optionalAccount.isPresent() == false && isForeignKeyEmpty(accountEnity) == false) {
                      // Thêm AccountEntity vào
                      this.repo.save(accountEnity);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
@@ -135,14 +135,14 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
 
               // Nếu kết quả có
-              if (optionalAccount.isPresent()) {
+              if (optionalAccount.isPresent() && isForeignKeyEmpty(accountEnity) == false) {
                      // sửa AccountEntity vào
                      this.repo.save(accountEnity);
 
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
 
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST);
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        // Mapping thành đối tượng accountDTO
@@ -169,7 +169,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               // Nếu kết quả có
               if (optionalAccount.isPresent()) {
                      // kiem tra khoa ngoai trước khi xóa
-                     Boolean checkForeignKey = isForeignKeyViolationIfDelete(optionalAccount.get());
+                     Boolean checkForeignKey = foreignKeyViolationIfDelete(optionalAccount.get());
 
                      if (checkForeignKey) {
                             // Xóa
@@ -191,7 +191,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
               if (optional.isPresent()) {
                      // kiem tra khoa ngoai truoc khi an
-                     Boolean checkForeignKey = isForeignKeyViolationIfHidden(optional.get());
+                     Boolean checkForeignKey = foreignKeyViolationIfHidden(optional.get());
 
                      if (checkForeignKey) {
                             AccountEntity accountEntity = optional.get();
@@ -209,7 +209,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfDelete(AccountEntity entityObj) {
+       public Boolean foreignKeyViolationIfDelete(AccountEntity entityObj) {
 
               // Accounnt foreign key Feedback and Ticket
 
@@ -229,7 +229,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfHidden(AccountEntity entityObj) {
+       public Boolean foreignKeyViolationIfHidden(AccountEntity entityObj) {
 
               // Accounnt foreign key Feedback and Ticket
 
@@ -257,5 +257,13 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
                      return true;
               }
               return true;
+       }
+       
+       @Transactional
+       @Override
+       public Boolean isForeignKeyEmpty(AccountEntity entityObj) {
+              
+              // Account khong co thuoc tinh khoa ngoai 
+              return false;
        }
 }
