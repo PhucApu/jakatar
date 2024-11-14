@@ -99,7 +99,7 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
               Optional<BusEntity> optional = this.repo.findByBusId(id);
 
               if (optional.isPresent()) {
-                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+                     Boolean check = foreignKeyViolationIfDelete(optional.get());
 
                      if (check) {
                             // xoa
@@ -163,7 +163,7 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
 
               if (optional.isPresent()) {
                      // kiem tra
-                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+                     Boolean check = foreignKeyViolationIfHidden(optional.get());
 
                      if (check) {
                             BusEntity busEntity = optional.get();
@@ -180,7 +180,7 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfDelete(BusEntity entityObj) {
+       public Boolean foreignKeyViolationIfDelete(BusEntity entityObj) {
 
               // Bus foreign key employee, ticket, penalty_tiket
 
@@ -201,7 +201,7 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfHidden(BusEntity entityObj) {
+       public Boolean foreignKeyViolationIfHidden(BusEntity entityObj) {
               // Bus foreign key employee, ticket, penalty_tiket
 
               List<EmployeeEntity> employeeEntities = this.employeeRepo.findByBusEntityId(entityObj.getBusId());

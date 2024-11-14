@@ -88,7 +88,7 @@ public class DiscountService implements SimpleServiceInf<DiscountEntity, Discoun
 
               if (optional.isPresent()) {
                      // Kiem tra khoa ngoai
-                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+                     Boolean check = foreignKeyViolationIfDelete(optional.get());
 
                      if (check) {
                             this.repo.delete(optional.get());
@@ -150,7 +150,7 @@ public class DiscountService implements SimpleServiceInf<DiscountEntity, Discoun
 
               if (optional.isPresent()) {
                      // kierm tra
-                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+                     Boolean check = foreignKeyViolationIfHidden(optional.get());
 
                      if (check) {
                             DiscountEntity discountEntity = optional.get();
@@ -166,7 +166,7 @@ public class DiscountService implements SimpleServiceInf<DiscountEntity, Discoun
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfDelete(DiscountEntity entityObj) {
+       public Boolean foreignKeyViolationIfDelete(DiscountEntity entityObj) {
 
               // Discount foreign key ticket
               List<TicketEntity> ticketEntities = this.ticketRepo.findByDiscountEntity_Id(entityObj.getDiscountId());
@@ -179,7 +179,7 @@ public class DiscountService implements SimpleServiceInf<DiscountEntity, Discoun
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfHidden(DiscountEntity entityObj) {
+       public Boolean foreignKeyViolationIfHidden(DiscountEntity entityObj) {
               // Discount foreign key ticket
               List<TicketEntity> ticketEntities = this.ticketRepo.findByDiscountEntity_Id(entityObj.getDiscountId());
 

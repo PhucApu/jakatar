@@ -12,22 +12,22 @@ import jakarta.validation.constraints.Size;
 
 public class TicketDTO {
 
-       @NotBlank(message = "ticketId cannot be blank")
+       @NotNull(message = "ticketId cannot be blank")
        private Long ticketId;
 
        @NotBlank(message = "accountEnity_Id cannot be blank")
        private String accountEnity_Id;
        
-       @NotBlank(message = "busEntity_Id cannot be blank")
+       @NotNull(message = "busEntity_Id cannot be blank")
        private Long busEntity_Id;
 
-       @NotBlank(message = "busRoutesEntity_Id cannot be blank")
+       @NotNull(message = "busRoutesEntity_Id cannot be blank")
        private Long busRoutesEntity_Id;
        
-       @NotBlank(message = "paymentEntity_Id cannot be blank")
+       @NotNull(message = "paymentEntity_Id cannot be blank")
        private Long paymentEntity_Id;
 
-       @NotBlank(message = "discountEntity_Id cannot be blank")
+       @NotNull(message = "discountEntity_Id cannot be blank")
        private Long discountEntity_Id;
 
        @NotBlank(message = "seatNumber cannot be blank")
