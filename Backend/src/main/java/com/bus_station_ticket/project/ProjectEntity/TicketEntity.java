@@ -25,23 +25,23 @@ public class TicketEntity {
        private Long ticketId;
 
        @ManyToOne
-       @JoinColumn(name = "username_id", referencedColumnName = "username", nullable = false, insertable = false, updatable = true)
+       @JoinColumn(name = "username_id", referencedColumnName = "username", nullable = false)
        private AccountEntity accountEntity;
 
        @ManyToOne
-       @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false, insertable = false, updatable = true)
+       @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false)
        private BusEntity busEntity;
 
        @ManyToOne
-       @JoinColumn(name = "routes_id", referencedColumnName = "routes_id", nullable = false, insertable = false, updatable = true)
+       @JoinColumn(name = "routes_id", referencedColumnName = "routes_id", nullable = false)
        private BusRoutesEntity busRoutesEntity;
 
        @ManyToOne
-       @JoinColumn(name = "payment_id", referencedColumnName = "payment_id", nullable = false, insertable = false, updatable = true)
+       @JoinColumn(name = "payment_id", referencedColumnName = "payment_id", nullable = false)
        private PaymentEntity paymentEntity;
 
        @ManyToOne
-       @JoinColumn(name = "discount_id", referencedColumnName = "discount_id", nullable = true, insertable = false, updatable = true)
+       @JoinColumn(name = "discount_id", referencedColumnName = "discount_id", nullable = true)
        private DiscountEntity discountEntity;
 
        @Column(name = "seat_number", nullable = false, columnDefinition = "VARCHAR(10)")

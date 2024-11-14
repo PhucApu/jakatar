@@ -92,7 +92,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               Optional<EmployeeEntity> optional = this.repo.findByDriverId(id);
 
               if (optional.isPresent()) {
-                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+                     Boolean check = foreignKeyViolationIfDelete(optional.get());
 
                      if (check) {
                             this.repo.delete(optional.get());
@@ -152,7 +152,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               Optional<EmployeeEntity> optional = this.repo.findByDriverId(id);
 
               if (optional.isPresent()) {
-                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+                     Boolean check = foreignKeyViolationIfHidden(optional.get());
 
                      if (check) {
                             EmployeeEntity employeeEntity = optional.get();
@@ -168,7 +168,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfDelete(EmployeeEntity entityObj) {
+       public Boolean foreignKeyViolationIfDelete(EmployeeEntity entityObj) {
 
               // Employee foreign key bus, penalty_ticket
               List<BusEntity> busEntities = this.busRepo.findByEmployeeEntity_Id(entityObj.getDriverId());
@@ -185,7 +185,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfHidden(EmployeeEntity entityObj) {
+       public Boolean foreignKeyViolationIfHidden(EmployeeEntity entityObj) {
               // Employee foreign key bus, penalty_ticket
               List<BusEntity> busEntities = this.busRepo.findByEmployeeEntity_Id(entityObj.getDriverId());
 

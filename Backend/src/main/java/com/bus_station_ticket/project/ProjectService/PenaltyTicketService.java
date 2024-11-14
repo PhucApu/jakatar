@@ -83,7 +83,7 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(id);
 
               if (optional.isPresent()) {
-                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+                     Boolean check = foreignKeyViolationIfDelete(optional.get());
 
                      if (check) {
                             this.repo.delete(optional.get());
@@ -101,7 +101,11 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
 
               if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
-                     this.repo.save(entityObj);
+                     if(entityObj.getBusEntity() != null){
+                            entityObj.setBusEntity(entityObj.getBusEntity());
+                            this.repo.save(entityObj);
+                     }
+                     // System.out.println(entityObj.getBusEntity().getBusNumber());
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
               return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
@@ -110,6 +114,7 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess save_toDTO(PenaltyTicketDTO dtoObj) {
+              
               PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
 
               return save(penaltyTicketEntity);
@@ -122,7 +127,7 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
 
               if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
-                     this.save(entityObj);
+                     this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
               return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
@@ -144,7 +149,7 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(id);
 
               if (optional.isPresent()) {
-                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+                     Boolean check = foreignKeyViolationIfHidden(optional.get());
 
                      if (check) {
                             PenaltyTicketEntity penaltyTicketEntity = optional.get();
@@ -159,7 +164,7 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfDelete(PenaltyTicketEntity entityObj) {
+       public Boolean foreignKeyViolationIfDelete(PenaltyTicketEntity entityObj) {
 
               // PenaltyTicket has no foreign key
               return true;
@@ -167,7 +172,7 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfHidden(PenaltyTicketEntity entityObj) {
+       public Boolean foreignKeyViolationIfHidden(PenaltyTicketEntity entityObj) {
 
               return true;
        }

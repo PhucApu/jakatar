@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 
 public class PenaltyTicketDTO {
 
-       @NotBlank(message = "penaltyTicketId cannot be blank")
+       @NotNull(message = "penaltyTicketId cannot be blank")
        private Long penaltyTicketId;
 
        @NotNull(message = "Bus ID cannot be null")

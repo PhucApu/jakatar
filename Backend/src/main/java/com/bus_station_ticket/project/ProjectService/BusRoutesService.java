@@ -124,7 +124,7 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               // neu ket qua co
               if (optional.isPresent()) {
                      // kierm tra khoa ngoai truoc khi xoa
-                     Boolean check = isForeignKeyViolationIfDelete(optional.get());
+                     Boolean check = foreignKeyViolationIfDelete(optional.get());
 
                      if (check) {
                             // xoa
@@ -170,7 +170,7 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
 
               if (optional.isPresent()) {
                      // kiem tra khoa ngoai
-                     Boolean check = isForeignKeyViolationIfHidden(optional.get());
+                     Boolean check = foreignKeyViolationIfHidden(optional.get());
 
                      if (check) {
                             BusRoutesEntity busRoutesEntity = optional.get();
@@ -186,7 +186,7 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfDelete(BusRoutesEntity entityObj) {
+       public Boolean foreignKeyViolationIfDelete(BusRoutesEntity entityObj) {
 
               // BusRoutes foreign key ticket
 
@@ -204,7 +204,7 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
 
        @Transactional
        @Override
-       public Boolean isForeignKeyViolationIfHidden(BusRoutesEntity entityObj) {
+       public Boolean foreignKeyViolationIfHidden(BusRoutesEntity entityObj) {
               // BusRoutes foriegn key ticket
 
               // lay danh sach ticket tham chieu den BusRoutes duoc xoa
