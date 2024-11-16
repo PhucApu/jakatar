@@ -229,4 +229,28 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
 
        }
+
+       @PostMapping("/info-login")
+       public ResponseEntity<ResponseObject> getInfoLogin (){
+              
+              ResponseObject responseObject = new ResponseObject();
+              
+              AccountDTO accountDTO = this.accountService.getAccountEntityHasLogin();
+
+              // kiem tra
+              if(accountDTO != null){
+                     responseObject.setStatus(MESS_SUCCESS);
+                     responseObject.addMessage("mess", "Below is the user's authentication information");
+                     responseObject.setData(accountDTO);
+              
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+              responseObject.setStatus(MESS_FAILURE);
+              responseObject.addMessage("mess", "Could not get user authentication information");
+
+              responseObject.setData(null);
+       
+              return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+
+       }
 }

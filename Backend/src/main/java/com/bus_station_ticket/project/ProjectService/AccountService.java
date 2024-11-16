@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,6 +23,7 @@ import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.AccountMap
 import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
+import com.bus_station_ticket.project.ProjectSecurity.UserDetailsConfig;
 
 @Service
 public class AccountService implements SimpleServiceInf<AccountEntity, AccountDTO, String> {
@@ -34,6 +39,9 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
        @Autowired
        private AccountMapping accountMapping;
+
+       // Sử dụng để mã hóa mật khẩu
+       private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10);
 
        // Lấy một đối tượng AccountEntity theo giá trị userName
        // Input: userName (String)
@@ -104,8 +112,12 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
               // Nếu kết quả không có
               if (optionalAccount.isPresent() == false && isForeignKeyEmpty(accountEnity) == false) {
+
+                     // Mã hóa mật khẩu trước khi thêm vào csdl
+                     AccountEntity accountEntityEncode = encodePassWord(accountEnity);
+
                      // Thêm AccountEntity vào
-                     this.repo.save(accountEnity);
+                     this.repo.save(accountEntityEncode);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
 
@@ -136,13 +148,17 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
               // Nếu kết quả có
               if (optionalAccount.isPresent() && isForeignKeyEmpty(accountEnity) == false) {
+                     // Mã hóa mật khẩu trước khi thêm vào csdl
+                     AccountEntity accountEntityEncode = encodePassWord(accountEnity);
+
                      // sửa AccountEntity vào
-                     this.repo.save(accountEnity);
+                     this.repo.save(accountEntityEncode);
 
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
 
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
+              return new ResponseBoolAndMess(false,
+                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        // Mapping thành đối tượng accountDTO
@@ -258,12 +274,48 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               }
               return true;
        }
-       
+
        @Transactional
        @Override
        public Boolean isForeignKeyEmpty(AccountEntity entityObj) {
-              
-              // Account khong co thuoc tinh khoa ngoai 
+
+              // Account khong co thuoc tinh khoa ngoai
               return false;
+       }
+
+       @Transactional
+       public AccountEntity encodePassWord(AccountEntity accountEntity) {
+
+              String pass = accountEntity.getPassWord();
+              String encodePass = bCryptPasswordEncoder.encode(pass);
+              accountEntity.setPassWord(encodePass);
+
+              return accountEntity;
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public AccountDTO getAccountEntityHasLogin() {
+              
+              Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+              if (authentication != null && authentication.isAuthenticated()) {
+                     
+                     // Lấy ra UserDetails
+                     Object principal = authentication.getPrincipal();
+
+                     // kiểm tra
+                     if (principal instanceof UserDetails) {
+
+                            // Lấy username
+                            String username = ((UserDetailsConfig) principal).getUsername();
+
+                            // Lấy thông tin AccountEntity
+                            AccountEntity accountEntity = this.repo.findByUserName(username).orElse(null);
+
+                            return this.accountMapping.toDTO(accountEntity);
+                     }
+                     return null; 
+              }
+              return null;
        }
 }
