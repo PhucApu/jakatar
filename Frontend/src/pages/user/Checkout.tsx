@@ -1,5 +1,5 @@
 import { Label, TextInput } from 'flowbite-react';
-import SeatPicker from '../components/SeatPicker';
+import SeatPicker from '../../components/user/SeatPicker';
 
 export default function Checkout() {
   return (

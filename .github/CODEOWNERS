@@ -1,0 +1,8 @@
+# Chỉ định `@admin-user` là người review cho toàn bộ mã nguồn
+* @PhucApu
+
+# Chỉ định bạn là người review cho các thay đổi trong thư mục Frontend
+/Frontend/ @PhucApu
+
+# Chỉ định bạn là người review cho các thay đổi trong thư mục Backend
+/Backend/ @PhucApu
