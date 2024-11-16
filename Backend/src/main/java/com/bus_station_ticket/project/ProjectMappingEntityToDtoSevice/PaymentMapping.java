@@ -24,6 +24,10 @@ public class PaymentMapping implements MappingInterface<PaymentEntity, PaymentDT
               // Mapping các thuộc tính cơ bản
               paymentDTO.setPaymentId(entity.getPaymentId());
               paymentDTO.setPaymentTime(entity.getPaymentTime());
+              paymentDTO.setOriginalAmount(entity.getOriginalAmount());
+              paymentDTO.setDiscountAmount(entity.getDiscountAmount());
+              paymentDTO.setFinalAmount(entity.getFinalAmount());
+              paymentDTO.setStatus(entity.getStatus());
               paymentDTO.setPaymentMethod(entity.getPaymentMethod());
               paymentDTO.setIsDelete(entity.getIsDelete());
 
@@ -48,6 +52,10 @@ public class PaymentMapping implements MappingInterface<PaymentEntity, PaymentDT
               paymentEntity.setPaymentId(dto.getPaymentId());
               paymentEntity.setPaymentTime(dto.getPaymentTime());
               paymentEntity.setPaymentMethod(dto.getPaymentMethod());
+              paymentEntity.setOriginalAmount(dto.getOriginalAmount());
+              paymentEntity.setDiscountAmount(dto.getDiscountAmount());
+              paymentEntity.setFinalAmount(dto.getFinalAmount());
+              paymentEntity.setStatus(dto.getStatus());
               paymentEntity.setIsDelete(dto.getIsDelete());
 
               // Mapping các thuộc tính List

@@ -22,11 +22,11 @@ public class PenaltyTicketEntity {
        private Long penaltyTicketId;
 
        @ManyToOne
-       @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false, insertable = false, updatable = true)
+       @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false)
        private BusEntity busEntity;
 
        @ManyToOne
-       @JoinColumn(name = "driver_id", referencedColumnName = "driver_id" , nullable = true, insertable = false, updatable = true )
+       @JoinColumn(name = "driver_id", referencedColumnName = "driver_id" , nullable = true)
        private EmployeeEntity employeeEntity;
 
        @Column(name = "penalty_day", nullable = false, columnDefinition = "DATETIME")
@@ -121,6 +121,4 @@ public class PenaltyTicketEntity {
        public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
        }
-
-       
 }
