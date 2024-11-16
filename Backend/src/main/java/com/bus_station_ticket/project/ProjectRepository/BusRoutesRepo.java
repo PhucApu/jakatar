@@ -35,7 +35,7 @@ public interface BusRoutesRepo extends JpaRepository<BusRoutesEntity,Long> {
 
        @Query(
               value = """
-                     select *
+                     select br.routes_id, br.departure_location, br.destination_location, br.distance_location, br.departure_time, br.arival_time, br.price, br.is_delete
                      from bus_routes br, ticket tk
                      where br.routes_id = tk.routes_id and tk.ticket_id = :ticketId
               """,

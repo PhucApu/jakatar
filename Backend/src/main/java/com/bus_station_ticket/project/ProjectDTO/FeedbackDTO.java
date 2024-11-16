@@ -2,14 +2,36 @@ package com.bus_station_ticket.project.ProjectDTO;
 
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class FeedbackDTO {
 
+       @NotNull(message = "Feedback ID cannot be null")
        private Long feedbackId;
+
+       @NotBlank(message = "Account username cannot be blank")
+       @Size(max = 20, message = "Account username must not exceed 20 characters")
        private String accountEnity_userName;
+
+       @NotNull(message = "Ticket entity ID cannot be null")
        private Long ticketEntity_Id;
+
+       @NotBlank(message = "Content cannot be blank")
+       @Size(max = 500, message = "Content must not exceed 500 characters")
        private String content;
+
+       @Min(value = 1, message = "Rating must be at least 1")
+       @Max(value = 5, message = "Rating must not exceed 5")
        private int rating;
+
+       @NotNull(message = "Date of comment cannot be null")
        private LocalDateTime dateComment;
+
+       @NotNull(message = "Delete status cannot be null")
        private Boolean isDelete;
 
        public FeedbackDTO() {
