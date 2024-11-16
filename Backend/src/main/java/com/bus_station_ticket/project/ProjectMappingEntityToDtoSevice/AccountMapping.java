@@ -33,19 +33,24 @@ public class AccountMapping implements MappingInterface<AccountEntity, AccountDT
               accountDTO.setEmail(entity.getEmail());
               accountDTO.setPhoneNumber(entity.getPhoneNumber());
               accountDTO.setRole(entity.getRole());
+              accountDTO.setIsBlock(entity.getIsBlock());
               accountDTO.setIsDelete(entity.getIsDelete());
 
               // mapping cac thuoc tinh list
               List<Long> listFeedbackEntities_Id = new ArrayList<>();
               List<Long> listTicketEntities_Id = new ArrayList<>();
 
-              if(entity.getListFeedbackEntities() != null){
-                     for (FeedbackEntity e : entity.getListFeedbackEntities()) {
+              List<FeedbackEntity> listFeedbackEntities = entity.getListFeedbackEntities();
+              if(listFeedbackEntities != null && listFeedbackEntities.isEmpty() == false){
+                     for (FeedbackEntity e : listFeedbackEntities) {
                             listFeedbackEntities_Id.add(e.getFeedbackId());
                      }
               }
-              if(entity.getListTicketEntities() != null){
-                     for (TicketEntity e : entity.getListTicketEntities()) {
+
+              List<TicketEntity> listTicketEntities = entity.getListTicketEntities();
+              
+              if(listTicketEntities != null && listTicketEntities.isEmpty() == false){
+                     for (TicketEntity e : listTicketEntities) {
                             listTicketEntities_Id.add(e.getTicketId());
                      }
               }

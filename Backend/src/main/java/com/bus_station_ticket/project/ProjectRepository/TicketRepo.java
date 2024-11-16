@@ -17,7 +17,7 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
        
        @Query(
               value = """
-                     select *
+                     select tk.ticket_id, tk.username_id, tk.bus_id, tk.routes_id, tk.payment_id, tk.discount_id, tk.seat_number, tk.departure_date, tk.price, tk.phone, tk.status, tk.is_delete
                      from account acc, ticket tk
                      where acc.username = tk.username_id and tk.username_id = :userName
               """,
@@ -27,7 +27,7 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
 
        @Query(
               value = """
-                     select *
+                     select tk.ticket_id, tk.username_id, tk.bus_id, tk.routes_id, tk.payment_id, tk.discount_id, tk.seat_number, tk.departure_date, tk.price, tk.phone, tk.status, tk.is_delete
                      from bus b, ticket tk
                      where b.bus_id = tk.bus_id and  tk.bus_id = :busId
               """,
@@ -37,7 +37,7 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
 
        @Query(
               value = """
-                     select *
+                     select tk.ticket_id, tk.username_id, tk.bus_id, tk.routes_id, tk.payment_id, tk.discount_id, tk.seat_number, tk.departure_date, tk.price, tk.phone, tk.status, tk.is_delete
                      from bus_routes br, ticket tk
                      where br.routes_id = tk.routes_id and tk.routes_id = :routesId
               """,
@@ -47,7 +47,7 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
 
        @Query(
               value = """
-                     select *
+                     select tk.ticket_id, tk.username_id, tk.bus_id, tk.routes_id, tk.payment_id, tk.discount_id, tk.seat_number, tk.departure_date, tk.price, tk.phone, tk.status, tk.is_delete
                      from payment p, ticket tk
                      where p.payment_id = tk.payment_id and tk.payment_id = :paymentId
               """,
@@ -57,7 +57,7 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
        
        @Query(
               value = """
-                     select *
+                     select tk.ticket_id, tk.username_id, tk.bus_id, tk.routes_id, tk.payment_id, tk.discount_id, tk.seat_number, tk.departure_date, tk.price, tk.phone, tk.status, tk.is_delete
                      from discount d, ticket tk
                      where d.discount_id = tk.discount_id and tk.discount_id = :discountId
               """,
@@ -73,7 +73,7 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
 
        @Query(
               value = """
-                     select *
+                     select tk.ticket_id, tk.username_id, tk.bus_id, tk.routes_id, tk.payment_id, tk.discount_id, tk.seat_number, tk.departure_date, tk.price, tk.phone, tk.status, tk.is_delete
                      from feedback f, ticket tk
                      where f.ticket_id = tk.ticket_id and f.feedback_id = :feedbackId
               """,

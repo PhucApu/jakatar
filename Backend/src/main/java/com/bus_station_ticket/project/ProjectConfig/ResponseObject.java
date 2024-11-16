@@ -74,11 +74,15 @@ public class ResponseObject {
               // xóa một đối tượng
               String inforPathDeleteData = "Try send HTTP DELETE: /" + nameEntity + "/" + id;
 
+              // ẩn một đối tượng (không xóa)
+              String inforPathHiddenData = "Try send HTTP HIDDEN: /" + nameEntity + "/" + id;
+
               infor.put("getAll", inforPathGetAllData);
               infor.put("getById", inforPathGetData);
               infor.put("insert", inforPathInsertData);
               infor.put("update", inforPathUpdateData);
               infor.put("delete", inforPathDeleteData);
+              infor.put("hidden", inforPathHiddenData);
 
               return infor;
        }

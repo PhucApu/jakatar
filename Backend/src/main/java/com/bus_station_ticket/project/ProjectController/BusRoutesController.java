@@ -5,24 +5,32 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
-
 import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
 import com.bus_station_ticket.project.ProjectService.BusRoutesService;
 
+import jakarta.validation.Valid;
+
 @RestController
-public class BusRoutesController {
+@RequestMapping("/busroutes")
+public class BusRoutesController implements RestApiSimpleControllerInf<BusRoutesDTO, Long> {
 
        @Autowired
        private BusRoutesService busRoutesService;
 
        // Lấy tất cả các BusRoutesEntity có
        // path: "/busroutes"
-       @GetMapping("/busroutes")
+       @GetMapping
+       @Override
        public ResponseEntity<ResponseObject> getAll() {
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
@@ -34,7 +42,7 @@ public class BusRoutesController {
               // Nếu mảng không rỗng
               if (listBusRoutesEntities.isEmpty() == false) {
 
-                     responseObject.setStatus("success"); // set status
+                     responseObject.setStatus(MESS_SUCCESS); // set status
                      responseObject.setData(listBusRoutesEntities); // set data
 
                      responseObject.addMessage("mess", "Successfully retrieved data");
@@ -44,7 +52,7 @@ public class BusRoutesController {
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
-              responseObject.setStatus("failure");
+              responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(listBusRoutesEntities);
               responseObject.addMessage("mess", "There is no data in the database");
               responseObject.addMessage("length", listBusRoutesEntities.size());
@@ -54,18 +62,18 @@ public class BusRoutesController {
 
        // Lấy đối tượng BusRoutesEnity dựa vào routesId
        // path: "/busroutes/{routesId}"
-       @GetMapping("/busroutes/{routesId}")
-       public ResponseEntity<ResponseObject> getByRoutesId(@PathVariable("routesId") Long routesId) {
+       @GetMapping("/{routesId}")
+       public ResponseEntity<ResponseObject> getById(@PathVariable("routesId") Long routesId) {
 
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // Lấy đối tượng AccountEntity dựa vào username
-              BusRoutesDTO busRoutesDTO = busRoutesService.getByRoutesId_toDTO(routesId);
+              BusRoutesDTO busRoutesDTO = busRoutesService.getById_toDTO(routesId);
 
               // kiểm tra
               if (busRoutesDTO != null) {
-                     responseObject.setStatus("success");
+                     responseObject.setStatus(MESS_SUCCESS);
                      responseObject.setData(busRoutesDTO);
                      responseObject.addMessage("mess", "Found data with matching bus routes id");
 
@@ -73,9 +81,133 @@ public class BusRoutesController {
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
-              responseObject.setStatus("failure");
+              responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(busRoutesDTO);
               responseObject.addMessage("mess", "No bus routes entity found with matching routes id");
+
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       }
+
+       @DeleteMapping("/delete/{routesId}")
+       @Override
+       public ResponseEntity<ResponseObject> delete(@PathVariable("routesId") Long id) {
+              // Tạo một đối tượng phản hồi ResponseObject
+              ResponseObject responseObject = new ResponseObject();
+
+              // kiểm tra giá trị id
+              if(isValidId(id) == false){
+                     responseObject.setStatus(MESS_FAILURE);
+                     responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");     
+                     responseObject.setData(id);
+                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+              }
+
+              // Lấy đối tượng AccountEntity dựa vào username
+              BusRoutesDTO busRoutesDTO = busRoutesService.getById_toDTO(id);
+
+              // xóa đối tượng
+              ResponseBoolAndMess responseBoolAndMess = busRoutesService.delete(id);
+
+              // kiểm tra
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
+                     responseObject.setData(busRoutesDTO);
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("busroutes", "{routesId}"));
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+
+              responseObject.setStatus(MESS_FAILURE);
+              responseObject.setData(busRoutesDTO);
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       }
+
+       @DeleteMapping("/hidden/{routesId}")
+       @Override
+       public ResponseEntity<ResponseObject> hidden(@PathVariable("routesId")  Long id) {
+              // Tạo một đối tượng phản hồi ResponseObject
+              ResponseObject responseObject = new ResponseObject();
+
+              // kiểm tra giá trị id
+              if(isValidId(id) == false){
+                     responseObject.setStatus(MESS_FAILURE);
+                     responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");     
+                     responseObject.setData(id);
+                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+              }
+
+              // ẩn đối tượng
+              ResponseBoolAndMess responseBoolAndMess = busRoutesService.invisibleWithoutDelete(id);
+
+              
+              BusRoutesDTO busRoutesDTO = busRoutesService.getById_toDTO(id);
+
+              // kiểm tra
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
+                     responseObject.setData(busRoutesDTO);
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("busroutes", "{routesId}"));
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+
+              responseObject.setStatus(MESS_FAILURE);
+              responseObject.setData(busRoutesDTO);
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       }
+
+       @PostMapping("/insert")
+       @Override
+       public ResponseEntity<ResponseObject> save(@Valid BusRoutesDTO obj) {
+              ResponseObject responseObject = new ResponseObject();
+
+              ResponseBoolAndMess responseBoolAndMess = this.busRoutesService.save_toDTO(obj);
+
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
+                     responseObject.setData(obj);
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+                     
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("busroutes", "{routesId}"));
+
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+
+              responseObject.setStatus(MESS_FAILURE);
+              responseObject.setData(obj);
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       }
+
+       @PutMapping("/update")
+       @Override
+       public ResponseEntity<ResponseObject> update(@Valid BusRoutesDTO obj) {
+              ResponseObject responseObject = new ResponseObject();
+
+              ResponseBoolAndMess responseBoolAndMess = this.busRoutesService.update_toDTO(obj);
+
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
+                     responseObject.setData(obj);
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+                     
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("busroutes", "{routesId}"));
+
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+
+              responseObject.setStatus(MESS_FAILURE);
+              responseObject.setData(obj);
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
