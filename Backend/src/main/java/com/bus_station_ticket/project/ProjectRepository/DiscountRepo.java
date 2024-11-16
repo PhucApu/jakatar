@@ -29,7 +29,7 @@ public interface DiscountRepo extends JpaRepository<DiscountEntity,Long>{
 
        @Query(
               value = """
-                     select *
+                     select dc.discount_id, dc.discount_percentage, dc.valid_from, dc.valid_until, dc.amount, dc.is_delete
                      from discount dc, ticket tk
                      where dc.discount_id = tk.discount_id and tk.ticket_id = :ticketId
               """,

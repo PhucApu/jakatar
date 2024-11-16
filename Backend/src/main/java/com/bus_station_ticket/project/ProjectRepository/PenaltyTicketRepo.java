@@ -7,8 +7,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import com.bus_station_ticket.project.ProjectEntity.PaymentEntity;
 import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
 
 public interface PenaltyTicketRepo extends JpaRepository<PenaltyTicketEntity,Long> {
@@ -18,31 +16,31 @@ public interface PenaltyTicketRepo extends JpaRepository<PenaltyTicketEntity,Lon
 
        public Optional<PenaltyTicketEntity> findByPenaltyDay (LocalDateTime penaltyDay);
 
-       public List<PaymentEntity> findByIsDelete (Boolean isDelete);
+       public List<PenaltyTicketEntity> findByIsDelete (Boolean isDelete);
        
-       public List<PaymentEntity> findByPrice (Float price);
+       public List<PenaltyTicketEntity> findByPrice (Float price);
        
        
        @Query(value = """
-                     select *
+                     select pt.penalty_ticket_id, pt.bus_id, pt.driver_id, pt.penalty_day, pt.description, pt.responsibility, pt.price, pt.is_delete
                      from penalty_ticket pt, employee e
                      where pt.driver_id = e.driver_id and pt.driver_id = :driverId
               """,
               nativeQuery = true 
 
        )
-       public List<PaymentEntity> findByEmployeeEntity_Id (@Param("driverId") Long driverId);
+       public List<PenaltyTicketEntity> findByEmployeeEntity_Id (@Param("driverId") Long driverId);
 
        
        @Query(value = """
-                     select *
+                     select pt.penalty_ticket_id, pt.bus_id, pt.driver_id, pt.penalty_day, pt.description, pt.responsibility, pt.price, pt.is_delete
                      from penalty_ticket pt, bus b
                      where pt.bus_id = b.bus_id and pt.bus_id = :busId
               """,
               nativeQuery = true 
 
        )
-       public List<PaymentEntity> findByBusEntity_Id (@Param("busId") Long busId);
+       public List<PenaltyTicketEntity> findByBusEntity_Id (@Param("busId") Long busId);
 
 
 

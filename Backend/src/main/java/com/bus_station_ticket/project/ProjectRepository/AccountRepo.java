@@ -32,7 +32,7 @@ public interface AccountRepo extends JpaRepository<AccountEntity,String> {
 
        @Query(
               value = """
-                     select * 
+                     select acc.username, acc.password, acc.email, acc.phone, acc.ROLE, acc.is_delete, is_block
                      from account acc,feedback fb
                      where acc.username = fb.username and fb.feedback_id = :feedbackId
               """,
@@ -43,7 +43,7 @@ public interface AccountRepo extends JpaRepository<AccountEntity,String> {
 
        @Query(
               value = """
-                     select * 
+                     select acc.username, acc.password, acc.email, acc.phone, acc.ROLE, acc.is_delete, is_block
                      from account acc,ticket tk
                      where acc.username = tk.username_id and tk.ticket_id = :ticketId
               """,

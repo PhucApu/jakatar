@@ -27,7 +27,7 @@ public interface EmployeeRepo extends JpaRepository<EmployeeEntity, Long> {
 
        @Query(
               value = """
-                     SELECT * 
+                     SELECT e.driver_id, e.is_driver, e.driver_name, e.license_number, e.phone_number, e.is_delete
                      FROM employee e, bus b, bus_employee be 
                      WHERE e.driver_id = be.driver_id AND be.bus_id = b.bus_id AND b.bus_id = :busId
               """,

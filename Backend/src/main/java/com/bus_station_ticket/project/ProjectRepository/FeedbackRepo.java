@@ -9,14 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
-import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 
 public interface FeedbackRepo extends JpaRepository<FeedbackEntity,Long>{
        
        // Truy suất theo thuộc tính
        public Optional<FeedbackEntity> findByFeedbackId (Long feedbackId);
-       
-       public List<FeedbackEntity> findByTicketEntity (TicketEntity ticketEntity);
        
        public List<FeedbackEntity> findByRating (int rating);
        
@@ -26,7 +23,7 @@ public interface FeedbackRepo extends JpaRepository<FeedbackEntity,Long>{
           
        @Query(
               value = """
-                     select *
+                     select fb.feedback_id, fb.username, fb.ticket_id, fb.content, fb.rating, fb.date_comment, fb.is_delete
                      from feedback fb, account acc
                      where fb.username = acc.username and fb.username = :username
               """,
@@ -36,7 +33,7 @@ public interface FeedbackRepo extends JpaRepository<FeedbackEntity,Long>{
        
        @Query(
               value = """
-                     select *
+                     select fb.feedback_id, fb.username, fb.ticket_id, fb.content, fb.rating, fb.date_comment, fb.is_delete
                      from feedback fb, ticket tk
                      where tk.ticket_id = fb.ticket_id and fb.ticket_id = :ticketId
               """,
