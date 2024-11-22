@@ -17,6 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
 
               // Cho phép các origins cụ thể
               config.addAllowedOrigin("http://localhost:3000");
+              config.addAllowedOrigin("http://localhost:5173");
               // Nếu cần thêm origins khác:
               // config.addAllowedOrigin("https://your-production-domain.com");
 
