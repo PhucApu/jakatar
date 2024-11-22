@@ -1,46 +1,56 @@
 package com.bus_station_ticket.project.ProjectConfig;
 
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+
+import io.micrometer.common.lang.NonNull;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class WebConfig implements CorsConfigurationSource {
 
-       @Bean
-       public CorsFilter corsFilter() {
-              UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+       @Override
+       @NonNull
+       public CorsConfiguration getCorsConfiguration(@SuppressWarnings("null") HttpServletRequest request) {
               CorsConfiguration config = new CorsConfiguration();
 
-              // Cho phép các origins cụ thể
-              config.addAllowedOrigin("http://localhost:3000");
-              config.addAllowedOrigin("http://localhost:5173");
-              // Nếu cần thêm origins khác:
-              // config.addAllowedOrigin("https://your-production-domain.com");
+              // Cấu hình allowed origins
+              config.setAllowedOrigins(Arrays.asList(
+                            "http://localhost:5173", // Frontend React
+                            "http://localhost:3000",
+                            "http://localhost:8080" // Backend Spring Boot (nếu cần)
+              ));
 
-              // Cho phép credentials (cookies, authorization headers)
+              // Cấu hình allowed methods
+              config.setAllowedMethods(Arrays.asList(
+                            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+
+              // Cấu hình allowed headers
+              config.setAllowedHeaders(Arrays.asList(
+                            "Origin",
+                            "Content-Type",
+                            "Accept",
+                            "Authorization",
+                            "Access-Control-Allow-Origin",
+                            "Access-Control-Allow-Credentials",
+                            "X-Requested-With"));
+
+              // Cho phép gửi cookie và credentials
               config.setAllowCredentials(true);
 
-              // Cho phép các HTTP methods cụ thể
-              config.addAllowedMethod("GET");
-              config.addAllowedMethod("POST");
-              config.addAllowedMethod("PUT");
-              config.addAllowedMethod("DELETE");
-              config.addAllowedMethod("OPTIONS");
+              // Cấu hình exposed headers
+              config.setExposedHeaders(Arrays.asList(
+                            "Access-Control-Allow-Origin",
+                            "Access-Control-Allow-Credentials",
+                            "Authorization"));
 
-              // Cho phép các headers cụ thể
-              config.addAllowedHeader("Origin");
-              config.addAllowedHeader("Content-Type");
-              config.addAllowedHeader("Accept");
-              config.addAllowedHeader("Authorization");
-
-              // Thời gian cache cho preflight requests (3600 giây = 1 giờ)
+              // Cache preflight requests (1 giờ)
               config.setMaxAge(3600L);
 
-              source.registerCorsConfiguration("/**", config);
-              return new CorsFilter(source);
+              return config;
        }
 }
