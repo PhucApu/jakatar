@@ -31,6 +31,7 @@ public class AccountMapping implements MappingInterface<AccountEntity, AccountDT
               accountDTO.setUserName(entity.getUserName());
               accountDTO.setPassWord(entity.getPassWord());
               accountDTO.setEmail(entity.getEmail());
+              accountDTO.setFullName(entity.getFullName());
               accountDTO.setPhoneNumber(entity.getPhoneNumber());
               accountDTO.setRole(entity.getRole());
               accountDTO.setIsBlock(entity.getIsBlock());
@@ -70,6 +71,7 @@ public class AccountMapping implements MappingInterface<AccountEntity, AccountDT
               accountEntity.setUserName(dto.getUserName());
               accountEntity.setPassWord(dto.getPassWord());
               accountEntity.setEmail(dto.getEmail());
+              accountEntity.setFullName(dto.getFullName());
               accountEntity.setPhoneNumber(dto.getPhoneNumber());
               accountEntity.setRole(dto.getRole());
               accountEntity.setIsBlock(dto.getIsBlock());

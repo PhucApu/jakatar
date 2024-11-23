@@ -20,6 +20,9 @@ public class AccountDTO {
        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@(gmail|outlook)\\.com$", message = "You need to enter your gmail or outlook address")
        private String email;
 
+       @NotBlank(message = "Cannot be left blank !")
+       private String fullName;
+
        @Pattern(regexp = "^(03|05|07|08|09)[0-9]{8}$", message = "Your phone number is not valid")
        private String phoneNumber;
 
@@ -41,12 +44,13 @@ public class AccountDTO {
        public AccountDTO() {
        }
 
-       public AccountDTO(String userName, String passWord, String email, String phoneNumber, String role,
+       public AccountDTO(String userName, String passWord, String email, String fullName, String phoneNumber, String role,
                      Boolean isBlock, Boolean isDelete, List<Long> listFeedbackEntities_Id,
                      List<Long> listTicketEntities_Id) {
               this.userName = userName;
               this.passWord = passWord;
               this.email = email;
+              this.fullName = fullName;
               this.phoneNumber = phoneNumber;
               this.role = role;
               this.isBlock = isBlock;
@@ -54,6 +58,8 @@ public class AccountDTO {
               this.listFeedbackEntities_Id = listFeedbackEntities_Id;
               this.listTicketEntities_Id = listTicketEntities_Id;
        }
+
+       
 
        public String getUserName() {
               return userName;
@@ -125,6 +131,14 @@ public class AccountDTO {
 
        public void setIsDelete(Boolean isDelete) {
               this.isDelete = isDelete;
+       }
+
+       public String getFullName() {
+              return fullName;
+       }
+
+       public void setFullName(String fullName) {
+              this.fullName = fullName;
        }
 
 }
