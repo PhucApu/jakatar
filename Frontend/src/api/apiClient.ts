@@ -1,8 +1,16 @@
 import axios from 'axios';
 
+
+const username = 'user1';
+const password = '123456';
+const token = btoa(`${username}:${password}`);
+
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
   timeout: 10000,
+  headers: {
+    'Authorization': `Basic ${token}`, // Add Basic Auth header
+  },
 });
 
 // apiClient.interceptors.request.use(

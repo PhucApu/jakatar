@@ -5,32 +5,38 @@ import { ToastContainer } from 'react-toastify';
 import { HiPlus } from 'react-icons/hi';
 
 import type { TableColumn } from '@type/common/TableColumn';
-import type { Bus } from '@type/model/Bus';
+import type { User } from '@type/model/User';
 
-import { getBuses, createBus, updateBus, deleteBus } from '../../api/services/admin/busService';
+import {
+  createAccount,
+  getAccounts,
+  updateAccount,
+  deleteAccount,
+  hideAccount,
+} from '../../api/services/admin/accountService';
 
-export default function Bus() {
-  const [data, setData] = useState<Bus[]>([]);
+export default function Account() {
+  const [data, setData] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Partial<Bus>>({});
+  const [formData, setFormData] = useState<Partial<User>>({});
 
-  const columns: TableColumn<Bus>[] = [
-    { name: 'Mã buýt', selector: (row) => row.busId, sortable: true },
-    { name: 'Biển kiểm soát', selector: (row) => row.busNumber, sortable: true },
-    { name: 'Sức chứa', selector: (row) => row.capacity, sortable: true },
-    { name: 'Hãng xe', selector: (row) => row.brand, sortable: true },
-    { name: 'Tình trạng', selector: (row) => row.isDelete, sortable: true },
+  const columns: TableColumn<User>[] = [
+    { name: 'Tài khoản', selector: (row) => row.userName, sortable: true },
+    { name: 'SĐT', selector: (row) => row.phoneNumber, sortable: true },
+    { name: 'Email', selector: (row) => row.email, sortable: true },
+    { name: 'Quyền hạn', selector: (row) => row.role, sortable: true },
+    { name: 'Tình trạng', selector: (row) => row.isBlock, sortable: true },
   ];
 
   useEffect(() => {
-    const fetchBuses = async () => {
+    const fetchUseres = async () => {
       try {
-        const buses = await getBuses();
-        setData(buses);
+        const accounts = await getAccounts();
+        setData(accounts);
       } catch (error: any) {
         setError(error.message);
       } finally {
@@ -38,16 +44,16 @@ export default function Bus() {
       }
     };
 
-    fetchBuses();
+    fetchUseres();
   }, []);
 
-  const handleOpenModal = (item: Bus | null = null) => {
+  const handleOpenModal = (item: User | null = null) => {
     if (item) {
       setIsEditMode(true);
       setFormData(item);
     } else {
       setIsEditMode(false);
-      setFormData({ busNumber: '', capacity: 0, brand: '', isDelete: false });
+      setFormData({ userName: '', phoneNumber: '', email: '', role: '', isBlock: false });
     }
     setOpenModal(true);
   };
@@ -73,63 +79,70 @@ export default function Bus() {
 
   return (
     <div className='p-4 mx-auto'>
-      <h1 className='uppercase font-semibold text-2xl tracking-wide mb-4'>
-        Quản lý buýt
-      </h1>
+      <h1 className='uppercase font-semibold text-2xl tracking-wide mb-4'>Quản lý tài khoản</h1>
       <Button onClick={() => handleOpenModal()} size='sm'>
         <HiPlus className='mr-2 h-5 w-5' />
-        Thêm buýt
+        Thêm tài khoản
       </Button>
       <Table rows={data} columns={columns} onEdit={handleOpenModal} />
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
-        <Modal.Header>{isEditMode ? 'Cập nhật' : 'Thêm buýt'}</Modal.Header>
+        <Modal.Header>{isEditMode ? 'Cập nhật' : 'Thêm tài khoản'}</Modal.Header>
         <Modal.Body>
           <div className='space-y-6'>
             <div className='space-y-2'>
-              <label htmlFor='busNumber'>Biển kiểm soát</label>
+              <label htmlFor='username'>Tên tài khoản</label>
               <TextInput
-                name='busNumber'
-                value={formData.busNumber || ''}
+                name='username'
+                value={formData.userName || ''}
+                disabled={formData.userName ? true : false}
                 onChange={handleChange}
-                placeholder='Nhập biển kiểm soát'
+                placeholder='Nhập tên tài khoản'
               />
             </div>
             <div className='space-y-2'>
-              <label htmlFor='capacity'>Sức chứa</label>
+              <label htmlFor='username'>Họ và tên</label>
               <TextInput
-                name='capacity'
+                name='username'
+                value={formData.userName || ''}
+                disabled={formData.userName ? true : false}
+                onChange={handleChange}
+                placeholder='Nhập họ và tên'
+              />
+            </div>
+            <div className='space-y-2'>
+              <label htmlFor='phoneNumber'>Số điện thoại</label>
+              <TextInput
+                name='phoneNumber'
                 type='number'
-                value={formData.capacity || ''}
+                value={formData.phoneNumber || ''}
                 onChange={handleChange}
-                placeholder='Nhập sức chứa'
+                placeholder='Nhập SĐT'
               />
             </div>
             <div className='space-y-2'>
-              <label htmlFor='brand'>Hãng xe</label>
+              <label htmlFor='email'>Email</label>
               <TextInput
-                name='brand'
-                type='number'
-                value={formData.brand || ''}
+                name='email'
+                type='text'
+                value={formData.email || ''}
+                disabled={formData.email ? true : false}
                 onChange={handleChange}
-                placeholder='Nhập sức chứa'
+                placeholder='Nhập email'
               />
             </div>
             <div className='space-y-2'>
-              <label>Tình trạng</label>
-              <Select value={formData.isDelete ? '1' : '0'}>
+              <label>Quyền hạn</label>
+              <Select>
                 <option value='0'>Không hoạt động</option>
                 <option value='1'>Hoạt động</option>
               </Select>
             </div>
-            <div>
-            <label htmlFor='brand'>Sức chứa</label>
-              <TextInput
-                name='brand'
-                type='number'
-                value={formData.brand || ''}
-                onChange={handleChange}
-                placeholder='Nhập sức chứa'
-              />
+            <div className='space-y-2'>
+              <label>Tình trạng</label>
+              <Select>
+                <option value='0'>Không hoạt động</option>
+                <option value='1'>Hoạt động</option>
+              </Select>
             </div>
           </div>
           <HR className='my-4' />

@@ -17,12 +17,13 @@ export default function AdminSidebar() {
             <Sidebar.Item href="/admin/lich-trinh">Lịch trình</Sidebar.Item>
             <Sidebar.Item href="/admin/xe">Xe</Sidebar.Item>
             <Sidebar.Item href="/admin/tai-xe">Tài xế</Sidebar.Item>
+            <Sidebar.Item href="/admin/ve-phat">Vé phạt</Sidebar.Item>
           </Sidebar.Collapse>
           <Sidebar.Item href="/admin/ve" icon={FaTicketAlt}>
             Vé xe
           </Sidebar.Item>
           <Sidebar.Item href="/admin/khach-hang" icon={HiUser}>
-            Khách hàng
+            Tài khoản
           </Sidebar.Item>
           <Sidebar.Item href="/admin/khuyen-mai" icon={HiShoppingBag}>
             Khuyến mãi
