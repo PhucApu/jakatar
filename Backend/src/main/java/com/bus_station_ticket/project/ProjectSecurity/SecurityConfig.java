@@ -11,7 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.bus_station_ticket.project.ProjectConfig.WebConfig;
 import com.bus_station_ticket.project.ProjectExceptionHandler.ExceptionAccessDeniedHandler;
 import com.bus_station_ticket.project.ProjectExceptionHandler.ExceptionAuthenticationEntryPoint;
 import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
@@ -20,49 +22,45 @@ import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 @EnableWebSecurity
 public class SecurityConfig {
 
-       private final String[] ADMIN_ACCESS_PATH = { 
-              "/accounts/**", 
-              "/buses/**", 
-              "/busroutes/**", 
-              "/discounts/**",
-              "/employees/**", 
-              "/feedbacks/**", 
-              "/payments/**", 
-              "/penaltytickets/**", 
-              "/tickets/**" 
+       private final String[] ADMIN_ACCESS_PATH = {
+                     "/accounts/**",
+                     "/buses/**",
+                     "/busroutes/**",
+                     "/discounts/**",
+                     "/employees/**",
+                     "/feedbacks/**",
+                     "/payments/**",
+                     "/penaltytickets/**",
+                     "/tickets/**"
        };
 
-       private final String[] MANAGER_ACCESS_PATH = { 
-              
-              "/buses",
-              "/buses/{busId}",
-              "/buses/update",
+       private final String[] MANAGER_ACCESS_PATH = {
 
-              "/busroutes",
-              "/busroutes/{routesId}",
-              
-              "/employees",
-              "/employees/{driverId}",
-              "/employees/update", 
-              
-              "/feedbacks",
-              "/feedbacks/{feedbackId}",
-              "/feedbacks/update",
-              "/feedbacks/hidden",
+                     "/buses",
+                     "/buses/{busId}",
+                     "/buses/update",
 
-              
-              "/tickets/**" 
+                     "/busroutes",
+                     "/busroutes/{routesId}",
+
+                     "/employees",
+                     "/employees/{driverId}",
+                     "/employees/update",
+
+                     "/feedbacks",
+                     "/feedbacks/{feedbackId}",
+                     "/feedbacks/update",
+                     "/feedbacks/hidden",
+
+                     "/tickets/**"
        };
-
-       
-
-
 
        // Cấu hình các bộ lọc Filter trong SecurityFilterChain cho việc bảo mật và xác
        // thực
        @Bean
        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
               http
+                            .cors(cors -> cors.configurationSource(new WebConfig()))
                             // kích hoạt xác thực bằng HTTP Basic Filter
                             .httpBasic(request -> request
                                           .authenticationEntryPoint(new ExceptionAuthenticationEntryPoint())
@@ -125,5 +123,10 @@ public class SecurityConfig {
        @Bean
        public ExceptionAuthenticationEntryPoint exceptionAuthenticationEntryPoint() {
               return new ExceptionAuthenticationEntryPoint();
+       }
+
+       @Bean
+       public CorsConfigurationSource configurationSource() {
+              return new WebConfig();
        }
 }
