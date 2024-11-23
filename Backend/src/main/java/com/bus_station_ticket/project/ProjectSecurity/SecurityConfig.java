@@ -1,5 +1,6 @@
 package com.bus_station_ticket.project.ProjectSecurity;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.bus_station_ticket.project.ProjectConfig.WebConfig;
@@ -21,6 +23,9 @@ import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+       @Autowired
+       private JwtFilter jwtFilter;
 
        private final String[] ADMIN_ACCESS_PATH = {
                      "/accounts/**",
@@ -78,6 +83,8 @@ public class SecurityConfig {
                                                         .authenticationEntryPoint(
                                                                       new ExceptionAuthenticationEntryPoint()))
 
+                            // Thêm filter JWT trước Basic Authentication
+                            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                             // vô hiệu hóa bảo mật bằng CSRF Filter
                             .csrf(request -> request.disable())
                             // vô hiệu hóa bảo mật bằng Form
