@@ -20,8 +20,13 @@ import AddressOfAccount from '../components/user/AddressOfAccount';
 import Checkout from '../pages/user/Checkout';
 import Dashboard from '../pages/user/Dashboard';
 import NotFound from '../pages/shared/NotFound';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import UnAuthorized from '../pages/shared/UnAuthorized';
 
 function UserRoute() {
+  const { user } = useSelector((state: RootState) => state.auth);
+
   return (
     <>
       <Header />
@@ -46,6 +51,7 @@ function UserRoute() {
             <Route path='dia-chi' element={<AddressOfAccount />} />
           </Route>
 
+          <Route path='/unauthorized' element={<UnAuthorized />} />
           <Route path='*' element = {<NotFound />} />
         </Routes>
       </div>
