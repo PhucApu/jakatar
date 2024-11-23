@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
@@ -235,12 +236,14 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
               
               ResponseObject responseObject = new ResponseObject();
               
-              AccountDTO accountDTO = this.accountService.getAccountEntityHasLogin();
+              AccountDTO accountDTO = this.accountService.geAccountDTOHasLogin();
 
               // kiem tra
               if(accountDTO != null){
                      responseObject.setStatus(MESS_SUCCESS);
+                     
                      responseObject.addMessage("mess", "Below is the user's authentication information");
+                     responseObject.addMessage("jwtToken", this.accountService.getTokenJwt());
                      responseObject.setData(accountDTO);
               
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
