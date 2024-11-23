@@ -23,6 +23,7 @@ import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.AccountMap
 import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
+import com.bus_station_ticket.project.ProjectSecurity.JwtService;
 import com.bus_station_ticket.project.ProjectSecurity.UserDetailsConfig;
 
 @Service
@@ -39,6 +40,9 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
        @Autowired
        private AccountMapping accountMapping;
+
+       @Autowired
+       private JwtService jwtService;
 
        // Sử dụng để mã hóa mật khẩu
        private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10);
@@ -294,7 +298,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        }
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public AccountDTO getAccountEntityHasLogin() {
+       public AccountDTO geAccountDTOHasLogin() {
               
               Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -309,13 +313,45 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
                             // Lấy username
                             String username = ((UserDetailsConfig) principal).getUsername();
 
-                            // Lấy thông tin AccountEntity
-                            AccountEntity accountEntity = this.repo.findByUserName(username).orElse(null);
+                            // lay doi tuong duoc xac thuc trong csdl
+                            AccountEntity acc = this.repo.findById(username).orElse(null);
+                            
 
-                            return this.accountMapping.toDTO(accountEntity);
+                            return this.accountMapping.toDTO(acc);
                      }
                      return null; 
               }
               return null;
        }
+
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public String getTokenJwt() {
+              
+              Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+              if (authentication != null && authentication.isAuthenticated()) {
+                     
+                     // Lấy ra UserDetails
+                     Object principal = authentication.getPrincipal();
+
+                     // kiểm tra
+                     if (principal instanceof UserDetails) {
+
+                            // Lấy username
+                            String username = ((UserDetailsConfig) principal).getUsername();
+
+                            // lay doi tuong duoc xac thuc trong csdl
+                            AccountEntity acc = this.repo.findById(username).orElse(null);
+                            
+
+                            return jwtService.token(acc);
+                     }
+                     return null; 
+              }
+              return null;
+       }
+
+
+
+
 }
