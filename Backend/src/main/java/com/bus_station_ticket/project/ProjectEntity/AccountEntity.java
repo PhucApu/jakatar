@@ -26,6 +26,10 @@ public class  AccountEntity {
                                                                                     // no
        private String email;
 
+       @Column(name = "full_name", nullable = false, columnDefinition = "VARCHAR(100)") // column: full name, type: text, null:
+                                                                                    // no
+       private String fullName;
+
        @Column(name = "phone", nullable = false, columnDefinition = "VARCHAR(15)") // column: phone, type: nvarchar,
                                                                                     // null: no
        private String phoneNumber;
@@ -59,12 +63,13 @@ public class  AccountEntity {
 
        public AccountEntity() {}
 
-       public AccountEntity(String userName, String passWord, String email, String phoneNumber, String role,
+       public AccountEntity(String userName,String fullName, String passWord, String email, String phoneNumber, String role,
                      Boolean isDelete, Boolean isBlock, List<FeedbackEntity> listFeedbackEntities,
                      List<TicketEntity> listTicketEntities) {
               this.userName = userName;
               this.passWord = passWord;
               this.email = email;
+              this.fullName = fullName;
               this.phoneNumber = phoneNumber;
               this.role = role;
               this.isDelete = isDelete;
@@ -76,6 +81,8 @@ public class  AccountEntity {
        public String getUserName() {
               return userName;
        }
+
+       
 
        public void setUserName(String userName) {
               this.userName = userName;
@@ -151,6 +158,14 @@ public class  AccountEntity {
                             + ", phoneNumber=" + phoneNumber + ", role=" + role + ", isDelete=" + isDelete
                             + ", isBlock=" + isBlock + ", listFeedbackEntities=" + listFeedbackEntities
                             + ", listTicketEntities=" + listTicketEntities + "]";
+       }
+
+       public String getFullName() {
+              return fullName;
+       }
+
+       public void setFullName(String fullName) {
+              this.fullName = fullName;
        }
 
        
