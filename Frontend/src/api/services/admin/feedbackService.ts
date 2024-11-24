@@ -6,42 +6,42 @@ import { Feedback } from '@type/model/Feedback';
 
 export const getFeedbacks = async (): Promise<Feedback[]> => {
   return apiRequest(async () => {
-    const response = await apiClient.get<ApiResponse<Feedback[]>>('/feedbacks');
-    return response.data.data || [];
+    const response = await apiClient.get('/feedbacks');
+    return response.data || [];
   });
 };
 
-export const getFeedbackById = async (feedbackId: string): Promise<Feedback> => {
+export const getFeedbackById = async (feedbackId: string): Promise<ApiResponse<Feedback>> => {
   return apiRequest(async () => {
-    const response = await apiClient.get<ApiResponse<Feedback>>(`/feedbacks/${feedbackId}`);
-    return response.data.data!;
+    const response = await apiClient.get(`/feedbacks/${feedbackId}`);
+    return response.data;
   });
 };
 
-export const createFeedback = async (feedback: Partial<Feedback>): Promise<Feedback> => {
+export const createFeedback = async (feedback: Partial<Feedback>): Promise<ApiResponse<Feedback>> => {
   return apiRequest(async () => {
-    const response = await apiClient.post<ApiResponse<Feedback>>('/feedbacks/insert', feedback);
-    return response.data.data!;
+    const response = await apiClient.post('/feedbacks/insert', feedback);
+    return response.data;
   });
 };
 
-export const updateFeedback = async (feedback: Partial<Feedback>): Promise<Feedback> => {
+export const updateFeedback = async (feedback: Partial<Feedback>): Promise<ApiResponse<Feedback>> => {
   return apiRequest(async () => {
-    const response = await apiClient.put<ApiResponse<Feedback>>('/feedbacks/update', feedback);
-    return response.data.data!;
+    const response = await apiClient.put('/feedbacks/update', feedback);
+    return response.data;
   });
 };
 
-export const deleteFeedback = async (feedbackId: string): Promise<Feedback> => {
+export const deleteFeedback = async (feedbackId: string): Promise<ApiResponse<Feedback>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete<ApiResponse<Feedback>>(`/feedbacks/${feedbackId}`);
-    return response.data.data!;
+    const response = await apiClient.delete(`/feedbacks/${feedbackId}`);
+    return response.data;
   });
 };
 
-export const hideFeedback = async (feedbackId: string): Promise<Feedback> => {
+export const hideFeedback = async (feedbackId: string): Promise<ApiResponse<Feedback>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete<ApiResponse<Feedback>>(`/feedbacks/hidden/${feedbackId}`);
-    return response.data.data!;
+    const response = await apiClient.delete(`/feedbacks/hidden/${feedbackId}`);
+    return response.data;
   });
 };
