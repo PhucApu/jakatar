@@ -4,44 +4,44 @@ import { apiRequest } from '../apiRequest';
 import { ApiResponse } from '@type/common/ApiResponse';
 import { Discount } from '@type/model/Discount';
 
-export const getDiscounts = async (): Promise<Discount[]> => {
+export const getDiscounts = async (): Promise<ApiResponse<Discount[]>> => {
   return apiRequest(async () => {
-    const response = await apiClient.get<ApiResponse<Discount[]>>('/discounts');
-    return response.data.data || [];
+    const response = await apiClient.get('/discounts');
+    return response.data || [];
   });
 };
 
-export const getDiscountById = async (discountId: string): Promise<Discount> => {
+export const getDiscountById = async (discountId: string): Promise<ApiResponse<Discount>> => {
   return apiRequest(async () => {
-    const response = await apiClient.get<ApiResponse<Discount>>(`/discounts/${discountId}`);
-    return response.data.data!;
+    const response = await apiClient.get(`/discounts/${discountId}`);
+    return response.data;
   });
 };
 
-export const createDiscount = async (discount: Partial<Discount>): Promise<Discount> => {
+export const createDiscount = async (discount: Partial<Discount>): Promise<ApiResponse<Discount>> => {
   return apiRequest(async () => {
-    const response = await apiClient.post<ApiResponse<Discount>>('/discounts/insert', discount);
-    return response.data.data!;
+    const response = await apiClient.post('/discounts/insert', discount);
+    return response.data;
   });
 };
 
-export const updateDiscount = async (discount: Partial<Discount>): Promise<Discount> => {
+export const updateDiscount = async (discount: Partial<Discount>): Promise<ApiResponse<Discount>> => {
   return apiRequest(async () => {
-    const response = await apiClient.put<ApiResponse<Discount>>('/discounts/update', discount);
-    return response.data.data!;
+    const response = await apiClient.put('/discounts/update', discount);
+    return response.data;
   });
 };
 
-export const deleteDiscount = async (discountId: string): Promise<Discount> => {
+export const deleteDiscount = async (discountId: string): Promise<ApiResponse<Discount>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete<ApiResponse<Discount>>(`/discounts/${discountId}`);
-    return response.data.data!;
+    const response = await apiClient.delete(`/discounts/${discountId}`);
+    return response.data;
   });
 };
 
-export const hideDiscount = async (discountId: string): Promise<Discount> => {
+export const hideDiscount = async (discountId: string): Promise<ApiResponse<Discount>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete<ApiResponse<Discount>>(`/discounts/hidden/${discountId}`);
-    return response.data.data!;
+    const response = await apiClient.delete(`/discounts/hidden/${discountId}`);
+    return response.data;
   });
 };

@@ -4,44 +4,44 @@ import { apiRequest } from '../apiRequest';
 import { ApiResponse } from '@type/common/ApiResponse';
 import { Payment } from '@type/model/Payment';
 
-export const getPayments = async (): Promise<Payment[]> => {
+export const getPayments = async (): Promise<ApiResponse<Payment[]>> => {
   return apiRequest(async () => {
-    const response = await apiClient.get<ApiResponse<Payment[]>>('/payments');
-    return response.data.data || [];
+    const response = await apiClient.get('/payments');
+    return response.data || [];
   });
 };
 
-export const getPaymentById = async (paymentId: string): Promise<Payment> => {
+export const getPaymentById = async (paymentId: string): Promise<ApiResponse<Payment>> => {
   return apiRequest(async () => {
-    const response = await apiClient.get<ApiResponse<Payment>>(`/payments/${paymentId}`);
-    return response.data.data!;
+    const response = await apiClient.get(`/payments/${paymentId}`);
+    return response.data;
   });
 };
 
-export const createPayment = async (payment: Partial<Payment>): Promise<Payment> => {
+export const createPayment = async (payment: Partial<Payment>): Promise<ApiResponse<Payment>> => {
   return apiRequest(async () => {
-    const response = await apiClient.post<ApiResponse<Payment>>('/payments/insert', payment);
-    return response.data.data!;
+    const response = await apiClient.post('/payments/insert', payment);
+    return response.data;
   });
 };
 
-export const updatePayment = async (payment: Partial<Payment>): Promise<Payment> => {
+export const updatePayment = async (payment: Partial<Payment>): Promise<ApiResponse<Payment>> => {
   return apiRequest(async () => {
-    const response = await apiClient.put<ApiResponse<Payment>>('/payments/update', payment);
-    return response.data.data!;
+    const response = await apiClient.put('/payments/update', payment);
+    return response.data;
   });
 };
 
-export const deletePayment = async (paymentId: string): Promise<Payment> => {
+export const deletePayment = async (paymentId: string): Promise<ApiResponse<Payment>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete<ApiResponse<Payment>>(`/payments/${paymentId}`);
-    return response.data.data!;
+    const response = await apiClient.delete(`/payments/${paymentId}`);
+    return response.data;
   });
 };
 
-export const hidePayment = async (paymentId: string): Promise<Payment> => {
+export const hidePayment = async (paymentId: string): Promise<ApiResponse<Payment>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete<ApiResponse<Payment>>(`/payments/hidden/${paymentId}`);
-    return response.data.data!;
+    const response = await apiClient.delete(`/payments/hidden/${paymentId}`);
+    return response.data;
   });
 };
