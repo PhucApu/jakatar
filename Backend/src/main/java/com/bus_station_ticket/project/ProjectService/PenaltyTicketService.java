@@ -16,6 +16,8 @@ import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
 import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.PenaltyTicketMapping;
+import com.bus_station_ticket.project.ProjectRepository.BusRepo;
+import com.bus_station_ticket.project.ProjectRepository.EmployeeRepo;
 import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
 
 @Service
@@ -23,6 +25,12 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
 
        @Autowired
        private PenaltyTicketRepo repo;
+
+       @Autowired
+       private BusRepo busRepo;
+
+       @Autowired
+       private EmployeeRepo employeeRepo;
 
        @Autowired
        private PenaltyTicketMapping penaltyTicketMapping;
@@ -98,13 +106,12 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
        @Override
        public ResponseBoolAndMess save(PenaltyTicketEntity entityObj) {
 
-              Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
+              // Optional<PenaltyTicketEntity> optional =
+              // this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
 
-              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
-                     if(entityObj.getBusEntity() != null){
-                            entityObj.setBusEntity(entityObj.getBusEntity());
-                            this.repo.save(entityObj);
-                     }
+              if (isForeignKeyEmpty(entityObj) == false) {
+                     entityObj.setPenaltyTicketId(null);
+                     this.repo.save(entityObj);
                      // System.out.println(entityObj.getBusEntity().getBusNumber());
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -114,10 +121,14 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess save_toDTO(PenaltyTicketDTO dtoObj) {
-              
-              PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
 
-              return save(penaltyTicketEntity);
+              // kiem tra thuoc tinh khoa ngoai
+              if (isHasForeignKeyEntity(dtoObj)) {
+                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
+
+                     return save(penaltyTicketEntity);
+              }
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -130,16 +141,21 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
+              return new ResponseBoolAndMess(false,
+                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess update_toDTO(PenaltyTicketDTO dtoObj) {
 
-              PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
+              // kiem tra thuoc tinh khoa ngoai
+              if (isHasForeignKeyEntity(dtoObj)) {
+                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
 
-              return update(penaltyTicketEntity);
+                     return update(penaltyTicketEntity);
+              }
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -189,6 +205,23 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
                      return false;
               }
               return true;
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       @Override
+       public Boolean isHasForeignKeyEntity(PenaltyTicketDTO dtoObj) {
+              // PenaltyTicket co 2 thuocj tinh khoa ngoai bus_number va driverId
+              // kiem tra
+
+              BusEntity busEntity = this.busRepo.findByBusId(dtoObj.getBusEntity_Id()).orElse(null);
+              EmployeeEntity employeeEntity = this.employeeRepo.findByDriverId(dtoObj.getEmployeeEntity_Id())
+                            .orElse(null);
+
+              if (busEntity != null && employeeEntity != null) {
+                     return true;
+              }
+
+              return false;
        }
 
 }

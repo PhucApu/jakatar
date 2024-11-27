@@ -101,9 +101,10 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
        @Override
        public ResponseBoolAndMess save(PaymentEntity entityObj) {
 
-              Optional<PaymentEntity> optional = this.repo.findByPaymentId(entityObj.getPaymentId());
+              // Optional<PaymentEntity> optional = this.repo.findByPaymentId(entityObj.getPaymentId());
 
-              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
+              if ( isForeignKeyEmpty(entityObj) == false) {
+                     entityObj.setPaymentId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -200,5 +201,14 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
               // payment khong co thuoc tinh khoa ngoai
               return false;
        }
+
+       @Transactional
+       @Override
+       public Boolean isHasForeignKeyEntity(PaymentDTO dtoObj) {
+              // payment khong co thuoc tinh khoa ngoai
+              return true;
+       }
+
+       
 
 }
