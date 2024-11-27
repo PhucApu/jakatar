@@ -11,6 +11,7 @@ import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
 import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
+import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
 import com.bus_station_ticket.project.ProjectRepository.EmployeeRepo;
 import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
@@ -23,6 +24,9 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
 
        @Autowired
        private TicketRepo ticketRepo;
+
+       @Autowired
+       private BusRoutesRepo busRoutesRepo;
 
        @Autowired
        private PenaltyTicketRepo penaltyTicketRepo;
@@ -64,6 +68,8 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
               busDTO.setListEmployeeEntities_Id(listEmployeeEntities_Id);
               busDTO.setListTicketEntities_Id(listTicketEntities_Id);
               busDTO.setListPenaltyTicketEntities_Id(listPenaltyTicketEntities_Id);
+
+              busDTO.setBusRoutes_Id(entity.getBusRoutesEntity() != null ? entity.getBusRoutesEntity().getRoutesId() : null);
 
               return busDTO;
        }
@@ -109,6 +115,9 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
                      }
               }
               busEntity.setListPenaltyTicketEntities(listPenaltyTicketEntities);
+
+              busEntity.setBusRoutesEntity(busRoutesRepo.findByRoutesId(dto.getBusRoutes_Id()).orElse(null));
+              
 
               return busEntity;
        }

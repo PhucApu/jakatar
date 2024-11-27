@@ -34,6 +34,9 @@ public class BusDTO {
 
        @NotNull(message = "Penalty ticket entity IDs cannot be null")
        private List<Long> listPenaltyTicketEntities_Id;
+       
+       // @NotNull(message = "Penalty ticket entity IDs cannot be null")
+       private Long busRoutes_Id;
 
        public BusDTO() {
        }
@@ -49,6 +52,7 @@ public class BusDTO {
               this.listPenaltyTicketEntities_Id = listPenaltyTicketEntities_Id;
        }
 
+       
        public Long getBusId() {
               return busId;
        }
@@ -111,6 +115,14 @@ public class BusDTO {
 
        public void setListPenaltyTicketEntities_Id(List<Long> listPenaltyTicketEntities_Id) {
               this.listPenaltyTicketEntities_Id = listPenaltyTicketEntities_Id;
+       }
+
+       public Long getBusRoutes_Id() {
+              return busRoutes_Id;
+       }
+
+       public void setBusRoutes_Id(Long busRoutes_Id) {
+              this.busRoutes_Id = busRoutes_Id;
        }
 
 }

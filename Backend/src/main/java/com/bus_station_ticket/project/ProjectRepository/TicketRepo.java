@@ -35,15 +35,17 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
        )
        public List<TicketEntity> findByBusEntity_Id (@Param("busId") Long busId);
 
-       @Query(
-              value = """
-                     select tk.ticket_id, tk.username_id, tk.bus_id, tk.routes_id, tk.payment_id, tk.discount_id, tk.seat_number, tk.departure_date, tk.price, tk.phone, tk.status, tk.is_delete
-                     from bus_routes br, ticket tk
-                     where br.routes_id = tk.routes_id and tk.routes_id = :routesId
-              """,
-              nativeQuery =  true
-       )
-       public List<TicketEntity> findByBusRoutesEntity_Id (@Param("routesId") Long routesId);
+       // @Query(
+       //        value = """
+       //               select tk.ticket_id, tk.username_id, tk.bus_id, tk.routes_id, tk.payment_id, tk.discount_id, tk.seat_number, tk.departure_date, tk.price, tk.phone, tk.status, tk.is_delete
+       //               from bus_routes br, ticket tk
+       //               where br.routes_id = tk.routes_id and tk.routes_id = :routesId
+       //        """,
+       //        nativeQuery =  true
+       // )
+       // public List<TicketEntity> findByBusRoutesEntity_Id (@Param("routesId") Long routesId);
+
+       public List<TicketEntity> findByRoutesId (Long routesId);
 
        @Query(
               value = """
@@ -82,4 +84,25 @@ public interface TicketRepo extends JpaRepository<TicketEntity,Long>{
        public Optional<TicketEntity> findByFeedbackEntity_Id (@Param("feedbackId") Long feedbackId);
 
        public List<TicketEntity> findByIsDelete (Boolean isDelete);
+
+
+       @Query(
+              value = """
+                     select tk.ticket_id, tk.username_id, tk.bus_id, tk.routes_id, tk.payment_id, tk.discount_id, tk.seat_number, tk.departure_date, tk.price, tk.phone, tk.status, tk.is_delete
+                     from ticket tk, bus b, bus_routes br
+                     where 
+                     tk.bus_id = b.bus_id 
+                     and b.routes_id = br.routes_id 
+                     and b.bus_id = :busId
+                     and br.departure_location = :departureLocation
+                     and br.destination_location = :destinationLocation
+                     and br.departure_time = :departureTime
+                     and br.arival_time = :arivalTime
+                     and tk.status != 'failure'
+
+              """,
+              nativeQuery = true
+       )
+
+       public List<TicketEntity> findByBusAndRoutes (@Param("busId") Long busId, @Param("departureLocation") String departureLocation, @Param("destinationLocation") String destinationLocation, @Param("departureTime")  LocalDateTime departureTime, @Param("arivalTime") LocalDateTime arivalTime);
 }

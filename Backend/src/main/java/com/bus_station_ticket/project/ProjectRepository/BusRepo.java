@@ -51,6 +51,16 @@ public interface BusRepo extends JpaRepository<BusEntity,Long> {
               nativeQuery = true
 
        )
-       public BusEntity findByPenaltyTicket_Id(@Param("penaltyTicketId") Long penaltyTicketId);
+       public Optional<BusEntity> findByPenaltyTicket_Id(@Param("penaltyTicketId") Long penaltyTicketId);
+
+       @Query(
+              value = """
+                     select b.bus_id, b.bus_number, b.capacity, b.brand, b.routes_id, b.is_delete
+                     from bus b, bus_routes br
+                     where b.routes_id = br.routes_id and br.routes_id = :routesId
+              """,
+              nativeQuery = true 
+       )
+       public List<BusEntity> findByRoutes_Id (@Param("routesId") Long routesId);
 
 }
