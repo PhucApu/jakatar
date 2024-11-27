@@ -20,7 +20,12 @@ import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
 import com.bus_station_ticket.project.ProjectEntity.PaymentEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.TicketMapping;
+import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
+import com.bus_station_ticket.project.ProjectRepository.BusRepo;
+import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
+import com.bus_station_ticket.project.ProjectRepository.DiscountRepo;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
+import com.bus_station_ticket.project.ProjectRepository.PaymentRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
@@ -28,6 +33,21 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
        @Autowired
        private TicketRepo repo;
+
+       @Autowired
+       private AccountRepo accountRepo;
+
+       @Autowired
+       private BusRepo busRepo;
+
+       @Autowired
+       private DiscountRepo discountRepo;
+
+       @Autowired
+       private BusRoutesRepo busRoutesRepo;
+
+       @Autowired
+       private PaymentRepo paymentRepo;
 
        @Autowired
        private FeedbackRepo feedbackRepo;
@@ -106,9 +126,11 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        @Override
        public ResponseBoolAndMess save(TicketEntity entityObj) {
 
-              Optional<TicketEntity> optional = this.repo.findByTicketId(entityObj.getTicketId());
+              // Optional<TicketEntity> optional =
+              // this.repo.findByTicketId(entityObj.getTicketId());
 
-              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
+              if (isForeignKeyEmpty(entityObj) == false && isRoutesIdVal(entityObj) == true) {
+                     entityObj.setTicketId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -118,9 +140,16 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess save_toDTO(TicketDTO dtoObj) {
-              TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
 
-              return save(ticketEntity);
+              // kiem tra thuoc tinnh khoa ngoai
+
+              if (isHasForeignKeyEntity(dtoObj)) {
+                     TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
+
+                     return save(ticketEntity);
+              }
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -129,20 +158,26 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
               Optional<TicketEntity> optional = this.repo.findByTicketId(entityObj.getTicketId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isRoutesIdVal(entityObj) == true) {
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
+              return new ResponseBoolAndMess(false,
+                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess update_toDTO(TicketDTO dtoObj) {
 
-              TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
+              // kiem tra thuoc tinnh khoa ngoai
 
-              return update(ticketEntity);
+              if (isHasForeignKeyEntity(dtoObj)) {
+                     TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
+
+                     return update(ticketEntity);
+              }
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -203,21 +238,62 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        public Boolean isForeignKeyEmpty(TicketEntity entityObj) {
               // Ticket co 5 thuoc tinh khoa ngoai: account_name, bus_id, route_id,
               // payment_id, discount_id
+
               // kiem tra
               AccountEntity accountEntity = entityObj.getAccountEntity();
               BusEntity busEntity = entityObj.getBusEntity();
-              BusRoutesEntity busRoutesEntity = entityObj.getBusRoutesEntity();
+              Long routesId = entityObj.getRoutes_Id();
               PaymentEntity paymentEntity = entityObj.getPaymentEntity();
-              DiscountEntity discountEntity = entityObj.getDiscountEntity();
+
+              // Do discount co tthe null ne khong can kiem tra
+              // DiscountEntity discountEntity = entityObj.getDiscountEntity();
+
+              if (accountEntity != null
+                            && busEntity != null
+                            && routesId != null
+                            && paymentEntity != null) {
+
+                     return false;
+              }
+              return true;
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       @Override
+       public Boolean isHasForeignKeyEntity(TicketDTO dtoObj) {
+              // Ticket co 5 thuoc tinh khoa ngoai: account_name, bus_id, route_id,
+              // payment_id, discount_id
+              // kiem tra
+              AccountEntity accountEntity = this.accountRepo.findByUserName(dtoObj.getAccountEnity_Id()).orElse(null);
+              BusEntity busEntity = this.busRepo.findByBusId(dtoObj.getBusEntity_Id()).orElse(null);
+              BusRoutesEntity busRoutesEntity = this.busRoutesRepo.findByRoutesId(dtoObj.getBusRoutesEntity_Id())
+                            .orElse(null);
+              PaymentEntity paymentEntity = this.paymentRepo.findByPaymentId(dtoObj.getPaymentEntity_Id()).orElse(null);
+              DiscountEntity discountEntity = this.discountRepo.findByDiscountId(dtoObj.getDiscountEntity_Id())
+                            .orElse(null);
 
               if (accountEntity != null
                             && busEntity != null
                             && busRoutesEntity != null
                             && paymentEntity != null
                             && discountEntity != null) {
-                     return false;
+
+                     return true;
               }
-              return true;
+
+              return false;
+       }
+
+       // kiểm tra xem routes id có được phân cho bus chạy không
+       @Transactional
+       public Boolean isRoutesIdVal(TicketEntity ticketEntity) {
+              Long routesId = ticketEntity.getRoutes_Id();
+              BusEntity busEntity = ticketEntity.getBusEntity();
+
+              if (busEntity.getBusRoutesEntity().getRoutesId().equals(routesId)) {
+                     return true;
+              }
+              return false;
        }
 
 }

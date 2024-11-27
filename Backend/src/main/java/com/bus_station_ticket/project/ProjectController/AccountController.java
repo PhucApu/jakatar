@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bus_station_ticket.project.ProjectConfig.LoggerConfig;
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.AccountDTO;
@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/accounts")
-public class AccountController implements RestApiSimpleControllerInf<AccountDTO,String> {
+public class AccountController implements RestApiSimpleControllerInf<AccountDTO, String> {
 
        @Autowired
        private AccountService accountService;
@@ -52,6 +52,9 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.addMessage("length", listAccountEnities.size());
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
 
+                     // ghi logger
+                     LoggerConfig.writeInfoLevel(AccountController.class, "Successfully retrieved data", "getAll");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
@@ -59,6 +62,10 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
               responseObject.setData(listAccountEnities);
               responseObject.addMessage("mess", "There is no data in the database");
               responseObject.addMessage("length", listAccountEnities.size());
+
+              // ghi logger
+              // ghi logger
+              LoggerConfig.writeInfoLevel(AccountController.class, "getAll", "There is no data in the database");
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
@@ -72,9 +79,9 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
               ResponseObject responseObject = new ResponseObject();
 
               // kiểm tra giá trị id
-              if(isValidId(id) == false){
+              if (isValidId(id) == false) {
                      responseObject.setStatus(MESS_FAILURE);
-                     responseObject.addMessage("mess", "Incorrect path variable value");     
+                     responseObject.addMessage("mess", "Incorrect path variable value");
                      responseObject.setData(id);
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
@@ -114,7 +121,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.setStatus(MESS_SUCCESS);
                      responseObject.setData(accountDTO);
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
-                     
+
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
@@ -124,21 +131,20 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
               responseObject.setData(accountDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
-
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
 
        @DeleteMapping("/delete/{username-id}")
        @Override
        public ResponseEntity<ResponseObject> delete(@PathVariable("username-id") String id) {
-              
+
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // kiểm tra giá trị id
-              if(isValidId(id) == false){
+              if (isValidId(id) == false) {
                      responseObject.setStatus(MESS_FAILURE);
-                     responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");     
+                     responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
@@ -169,14 +175,14 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
        @DeleteMapping("/hidden/{username-id}")
        @Override
        public ResponseEntity<ResponseObject> hidden(@PathVariable("username-id") String id) {
-              
+
               // Tạo một đối tượng phản hồi ResponseObject
               ResponseObject responseObject = new ResponseObject();
 
               // kiểm tra giá trị id
-              if(isValidId(id) == false){
+              if (isValidId(id) == false) {
                      responseObject.setStatus(MESS_FAILURE);
-                     responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");     
+                     responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
@@ -207,7 +213,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
        @PutMapping("/update")
        @Override
        public ResponseEntity<ResponseObject> update(@Valid @RequestBody AccountDTO accountDTO) {
-              
+
               ResponseObject responseObject = new ResponseObject();
 
               ResponseBoolAndMess responseBoolAndMess = this.accountService.update_toDTO(accountDTO);
@@ -216,7 +222,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.setStatus(MESS_SUCCESS);
                      responseObject.setData(accountDTO);
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
-                     
+
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
@@ -226,33 +232,32 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
               responseObject.setData(accountDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
-
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
 
        }
 
        @PostMapping("/info-login")
-       public ResponseEntity<ResponseObject> getInfoLogin (){
-              
+       public ResponseEntity<ResponseObject> getInfoLogin() {
+
               ResponseObject responseObject = new ResponseObject();
-              
+
               AccountDTO accountDTO = this.accountService.geAccountDTOHasLogin();
 
               // kiem tra
-              if(accountDTO != null){
+              if (accountDTO != null) {
                      responseObject.setStatus(MESS_SUCCESS);
-                     
+
                      responseObject.addMessage("mess", "Below is the user's authentication information");
                      responseObject.addMessage("jwtToken", this.accountService.getTokenJwt());
                      responseObject.setData(accountDTO);
-              
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
               responseObject.setStatus(MESS_FAILURE);
               responseObject.addMessage("mess", "Could not get user authentication information");
 
               responseObject.setData(null);
-       
+
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
        }

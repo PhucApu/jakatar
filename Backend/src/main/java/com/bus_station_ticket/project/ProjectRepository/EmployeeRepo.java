@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -35,5 +36,23 @@ public interface EmployeeRepo extends JpaRepository<EmployeeEntity, Long> {
        )
        public List<EmployeeEntity> findByBusEntityId(@Param("busId") Long busId);
 
-       
+       @Modifying
+       @Query(
+              value = """
+                     DELETE FROM bus_employee be 
+                     WHERE be.driver_id = :driverId AND be.bus_id = :busId
+              """,
+              nativeQuery = true
+       )
+       public int deleteBusAndEmplyee(@Param("busId") Long busId, @Param("driverId") Long driverId);
+
+       @Modifying
+       @Query(
+              value = """
+                     INSERT INTO bus_employee (bus_id, driver_id) 
+                     VALUES (:busId, :driverId)
+              """,
+              nativeQuery = true
+       )
+       public int insertBusAndEmplyee(@Param("busId") Long busId, @Param("driverId") Long driverId);
 }

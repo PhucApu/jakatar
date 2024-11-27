@@ -36,15 +36,18 @@ public class BusRoutesDTO {
        @NotNull(message = "Delete status cannot be null")
        private Boolean isDelete;
 
-       @NotNull(message = "Ticket entity IDs cannot be null")
-       private List<Long> listTicketEntities_Id;
+       // @NotNull(message = "Ticket entity IDs cannot be null")
+       // private List<Long> listTicketEntities_Id;
+
+       @NotNull(message = "Bus entity IDs cannot be null")
+       private List<Long> listBusEntities_Id;
+
 
        public BusRoutesDTO() {
        }
 
        public BusRoutesDTO(Long routesId, String departureLocation, String destinationLocation, float distanceKilometer,
-                     LocalDateTime departureTime, LocalDateTime arivalTime, float price, Boolean isDelete,
-                     List<Long> listTicketEntities_Id) {
+                     LocalDateTime departureTime, LocalDateTime arivalTime, float price, Boolean isDelete) {
               this.routesId = routesId;
               this.departureLocation = departureLocation;
               this.destinationLocation = destinationLocation;
@@ -53,8 +56,10 @@ public class BusRoutesDTO {
               this.arivalTime = arivalTime;
               this.price = price;
               this.isDelete = isDelete;
-              this.listTicketEntities_Id = listTicketEntities_Id;
+              // this.listTicketEntities_Id = listTicketEntities_Id;
        }
+
+       
 
        public Long getRoutesId() {
               return routesId;
@@ -120,12 +125,20 @@ public class BusRoutesDTO {
               this.isDelete = isDelete;
        }
 
-       public List<Long> getListTicketEntities_Id() {
-              return listTicketEntities_Id;
+       // public List<Long> getListTicketEntities_Id() {
+       //        return listTicketEntities_Id;
+       // }
+
+       // public void setListTicketEntities_Id(List<Long> listTicketEntities_Id) {
+       //        this.listTicketEntities_Id = listTicketEntities_Id;
+       // }
+
+       public List<Long> getListtBusEntities_Id() {
+              return listBusEntities_Id;
        }
 
-       public void setListTicketEntities_Id(List<Long> listTicketEntities_Id) {
-              this.listTicketEntities_Id = listTicketEntities_Id;
+       public void setListtBusEntities_Id(List<Long> listtBusEntities_Id) {
+              this.listBusEntities_Id = listtBusEntities_Id;
        }
 
 }

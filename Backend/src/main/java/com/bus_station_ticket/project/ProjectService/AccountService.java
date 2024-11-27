@@ -152,11 +152,15 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
               // Nếu kết quả có
               if (optionalAccount.isPresent() && isForeignKeyEmpty(accountEnity) == false) {
-                     // Mã hóa mật khẩu trước khi thêm vào csdl
-                     AccountEntity accountEntityEncode = encodePassWord(accountEnity);
+                     // kiem tra xem nguoi dung co cap nhat pass khong
+                     if(isPassWordUpdate(accountEnity)){
+                            // Mã hóa mật khẩu mới trước khi thêm vào csdl
+                            AccountEntity accountEntityEncode = encodePassWord(accountEnity);
 
-                     // sửa AccountEntity vào
-                     this.repo.save(accountEntityEncode);
+                            // sửa AccountEntity vào
+                            this.repo.save(accountEntityEncode);
+                     }
+                     this.repo.save(accountEnity);
 
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
@@ -298,6 +302,26 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        }
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public Boolean isPassWordUpdate(AccountEntity accountEntity){
+              
+              String pass = accountEntity.getPassWord();
+
+              // lay data doi tuong cu
+              AccountEntity accountEntityOld = this.repo.findByUserName(accountEntity.getUserName()).orElse(null);
+
+              // encode
+              String passEncocdeNew = bCryptPasswordEncoder.encode(pass);
+              String passEncodeOld = accountEntityOld.getPassWord();
+
+              if(passEncocdeNew.equals(passEncodeOld) == true){
+                     return false;
+              }
+              return true;
+
+
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
        public AccountDTO geAccountDTOHasLogin() {
               
               Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -326,11 +350,11 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
        public String getTokenJwt() {
-              
+
               Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
               if (authentication != null && authentication.isAuthenticated()) {
-                     
+
                      // Lấy ra UserDetails
                      Object principal = authentication.getPrincipal();
 
@@ -342,16 +366,21 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
                             // lay doi tuong duoc xac thuc trong csdl
                             AccountEntity acc = this.repo.findById(username).orElse(null);
-                            
 
                             return jwtService.token(acc);
                      }
-                     return null; 
+                     return null;
               }
               return null;
        }
 
+       @Transactional
+       @Override
+       public Boolean isHasForeignKeyEntity(AccountDTO dtoObj) {
+              // Account không có thuộc tinhgs khóa ngoại
+              return true;
+       }
 
-
+       
 
 }

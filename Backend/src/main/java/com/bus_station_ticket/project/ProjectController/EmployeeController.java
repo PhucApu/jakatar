@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
@@ -193,6 +194,54 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
               ResponseObject responseObject = new ResponseObject();
 
               ResponseBoolAndMess responseBoolAndMess = this.employeeService.update_toDTO(obj);
+
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
+                     responseObject.setData(obj);
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
+
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+
+              responseObject.setStatus(MESS_FAILURE);
+              responseObject.setData(obj);
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       }
+
+       @PutMapping("/update/bus_and_employee")
+       public ResponseEntity<ResponseObject> updateBusAndEmployeee(@Valid @RequestParam("busId") Long busId, @Valid @RequestParam("driverId") Long driverId) {
+              ResponseObject responseObject = new ResponseObject();
+
+              ResponseBoolAndMess responseBoolAndMess = this.employeeService.addEmployeeDriverBus(driverId,busId);
+              EmployeeDTO obj = this.employeeService.getById_toDTO(driverId);
+
+              if (responseBoolAndMess.getValueBool()) {
+                     responseObject.setStatus(MESS_SUCCESS);
+                     responseObject.setData(obj);
+                     responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
+
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+
+              responseObject.setStatus(MESS_FAILURE);
+              responseObject.setData(obj);
+              responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       }
+
+       @DeleteMapping("/delete/bus_and_employee")
+       public ResponseEntity<ResponseObject> deleteBusAndEmployeee(@Valid @RequestParam("busId") Long busId, @Valid @RequestParam("driverId") Long driverId) {
+              ResponseObject responseObject = new ResponseObject();
+
+              ResponseBoolAndMess responseBoolAndMess = this.employeeService.deleteEmployeeDriverBus(driverId,busId);
+              EmployeeDTO obj = this.employeeService.getById_toDTO(driverId);
 
               if (responseBoolAndMess.getValueBool()) {
                      responseObject.setStatus(MESS_SUCCESS);
