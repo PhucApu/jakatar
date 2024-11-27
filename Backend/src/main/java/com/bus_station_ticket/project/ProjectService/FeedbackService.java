@@ -16,13 +16,21 @@ import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.FeedbackMapping;
+import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
+import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
 public class FeedbackService implements SimpleServiceInf<FeedbackEntity, FeedbackDTO, Long> {
 
        @Autowired
        private FeedbackRepo repo;
+
+       @Autowired
+       private AccountRepo accountRepo;
+
+       @Autowired
+       private TicketRepo ticketRepo;
 
        @Autowired
        private FeedbackMapping feedbackMapping;
@@ -101,9 +109,11 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
        @Override
        public ResponseBoolAndMess save(FeedbackEntity entityObj) {
 
-              Optional<FeedbackEntity> optional = this.repo.findByFeedbackId(entityObj.getFeedbackId());
+              // Optional<FeedbackEntity> optional =
+              // this.repo.findByFeedbackId(entityObj.getFeedbackId());
 
-              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
+              if (isForeignKeyEmpty(entityObj) == false) {
+                     entityObj.setFeedbackId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -113,9 +123,14 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess save_toDTO(FeedbackDTO dtoObj) {
-              FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
 
-              return save(feedbackEntity);
+              /// kiem tra gia tri thuoc tinh khoa ngoai
+              if (isHasForeignKeyEntity(dtoObj)) {
+                     FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
+
+                     return save(feedbackEntity);
+              }
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -128,16 +143,21 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
 
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
+              return new ResponseBoolAndMess(false,
+                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess update_toDTO(FeedbackDTO dtoObj) {
 
-              FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
+              /// kiem tra gia tri thuoc tinh khoa ngoai
+              if (isHasForeignKeyEntity(dtoObj)) {
+                     FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
 
-              return update(feedbackEntity);
+                     return update(feedbackEntity);
+              }
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -189,6 +209,22 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
               }
 
               return true;
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       @Override
+       public Boolean isHasForeignKeyEntity(FeedbackDTO dtoObj) {
+              // Feedback co thuoc tinh khoa ngoai la username va ticketId
+              // kiem tra
+
+              AccountEntity accountEntity = this.accountRepo.findByUserName(dtoObj.getAccountEnity_userName())
+                            .orElse(null);
+              TicketEntity ticketEntity = this.ticketRepo.findByTicketId(dtoObj.getTicketEntity_Id()).orElse(null);
+
+              if (accountEntity != null && ticketEntity != null) {
+                     return true;
+              }
+              return false;
        }
 
 }

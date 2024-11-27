@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
+import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
-import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.BusRoutesMapping;
+import com.bus_station_ticket.project.ProjectRepository.BusRepo;
 import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
-import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
 public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRoutesDTO, Long> {
@@ -24,8 +24,11 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
        @Autowired
        private BusRoutesRepo repo;
 
+       // @Autowired
+       // private TicketRepo ticketRepo;
+
        @Autowired
-       private TicketRepo ticketRepo;
+       private BusRepo busRepo;
 
        @Autowired
        private BusRoutesMapping busRoutesMapping;
@@ -89,11 +92,11 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
        @Override
        public ResponseBoolAndMess save(BusRoutesEntity busRoutesEntity) {
 
-              // Kiểm tra
-              Optional<BusRoutesEntity> optional = this.repo.findByRoutesId(busRoutesEntity.getRoutesId());
+              // // Kiểm tra
+              // Optional<BusRoutesEntity> optional = this.repo.findByRoutesId(busRoutesEntity.getRoutesId());
 
-              if (optional.isPresent() == false && isForeignKeyEmpty(busRoutesEntity) == false) {
-
+              if (isForeignKeyEmpty(busRoutesEntity) == false && isDuplicateLocations(busRoutesEntity) == false) {
+                     busRoutesEntity.setRoutesId(null);
                      this.repo.save(busRoutesEntity);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -143,7 +146,7 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               // Kiem tra
               Optional<BusRoutesEntity> optional = this.repo.findByRoutesId(entityObj.getRoutesId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isDuplicateLocations(entityObj) == false) {
 
                      this.repo.save(entityObj);
 
@@ -188,14 +191,14 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
        @Override
        public Boolean foreignKeyViolationIfDelete(BusRoutesEntity entityObj) {
 
-              // BusRoutes foreign key ticket
+              // BusRoutes foreign key bus
 
-              // lay danh sach ticket tham chieu den BusRoutes duoc xoa
-              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusEntity_Id(entityObj.getRoutesId());
+              // lay danh sach bus tham chieu den BusRoutes duoc xoa
+              List<BusEntity> listBusEntities = this.busRepo.findByRoutes_Id(entityObj.getRoutesId());
 
               // kiem tra
               // neu co thuc the
-              if (ticketEntities.isEmpty() == false) {
+              if (listBusEntities.isEmpty() == false) {
                      return false;
               }
 
@@ -205,16 +208,16 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
        @Transactional
        @Override
        public Boolean foreignKeyViolationIfHidden(BusRoutesEntity entityObj) {
-              // BusRoutes foriegn key ticket
+              // BusRoutes foriegn key bus
 
-              // lay danh sach ticket tham chieu den BusRoutes duoc xoa
-              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusEntity_Id(entityObj.getRoutesId());
+              // lay danh sach bus tham chieu den BusRoutes duoc xoa
+              List<BusEntity> listBusEntities = this.busRepo.findByRoutes_Id(entityObj.getRoutesId());
 
               // kiem tra
               // neu co thuc the
-              if (ticketEntities.isEmpty() == false) {
-                     for (TicketEntity ticketEntity : ticketEntities) {
-                            if (ticketEntity.getIsDelete() == false) {
+              if (listBusEntities.isEmpty() == false) {
+                     for (BusEntity e : listBusEntities) {
+                            if (e.getIsDelete() == false) {
                                    return false;
                             }
                      }
@@ -231,6 +234,31 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               return false;
        }
 
-       
+       @Override
+       public Boolean isHasForeignKeyEntity(BusRoutesDTO dtoObj) {
+              // BusRouter khong co thuoc tinh khoa ngoai
+              return true;
+       }
 
+       // kiem tra xem co trung diem denn diem di khong
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public Boolean isDuplicateLocations (BusRoutesEntity busRoutesEntity){
+
+              BusRoutesEntity busRoutesEntity2 = this.repo.findByDepartureLocationAndDestinationLocation(busRoutesEntity.getDepartureLocation(), busRoutesEntity.getDestinationLocation()).orElse(null);
+
+              if(busRoutesEntity2 != null){
+                     return true;
+              }
+              return false;
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public BusRoutesDTO getByDepartureLocationAndDestinationLocation (String departureLocation, String destinationLocation){
+              BusRoutesEntity busRoutesEntity = this.repo.findByDepartureLocationAndDestinationLocation(departureLocation, destinationLocation).orElse(null);
+
+              if(busRoutesEntity != null){
+                     return this.busRoutesMapping.toDTO(busRoutesEntity);
+              }
+              return null;
+       }
 }

@@ -102,9 +102,10 @@ public class DiscountService implements SimpleServiceInf<DiscountEntity, Discoun
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess save(DiscountEntity entityObj) {
-              Optional<DiscountEntity> optional = this.repo.findByDiscountId(entityObj.getDiscountId());
+              // Optional<DiscountEntity> optional = this.repo.findByDiscountId(entityObj.getDiscountId());
 
-              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
+              if (isForeignKeyEmpty(entityObj) == false) {
+                     entityObj.setDiscountId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -200,6 +201,14 @@ public class DiscountService implements SimpleServiceInf<DiscountEntity, Discoun
               // Discount khong co thuoc tinh khoa ngoai
               return false;
        }
+
+       @Override
+       public Boolean isHasForeignKeyEntity(DiscountDTO dtoObj) {
+              // Discount khong co thuoc tinh khoa ngoai
+              return true;
+       }
+
+       
 
        
 

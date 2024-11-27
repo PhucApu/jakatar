@@ -65,7 +65,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
        @Override
        public List<EmployeeEntity> getAll() {
               return this.repo.findAll();
-              
+
        }
 
        // Mapping đối tượng List<EmployeeEntity> --> List<EmployeeDTO>
@@ -80,9 +80,9 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
                      for (EmployeeEntity e : listEmployeeEntities) {
                             listEmployeeDTOs.add(this.employeeMapping.toDTO(e));
                      }
-                     return  listEmployeeDTOs;
+                     return listEmployeeDTOs;
               }
-              return  listEmployeeDTOs;
+              return listEmployeeDTOs;
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -107,9 +107,11 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
        @Override
        public ResponseBoolAndMess save(EmployeeEntity entityObj) {
 
-              Optional<EmployeeEntity> optional = this.repo.findByDriverId(entityObj.getDriverId());
+              // Optional<EmployeeEntity> optional =
+              // this.repo.findByDriverId(entityObj.getDriverId());
 
-              if (optional.isPresent() == false && isForeignKeyEmpty(entityObj) == false) {
+              if (isForeignKeyEmpty(entityObj) == false) {
+                     entityObj.setDriverId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
@@ -134,7 +136,8 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
+              return new ResponseBoolAndMess(false,
+                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -217,6 +220,51 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               // Employee khong co thuoc tinh khoa ngoai
               return false;
        }
+
        
 
+       @Override
+       public Boolean isHasForeignKeyEntity(EmployeeDTO dtoObj) {
+              // Employee khong co thuoc tinh khoa ngoai
+              return true;
+       }
+
+       // Phan nhan vien lai xe
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       public ResponseBoolAndMess addEmployeeDriverBus(Long driverId, Long busId) {
+
+              EmployeeEntity employeeEntity = this.repo.findByDriverId(driverId).orElse(null);
+              BusEntity busEntity = this.busRepo.findByBusId(busId).orElse(null);
+
+              if (employeeEntity != null && busEntity != null) {
+
+                     // kiem tra xem co duoc phan tu truoc khonng
+                     if (employeeEntity.getListBusEntity().contains(busEntity) == false) {
+                            int value = this.repo.insertBusAndEmplyee(busId, driverId);
+                            if (value > 0) {
+                                   return new ResponseBoolAndMess(true,
+                                                 "Assign bus driver with " + busId + " code successfully");
+                            }
+                            return new ResponseBoolAndMess(false,
+                                          "Assign bus driver with " + busId + " code no successfully");
+                     }
+                     return new ResponseBoolAndMess(false,
+                                          "Assign bus driver with " + busId + " code no successfully because it had already been assigned before");
+              }
+              return new ResponseBoolAndMess(false, "Assign bus driver with " + busId + " code no successfully");
+
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       public ResponseBoolAndMess deleteEmployeeDriverBus(Long driverId, Long busId) {
+
+              int value = this.repo.deleteBusAndEmplyee(busId, driverId);
+
+              if (value > 0) {
+                     return new ResponseBoolAndMess(false,
+                                   "Deletion of bus driver assignment with " + busId + " code successfully");
+              }
+              return new ResponseBoolAndMess(false,
+                            "Deletion of bus driver assignment with " + busId + " code no successfully");
+       }
 }

@@ -44,8 +44,11 @@ public class BusRoutesEntity {
        @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
        private Boolean isDelete;
 
+       // @OneToMany(mappedBy = "busRoutesEntity", fetch = FetchType.LAZY)
+       // private List<TicketEntity> listTicketEntities;
+
        @OneToMany(mappedBy = "busRoutesEntity", fetch = FetchType.LAZY)
-       private List<TicketEntity> listTicketEntities;
+       private List<BusEntity> listBusEntities;
 
 
        public BusRoutesEntity() {
@@ -53,7 +56,7 @@ public class BusRoutesEntity {
 
        public BusRoutesEntity(String departureLocation, String destinationLocation, float distanceKilometer,
                      LocalDateTime departureTime, LocalDateTime arivalTime, float price, Boolean isDelete,
-                     List<TicketEntity> listTicketEntities) {
+                     List<BusEntity> busEntities) {
               this.departureLocation = departureLocation;
               this.destinationLocation = destinationLocation;
               this.distanceKilometer = distanceKilometer;
@@ -61,12 +64,15 @@ public class BusRoutesEntity {
               this.arivalTime = arivalTime;
               this.price = price;
               this.isDelete = isDelete;
-              this.listTicketEntities = listTicketEntities;
+              // this.listTicketEntities = listTicketEntities;
+              this.listBusEntities = busEntities;
        }
 
        public Long getRoutesId() {
               return routesId;
        }
+
+       
 
        public void setRoutesId(Long routesId) {
               this.routesId = routesId;
@@ -128,12 +134,12 @@ public class BusRoutesEntity {
               this.isDelete = isDelete;
        }
 
-       public List<TicketEntity> getListTicketEntities() {
-              return listTicketEntities;
+       public List<BusEntity> getListBusEntities() {
+              return listBusEntities;
        }
 
-       public void setListTicketEntities(List<TicketEntity> listTicketEntities) {
-              this.listTicketEntities = listTicketEntities;
+       public void setListBusEntities(List<BusEntity> listBusEntities) {
+              this.listBusEntities = listBusEntities;
        }
 
        
