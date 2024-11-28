@@ -16,21 +16,13 @@ import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.FeedbackMapping;
-import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
-import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
 public class FeedbackService implements SimpleServiceInf<FeedbackEntity, FeedbackDTO, Long> {
 
        @Autowired
        private FeedbackRepo repo;
-
-       @Autowired
-       private AccountRepo accountRepo;
-
-       @Autowired
-       private TicketRepo ticketRepo;
 
        @Autowired
        private FeedbackMapping feedbackMapping;
@@ -95,7 +87,7 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
               if (optional.isPresent()) {
                      Boolean check = foreignKeyViolationIfDelete(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             this.repo.delete(optional.get());
                             return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
                      }
@@ -125,12 +117,11 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
        public ResponseBoolAndMess save_toDTO(FeedbackDTO dtoObj) {
 
               /// kiem tra gia tri thuoc tinh khoa ngoai
-              if (isHasForeignKeyEntity(dtoObj)) {
-                     FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
 
-                     return save(feedbackEntity);
-              }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
+
+              return save(feedbackEntity);
+
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -138,7 +129,9 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
        public ResponseBoolAndMess update(FeedbackEntity entityObj) {
               Optional<FeedbackEntity> optional = this.repo.findByFeedbackId(entityObj.getFeedbackId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false
+                            && foreignKeyViolationIfHidden(entityObj) == false) {
+                     entityObj.setFeedbackId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
@@ -152,12 +145,11 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
        public ResponseBoolAndMess update_toDTO(FeedbackDTO dtoObj) {
 
               /// kiem tra gia tri thuoc tinh khoa ngoai
-              if (isHasForeignKeyEntity(dtoObj)) {
-                     FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
 
-                     return update(feedbackEntity);
-              }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              FeedbackEntity feedbackEntity = this.feedbackMapping.toEntity(dtoObj);
+
+              return update(feedbackEntity);
+
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -169,7 +161,7 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
               if (optional.isPresent()) {
                      Boolean check = foreignKeyViolationIfHidden(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             FeedbackEntity feedbackEntity = optional.get();
 
                             feedbackEntity.setIsDelete(true);
@@ -187,13 +179,13 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
        public Boolean foreignKeyViolationIfDelete(FeedbackEntity entityObj) {
 
               // Feedback khong co tham chiu khoa ngoai
-              return true;
+              return false;
        }
 
        @Transactional
        @Override
        public Boolean foreignKeyViolationIfHidden(FeedbackEntity entityObj) {
-              return true;
+              return false;
        }
 
        @Transactional
@@ -211,20 +203,23 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
               return true;
        }
 
-       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       @Override
-       public Boolean isHasForeignKeyEntity(FeedbackDTO dtoObj) {
-              // Feedback co thuoc tinh khoa ngoai la username va ticketId
-              // kiem tra
+       // @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation
+       // = Isolation.READ_COMMITTED)
+       // @Override
+       // public Boolean isHasForeignKeyEntity(FeedbackDTO dtoObj) {
+       // // Feedback co thuoc tinh khoa ngoai la username va ticketId
+       // // kiem tra
 
-              AccountEntity accountEntity = this.accountRepo.findByUserName(dtoObj.getAccountEnity_userName())
-                            .orElse(null);
-              TicketEntity ticketEntity = this.ticketRepo.findByTicketId(dtoObj.getTicketEntity_Id()).orElse(null);
+       // AccountEntity accountEntity =
+       // this.accountRepo.findByUserName(dtoObj.getAccountEnity_userName())
+       // .orElse(null);
+       // TicketEntity ticketEntity =
+       // this.ticketRepo.findByTicketId(dtoObj.getTicketEntity_Id()).orElse(null);
 
-              if (accountEntity != null && ticketEntity != null) {
-                     return true;
-              }
-              return false;
-       }
+       // if (accountEntity != null && ticketEntity != null) {
+       // return true;
+       // }
+       // return false;
+       // }
 
 }

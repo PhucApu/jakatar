@@ -22,7 +22,7 @@ public interface BusRepo extends JpaRepository<BusEntity,Long> {
 
        @Query(
               value = """
-                     select b.bus_id, b.bus_number, b.capacity, b.brand, b.is_delete
+                     select b.bus_id, b.bus_number, b.capacity, b.brand, b.is_delete , b.routes_id
                      from bus b, employee e, bus_employee be
                      where e.driver_id = be.driver_id and be.bus_id = b.bus_id and e.driver_id = :driverId
               """,
@@ -33,7 +33,7 @@ public interface BusRepo extends JpaRepository<BusEntity,Long> {
 
        @Query(
               value = """
-                     select b.bus_id, b.bus_number, b.capacity, b.brand, b.is_delete
+                     select b.bus_id, b.bus_number, b.capacity, b.brand, b.is_delete , b.routes_id
                      from bus b, ticket tk
                      where b.bus_id = tk.bus_id and tk.ticket_id = :ticketId
               """,
@@ -44,7 +44,7 @@ public interface BusRepo extends JpaRepository<BusEntity,Long> {
 
        @Query(
               value = """
-                     select b.bus_id, b.bus_number, b.capacity, b.brand, b.is_delete
+                     select b.bus_id, b.bus_number, b.capacity, b.brand, b.is_delete , b.routes_id
                      from bus b,  penalty_ticket pt
                      where b.bus_id = pt.bus_id and pt.penalty_ticket_id = :penaltyTicketId
               """,

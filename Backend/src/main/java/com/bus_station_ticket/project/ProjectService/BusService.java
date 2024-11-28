@@ -107,7 +107,7 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
               if (optional.isPresent()) {
                      Boolean check = foreignKeyViolationIfDelete(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             // xoa
                             this.repo.delete(optional.get());
                             return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
@@ -123,25 +123,22 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
 
               // Optional<BusEntity> optional = this.repo.findByBusId(entityObj.getBusId());
 
-              if (isForeignKeyEmpty(entityObj) == false) {
+              if (isForeignKeyEmpty(entityObj) == false && isDuplicatBusNumber(entityObj) == false) {
                      entityObj.setBusId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION + " or " + " Matching license plate number");
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess save_toDTO(BusDTO dtoObj) {
 
-              // Kiểm tra giá trị thuộc tính khóa ngoại
+              // Kiểm tra giá trị thuộc tính khóa ngoạ
+              BusEntity busEntity = this.busMapping.toEntity(dtoObj);
+              return save(busEntity);
 
-              if (isHasForeignKeyEntity(dtoObj)) {
-                     BusEntity busEntity = this.busMapping.toEntity(dtoObj);
-                     return save(busEntity);
-              }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -149,25 +146,21 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        public ResponseBoolAndMess update(BusEntity entityObj) {
               Optional<BusEntity> optional = this.repo.findByBusId(entityObj.getBusId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false && isDuplicatBusNumber(entityObj) == false) {
+                     entityObj.setBusId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
               return new ResponseBoolAndMess(false,
-                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION);
+                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION + " or " + " Matching license plate number");
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        @Override
        public ResponseBoolAndMess update_toDTO(BusDTO dtoObj) {
 
-              // Kiểm tra giá trị thuộc tính khóa ngoại
-
-              if (isHasForeignKeyEntity(dtoObj)) {
-                     BusEntity busEntity = this.busMapping.toEntity(dtoObj);
-                     return update(busEntity);
-              }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              BusEntity busEntity = this.busMapping.toEntity(dtoObj);
+              return update(busEntity);
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -180,7 +173,7 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
                      // kiem tra
                      Boolean check = foreignKeyViolationIfHidden(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             BusEntity busEntity = optional.get();
                             busEntity.setIsDelete(true);
 
@@ -207,11 +200,11 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
                             .findByBusEntity_Id(entityObj.getBusId());
 
               // kiem tra
-              if (employeeEntities.isEmpty() == false && ticketEntities.isEmpty() == false
-                            && penaltyTicketEntities.isEmpty() == false) {
-                     return false;
+              if (employeeEntities.isEmpty() == false || ticketEntities.isEmpty() == false
+                            || penaltyTicketEntities.isEmpty() == false) {
+                     return true;
               }
-              return true;
+              return false;
        }
 
        @Transactional
@@ -227,29 +220,31 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
                             .findByBusEntity_Id(entityObj.getBusId());
 
               // kiem tra
-              if (employeeEntities.isEmpty() == false && ticketEntities.isEmpty() == false
-                            && penaltyTicketEntities.isEmpty() == false) {
-
-                     for (PenaltyTicketEntity penaltyTicketEntity : penaltyTicketEntities) {
-                            if (penaltyTicketEntity.getIsDelete() == false) {
-                                   return false;
-                            }
-                     }
-
-                     for (TicketEntity e : ticketEntities) {
-                            if (e.getIsDelete() == false) {
-                                   return false;
-                            }
-                     }
+              if (employeeEntities.isEmpty() == false) {
 
                      for (EmployeeEntity e : employeeEntities) {
                             if (e.getIsDelete() == false) {
-                                   return false;
+                                   return true;
                             }
                      }
-                     return true;
               }
-              return true;
+              if (ticketEntities.isEmpty() == false) {
+
+                     for (TicketEntity e : ticketEntities) {
+                            if (e.getIsDelete() == false) {
+                                   return true;
+                            }
+                     }
+              }
+              if (penaltyTicketEntities.isEmpty() == false) {
+
+                     for (PenaltyTicketEntity penaltyTicketEntity : penaltyTicketEntities) {
+                            if (penaltyTicketEntity.getIsDelete() == false) {
+                                   return true;
+                            }
+                     }
+              }
+              return false;
        }
 
        @Transactional
@@ -260,30 +255,45 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
               return false;
        }
 
+       // @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation
+       // = Isolation.READ_COMMITTED)
+       // @Override
+       // public Boolean isHasForeignKeyEntity(BusDTO dtoObj) {
+       // // Bus co thuoc tinh khoa ngoai BusRoute
+       // BusRoutesEntity busRoutesEntity =
+       // this.busRoutesRepo.findByRoutesId(dtoObj.getRoutesId())
+       // .orElse(null);
+       // if (busRoutesEntity != null) {
+       // return true;
+       // }
+       // return false;
+       // }
+
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       @Override
-       public Boolean isHasForeignKeyEntity(BusDTO dtoObj) {
-              // Bus co thuoc tinh khoa ngoai BusRoute
-              BusRoutesEntity busRoutesEntity = this.busRoutesRepo.findByRoutesId(dtoObj.getBusRoutes_Id())
-                            .orElse(null);
-              if (busRoutesEntity != null) {
+       public Boolean isDuplicatBusNumber (BusEntity busEntity){
+              // kiem tra xem bien so bus co trung khong
+              BusEntity busEntity2 = this.repo.findByBusNumber(busEntity.getBusNumber()).orElse(null);
+
+              if(busEntity2 != null){
                      return true;
               }
               return false;
        }
 
-
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public List<BusDTO> getByDepartureLocationAndDestinationLocation (String departureLocation, String destinationLocation){
-              BusRoutesEntity busRoutesEntity = this.busRoutesRepo.findByDepartureLocationAndDestinationLocation(departureLocation, destinationLocation).orElse(null);
+       public List<BusDTO> getByDepartureLocationAndDestinationLocation(String departureLocation,
+                     String destinationLocation) {
+              BusRoutesEntity busRoutesEntity = this.busRoutesRepo
+                            .findByDepartureLocationAndDestinationLocation(departureLocation, destinationLocation)
+                            .orElse(null);
 
-              if(busRoutesEntity != null){
-                     
+              if (busRoutesEntity != null) {
+
                      List<BusEntity> listBusEntities = this.repo.findByRoutes_Id(busRoutesEntity.getRoutesId());
 
                      List<BusDTO> listBusDTOs = new ArrayList<>();
 
-                     for(BusEntity e : listBusEntities){
+                     for (BusEntity e : listBusEntities) {
                             BusDTO busDTO = this.busMapping.toDTO(e);
                             listBusDTOs.add(busDTO);
                      }
@@ -294,23 +304,43 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        }
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public Integer numberSeatRemain (Long busId, String departureLocation, String destinationLocation, LocalDateTime departureTime, LocalDateTime arivalTime){
-              
-              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusAndRoutes(busId, departureLocation, destinationLocation, departureTime, arivalTime);
+       public Integer numberSeatRemain(Long busId, String departureLocation, String destinationLocation,
+                     LocalDateTime departureTime, LocalDateTime arivalTime) {
+
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusAndRoutes(busId, departureLocation,
+                            destinationLocation, departureTime, arivalTime);
+
+              int countSeatNotAval = 0;
+              for (TicketEntity e : ticketEntities) {
+                     if (e.getStatus().equals("failure") == false) {
+                            countSeatNotAval++;
+                     }
+              }
 
               BusEntity busEntity = this.repo.findByBusId(busId).orElse(null);
 
-              int numberSeatRemain = busEntity.getCapacity() - ticketEntities.size();
+              int numberSeatRemain = busEntity.getCapacity() - countSeatNotAval;
 
               return numberSeatRemain;
        }
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public ResponseBoolAndMess isValSeat (String seat, Long busId, String departureLocation, String destinationLocation, LocalDateTime departureTime, LocalDateTime arivalTime){
+       public ResponseBoolAndMess isValSeat(String seat, Long busId, String departureLocation,
+                     String destinationLocation, LocalDateTime departureTime, LocalDateTime arivalTime) {
 
-              // List<TicketEntity> ticketEntities = this.ticketRepo.findByBusAndRoutes(busId, departureLocation, destinationLocation, departureTime, arivalTime);
-              return null;
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusAndRoutes(busId, departureLocation,
+                            destinationLocation, departureTime, arivalTime);
+
+              if (ticketEntities.isEmpty() == false) {
+                     for (TicketEntity e : ticketEntities) {
+                            if (e.getSeatNumber().equals(seat) && e.getStatus().equals("failure") == false) {
+                                   return new ResponseBoolAndMess(false, "Seat is not availible");
+                            }
+                     }
+                     return new ResponseBoolAndMess(false, "Seat is availible");
+              }
+
+              return new ResponseBoolAndMess(false, "Seat is not availible");
        }
-
 
 }
