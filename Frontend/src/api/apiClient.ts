@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 
-const username = 'user1';
-const password = '123456';
+const username = 'phuc';
+const password = '123456Admin@';
 const token = btoa(`${username}:${password}`);
 
 const apiClient = axios.create({
