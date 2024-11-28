@@ -82,16 +82,7 @@ export default function Payment() {
 
   const validDataCheck = (): boolean => {
     // Kiểm tra paymentId (không được null)
-    if (!formData.paymentId) {
-      toast.error("Mã thanh toán không được để trống", { autoClose: 800 });
-      return false;
-    }
-  
-    // Kiểm tra paymentTime (không được null)
-    if (!formData.paymentTime) {
-      toast.error("Thời gian thanh toán không được để trống", { autoClose: 800 });
-      return false;
-    }
+    
   
     // Kiểm tra originalAmount (>= 0)
     if (formData.originalAmount === null || formData.originalAmount === undefined || formData.originalAmount < 0) {
@@ -126,12 +117,13 @@ export default function Payment() {
       toast.error("Phương thức thanh toán không được vượt quá 50 ký tự", { autoClose: 800 });
       return false;
     }
-  
-    // Kiểm tra listTicketEntities_Id (không được null)
-    if (!formData.listTicketEntities_Id || formData.listTicketEntities_Id.length === 0) {
-      toast.error("Danh sách mã vé không được để trống", { autoClose: 800 });
+    // Kiểm tra paymentTime (không được null)
+    if (!formData.paymentTime) {
+      toast.error("Thời gian thanh toán không được để trống", { autoClose: 800 });
       return false;
     }
+  
+
   
     // Kiểm tra isDelete (không được null)
     if (formData.isDelete === null || formData.isDelete === undefined) {
@@ -205,17 +197,7 @@ export default function Payment() {
         <Modal.Header>{isEditMode ? 'Cập nhật' : 'Thêm thanh toán'}</Modal.Header>
         <Modal.Body>
           <div className='space-y-6'>
-            <div className='space-y-2'>
-              <label htmlFor='paymentTime'>Thời gian thanh toán</label>
-              <TextInput
-                name='paymentTime'
-                type="datetime-local"
-                value={formData.paymentTime || ''}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, paymentTime: e.target.value }))
-                }
-              />
-            </div>
+            
             <div className='space-y-2'>
               <label htmlFor='originalAmount'>Số tiền gốc</label>
               <TextInput
@@ -253,6 +235,32 @@ export default function Payment() {
                 }
                 placeholder='Nhập phương thức thanh toán'
               />
+            </div>
+            <div className='space-y-2'>
+              <label htmlFor='paymentTime'>Thời gian thanh toán</label>
+              <TextInput
+                name='paymentTime'
+                type="datetime-local"
+                value={formData.paymentTime || ''}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, paymentTime: e.target.value }))
+                }
+              />
+            </div>
+            <div className='space-y-2'>
+              <label htmlFor='status'>Trạng thái</label>
+              <Select
+                name='status'
+                value={formData.status || ''}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, status: e.target.value }))
+                }
+              >
+                <option value='' disabled>Chọn trạng thái</option>
+                <option value='success'>Thêm thành công</option>
+                <option value='pending'>Đang duyệt</option>
+                <option value='failure'>Thất bại</option>
+              </Select>
             </div>
             <div className='space-y-2'>
               <label>Tình trạng</label>
