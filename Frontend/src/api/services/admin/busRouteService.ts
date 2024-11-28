@@ -34,7 +34,7 @@ export const updateBusRoute = async (busRoute: Partial<BusRoute>): Promise<ApiRe
 
 export const deleteBusRoute = async (busRouteId: string): Promise<ApiResponse<BusRoute>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete(`/busroutes/${busRouteId}`);
+    const response = await apiClient.delete(`/busroutes/delete/${busRouteId}`);
     return response.data;
   });
 };

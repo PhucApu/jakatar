@@ -21,6 +21,8 @@ public interface BusRoutesRepo extends JpaRepository<BusRoutesEntity,Long> {
        public Optional<BusRoutesEntity> findByDepartureLocation (String departureLocation);
        
        public Optional<BusRoutesEntity> findByDestinationLocation (String destinationLocation);
+
+       public Optional<BusRoutesEntity> findByDepartureLocationAndDestinationLocation (String departureLocation, String destinationLocation);
        
        public List<BusRoutesEntity> findByDistanceKilometer (float distanceKilometer);
        
@@ -33,14 +35,24 @@ public interface BusRoutesRepo extends JpaRepository<BusRoutesEntity,Long> {
        public List<BusRoutesEntity> findByIsDelete (Boolean isDelete);
 
 
+       // @Query(
+       //        value = """
+       //               select br.routes_id, br.departure_location, br.destination_location, br.distance_location, br.departure_time, br.arival_time, br.price, br.is_delete
+       //               from bus_routes br, ticket tk
+       //               where br.routes_id = tk.routes_id and tk.ticket_id = :ticketId
+       //        """,
+       //        nativeQuery = true
+       // )
+       // public Optional<BusRoutesEntity> findByTicketEntity_Id(@Param("ticketId") Long ticketId);
+
        @Query(
               value = """
                      select br.routes_id, br.departure_location, br.destination_location, br.distance_location, br.departure_time, br.arival_time, br.price, br.is_delete
-                     from bus_routes br, ticket tk
-                     where br.routes_id = tk.routes_id and tk.ticket_id = :ticketId
+                     from bus_routes br, bus b
+                     where br.routes_id = b.routes_id and b.bus_id = :busId
               """,
               nativeQuery = true
        )
-       public Optional<BusRoutesEntity> findByTicketEntity_Id(@Param("ticketId") Long ticketId);
+       public Optional<BusRoutesEntity> findByBusEntity_Id(@Param("busId") Long busId);
 
 }

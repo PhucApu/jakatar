@@ -34,7 +34,7 @@ export const updateEmployee = async (employee: Partial<Employee>): Promise<ApiRe
 
 export const deleteEmployee = async (employeeId: string): Promise<ApiResponse<Employee>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete(`/employees/${employeeId}`);
+    const response = await apiClient.delete(`/employees/delete/${employeeId}`);
     return response.data;
   });
 };

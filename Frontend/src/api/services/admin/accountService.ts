@@ -34,7 +34,7 @@ export const updateAccount = async (user: Partial<User>): Promise<ApiResponse<Us
 
 export const deleteAccount = async (username: string): Promise<ApiResponse<User>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete(`/accounts/${username}`);
+    const response = await apiClient.delete(`/accounts/delete/${username}`);
     return response.data;
   });
 };

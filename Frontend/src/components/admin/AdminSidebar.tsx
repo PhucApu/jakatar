@@ -14,7 +14,7 @@ export default function AdminSidebar() {
           </Sidebar.Item>
           <Sidebar.Collapse icon={FaBus} label="Quản lý nhà xe">
             <Sidebar.Item href="/admin/chuyen-di">Chuyến đi</Sidebar.Item>
-            <Sidebar.Item href="/admin/lich-trinh">Lịch trình</Sidebar.Item>
+            <Sidebar.Item href="/admin/tuyen-xe">Tuyến Xe</Sidebar.Item>
             <Sidebar.Item href="/admin/xe">Xe</Sidebar.Item>
             <Sidebar.Item href="/admin/tai-xe">Tài xế</Sidebar.Item>
             <Sidebar.Item href="/admin/ve-phat">Vé phạt</Sidebar.Item>
@@ -31,8 +31,8 @@ export default function AdminSidebar() {
           <Sidebar.Item href="/admin/phan-hoi" icon={MdFeedback}>
             Phản hồi
           </Sidebar.Item>
-          <Sidebar.Item href="/admin/doanh-thu" icon={FaMoneyBill}>
-            Doanh thu
+          <Sidebar.Item href="/admin/thanh-toan" icon={FaMoneyBill}>
+            Thanh toán
           </Sidebar.Item>
           <HR />
           <Sidebar.Item href="/admin" icon={FaSignOutAlt}>

@@ -34,7 +34,7 @@ export const updatePayment = async (payment: Partial<Payment>): Promise<ApiRespo
 
 export const deletePayment = async (paymentId: string): Promise<ApiResponse<Payment>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete(`/payments/${paymentId}`);
+    const response = await apiClient.delete(`/payments/delete/${paymentId}`);
     return response.data;
   });
 };

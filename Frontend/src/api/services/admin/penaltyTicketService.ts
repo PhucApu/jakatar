@@ -34,7 +34,7 @@ export const updatePenaltyTicket = async (penaltyTicket: Partial<PenaltyTicket>)
 
 export const deletePenaltyTicket = async (penaltyTicketId: string): Promise<ApiResponse<PenaltyTicket>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete(`/penaltytickets/${penaltyTicketId}`);
+    const response = await apiClient.delete(`/penaltytickets/delete/${penaltyTicketId}`);
     return response.data;
   });
 };
