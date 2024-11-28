@@ -11,7 +11,6 @@ import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
 import com.bus_station_ticket.project.ProjectRepository.BusRepo;
-import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
 import com.bus_station_ticket.project.ProjectRepository.DiscountRepo;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
 import com.bus_station_ticket.project.ProjectRepository.PaymentRepo;
@@ -24,9 +23,6 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
 
        @Autowired
        private BusRepo busRepo;
-
-       @Autowired
-       private BusRoutesRepo busRoutesRepo;
 
        @Autowired
        private PaymentRepo paymentRepo;
@@ -47,8 +43,7 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
                             (entity.getAccountEntity() != null) ? entity.getAccountEntity().getUserName() : null);
               ticketDTO.setBusEntity_Id(
                             (entity.getBusEntity() != null) ? entity.getBusEntity().getBusId() : null);
-              ticketDTO.setBusRoutesEntity_Id(
-                            (entity.getBusRoutesEntity() != null) ? entity.getBusRoutesEntity().getRoutesId() : null);
+              ticketDTO.setBusRoutesEntity_Id(entity.getRoutes_Id());
               ticketDTO.setPaymentEntity_Id(
                             (entity.getPaymentEntity() != null) ? entity.getPaymentEntity().getPaymentId() : null);
               ticketDTO.setDiscountEntity_Id(
@@ -85,8 +80,7 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
 
               ticketEntity.setBusEntity(this.busRepo.findByBusId(dto.getBusEntity_Id()).orElse(null));
 
-              ticketEntity.setBusRoutesEntity(
-                            this.busRoutesRepo.findByRoutesId(dto.getBusRoutesEntity_Id()).orElse(null));
+              ticketEntity.setRoutes_Id(dto.getBusRoutesEntity_Id());
 
               ticketEntity.setPaymentEntity(this.paymentRepo.findByPaymentId(dto.getPaymentEntity_Id()).orElse(null));
 

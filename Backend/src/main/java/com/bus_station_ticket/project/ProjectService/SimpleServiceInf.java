@@ -39,11 +39,13 @@ public interface SimpleServiceInf<ENTITY,DTO,ID> {
        public List<DTO> getAll_toDTO();
        public ResponseBoolAndMess save_toDTO (DTO dtoObj);
        public ResponseBoolAndMess update_toDTO (DTO dtoObj);
+       // public Boolean isHasForeignKeyEntity(DTO dtoObj);
 
        //
        public Boolean foreignKeyViolationIfDelete(ENTITY entityObj);
        public Boolean foreignKeyViolationIfHidden(ENTITY entityObj);
        public Boolean isForeignKeyEmpty(ENTITY entityObj);
+       
 
        default <T> Boolean compareId (T id1, T id2){
               

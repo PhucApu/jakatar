@@ -27,7 +27,7 @@ public class TicketDTO {
        @NotNull(message = "paymentEntity_Id cannot be blank")
        private Long paymentEntity_Id;
 
-       @NotNull(message = "discountEntity_Id cannot be blank")
+       // @NotNull(message = "discountEntity_Id cannot be blank")
        private Long discountEntity_Id;
 
        @NotBlank(message = "seatNumber cannot be blank")

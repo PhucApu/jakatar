@@ -7,15 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
+import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
-import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
-import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
+// import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
+import com.bus_station_ticket.project.ProjectRepository.BusRepo;
+// import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
+// import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Component
 public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRoutesDTO> {
 
+       // @Autowired
+       // private TicketRepo ticketRepo;
+
        @Autowired
-       private TicketRepo ticketRepo;
+       private BusRepo busRepo;
 
        @Override
        public BusRoutesDTO toDTO(BusRoutesEntity entity) {
@@ -33,15 +39,24 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
               busRoutesDTO.setIsDelete(entity.getIsDelete());
 
               // mapping thuộc tính list
-              List<Long> listTicketEntities_Id = new ArrayList<>();
+              // List<Long> listTicketEntities_Id = new ArrayList<>();
 
-              if (entity.getListTicketEntities() != null) {
-                     for (TicketEntity e : entity.getListTicketEntities()) {
-                            listTicketEntities_Id.add(e.getTicketId());
+              // if (entity.getListTicketEntities() != null) {
+              //        for (TicketEntity e : entity.getListTicketEntities()) {
+              //               listTicketEntities_Id.add(e.getTicketId());
+              //        }
+              // }
+
+              // busRoutesDTO.setListTicketEntities_Id(listTicketEntities_Id);
+
+              List<Long> listBusEntities_Id = new ArrayList<>();
+              if(entity.getListBusEntities() != null){
+                     for(BusEntity e : entity.getListBusEntities()){
+                            listBusEntities_Id.add(e.getBusId());
                      }
               }
+              busRoutesDTO.setListtBusEntities_Id(listBusEntities_Id);
 
-              busRoutesDTO.setListTicketEntities_Id(listTicketEntities_Id);
               return busRoutesDTO;
        }
 
@@ -60,16 +75,25 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
               busRoutesEntity.setIsDelete(dto.getIsDelete());
 
               // Mapping cac thuoo tinh list
-              List<TicketEntity> listTicketEntities = new ArrayList<>();
+              // List<TicketEntity> listTicketEntities = new ArrayList<>();
 
-              if (dto.getListTicketEntities_Id() != null) {
+              // if (dto.getListTicketEntities_Id() != null) {
 
-                     for (Long value : dto.getListTicketEntities_Id()) {
-                            TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
-                            listTicketEntities.add(ticketEntity);
+              //        for (Long value : dto.getListTicketEntities_Id()) {
+              //               TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
+              //               listTicketEntities.add(ticketEntity);
+              //        }
+              // }
+              // busRoutesEntity.setListTicketEntities(listTicketEntities);
+
+              List<BusEntity> listBusEntities = new ArrayList<>();
+              if(dto.getListtBusEntities_Id() != null){
+                     for(Long id: dto.getListtBusEntities_Id()){
+                            BusEntity busEntity = this.busRepo.findByBusId(id).orElse(null);
+                            listBusEntities.add(busEntity);
                      }
               }
-              busRoutesEntity.setListTicketEntities(listTicketEntities);
+              busRoutesEntity.setListBusEntities(listBusEntities);
 
               return busRoutesEntity;
        }

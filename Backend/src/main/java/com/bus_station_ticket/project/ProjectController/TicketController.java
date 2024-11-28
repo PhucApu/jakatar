@@ -1,5 +1,6 @@
 package com.bus_station_ticket.project.ProjectController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
@@ -209,4 +211,21 @@ public class TicketController implements RestApiSimpleControllerInf<TicketDTO, L
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
 
+
+       // thong ke
+       @GetMapping("/statistics")
+       public ResponseEntity<ResponseObject> getStatisticsTickets (@RequestParam("dateA") LocalDateTime dateA, @RequestParam("dateB") LocalDateTime dateB){
+
+              ResponseObject responseObject = new ResponseObject();
+
+              if(dateA.isBefore(dateB)){
+                     responseObject = this.ticketService.statisticTicketRangeDay(dateA,dateB);
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+
+              responseObject.setStatus(MESS_FAILURE);
+              responseObject.addMessage("mess", "The statistical date entered is incorrect");
+              responseObject.setData(null);
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       } 
 }
