@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -49,7 +49,7 @@ public class TicketEntity {
        private String seatNumber;
 
        @Column(name = "departure_date", nullable = false, columnDefinition = "DATETIME")
-       private LocalDate departureDate;
+       private LocalDateTime departureDate;
 
        @Column(name = "price", nullable = false, columnDefinition = "FLOAT", length = 5)
        private float price;
@@ -72,7 +72,7 @@ public class TicketEntity {
        public TicketEntity(AccountEntity accountEnitty, BusEntity busEntity, 
        // BusRoutesEntity busRoutesEntity,
                      PaymentEntity paymentEntity, DiscountEntity discountEntity, String seatNumber,
-                     LocalDate departureDate, float price, String phoneNumber,
+                     LocalDateTime departureDate, float price, String phoneNumber,
                      List<FeedbackEntity> listFeedbackEntities, Boolean isDelete) {
               this.accountEntity = accountEnitty;
               this.busEntity = busEntity;
@@ -138,11 +138,11 @@ public class TicketEntity {
               this.seatNumber = seatNumber;
        }
 
-       public LocalDate getDepartureDate() {
+       public LocalDateTime getDepartureDate() {
               return departureDate;
        }
 
-       public void setDepartureDate(LocalDate departureDate) {
+       public void setDepartureDate(LocalDateTime departureDate) {
               this.departureDate = departureDate;
        }
 
