@@ -7,9 +7,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
-
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
@@ -32,7 +32,6 @@ public class BusEntity {
        @Column(name = "brand", nullable = false, columnDefinition = "VARCHAR(30)")
        private String brand;
 
-       
        @Column(name = "is_delete", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
        private Boolean isDelete;
 
@@ -42,16 +41,19 @@ public class BusEntity {
        @OneToMany(mappedBy = "busEntity", fetch = FetchType.LAZY)
        private List<TicketEntity> listTicketEntities;
 
-       @OneToMany(mappedBy = "busEntity" , fetch = FetchType.LAZY)
+       @OneToMany(mappedBy = "busEntity", fetch = FetchType.LAZY)
        private List<PenaltyTicketEntity> listPenaltyTicketEntities;
+
+       @ManyToOne
+       @JoinColumn(name = "routes_id", referencedColumnName = "routes_id", nullable = true)
+       private BusRoutesEntity busRoutesEntity;
 
        public BusEntity() {
        }
 
-
        public BusEntity(String busNumber, int capacity, String brand, Boolean isDelete,
                      List<EmployeeEntity> listEmployeeEntities, List<TicketEntity> listTicketEntities,
-                     List<PenaltyTicketEntity> listPenaltyTicketEntities) {
+                     List<PenaltyTicketEntity> listPenaltyTicketEntities, BusRoutesEntity busRoutesEntity) {
               this.busNumber = busNumber;
               this.capacity = capacity;
               this.brand = brand;
@@ -59,11 +61,8 @@ public class BusEntity {
               this.listEmployeeEntities = listEmployeeEntities;
               this.listTicketEntities = listTicketEntities;
               this.listPenaltyTicketEntities = listPenaltyTicketEntities;
+              this.busRoutesEntity = busRoutesEntity;
        }
-
-
-
-
 
        public Long getBusId() {
               return busId;
@@ -113,8 +112,6 @@ public class BusEntity {
               this.listEmployeeEntities = listEmployeeEntities;
        }
 
-       
-
        @Override
        public String toString() {
               return "BusEntity [busId=" + busId + ", busNumber=" + busNumber + ", capacity=" + capacity + ", brand="
@@ -136,6 +133,14 @@ public class BusEntity {
 
        public void setListPenaltyTicketEntities(List<PenaltyTicketEntity> listPenaltyTicketEntities) {
               this.listPenaltyTicketEntities = listPenaltyTicketEntities;
+       }
+
+       public BusRoutesEntity getBusRoutesEntity() {
+              return busRoutesEntity;
+       }
+
+       public void setBusRoutesEntity(BusRoutesEntity busRoutesEntity) {
+              this.busRoutesEntity = busRoutesEntity;
        }
 
 }
