@@ -151,7 +151,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
 
               // Nếu kết quả có
-              if (optionalAccount.isPresent() && isForeignKeyEmpty(accountEnity) == false) {
+              if (optionalAccount.isPresent() && isForeignKeyEmpty(accountEnity) == false && foreignKeyViolationIfHidden(accountEnity) == false) {
                      // kiem tra xem nguoi dung co cap nhat pass khong
                      if(isPassWordUpdate(accountEnity)){
                             // Mã hóa mật khẩu mới trước khi thêm vào csdl
@@ -159,6 +159,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
                             // sửa AccountEntity vào
                             this.repo.save(accountEntityEncode);
+                            return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
                      }
                      this.repo.save(accountEnity);
 
@@ -195,7 +196,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
                      // kiem tra khoa ngoai trước khi xóa
                      Boolean checkForeignKey = foreignKeyViolationIfDelete(optionalAccount.get());
 
-                     if (checkForeignKey) {
+                     if (checkForeignKey == false) {
                             // Xóa
                             this.repo.delete(optionalAccount.get());
                             return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
@@ -217,7 +218,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
                      // kiem tra khoa ngoai truoc khi an
                      Boolean checkForeignKey = foreignKeyViolationIfHidden(optional.get());
 
-                     if (checkForeignKey) {
+                     if (checkForeignKey == false) {
                             AccountEntity accountEntity = optional.get();
                             accountEntity.setIsDelete(true);
                             // cap nhat lai
@@ -245,10 +246,10 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
               // kiểm tra
               // Nếu có thực thể tham chiếu khóa ngoại
-              if (ticketEntities.isEmpty() == false && feedbackEntities.isEmpty() == false) {
-                     return false;
+              if (ticketEntities.isEmpty() == false || feedbackEntities.isEmpty() == false) {
+                     return true;
               }
-              return true;
+              return false;
        }
 
        @Transactional
@@ -265,22 +266,23 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
               // kiểm tra
               // Nếu có thực thể tham chiếu khóa ngoại
-              if (ticketEntities.isEmpty() == false && feedbackEntities.isEmpty() == false) {
-
-                     for (FeedbackEntity feedbackEntity : feedbackEntities) {
-                            if (feedbackEntity.getIsDelete() == false) {
-                                   return false;
-                            }
-                     }
+              if (ticketEntities.isEmpty() == false) {
 
                      for (TicketEntity ticketEntity : ticketEntities) {
                             if (ticketEntity.getIsDelete() == false) {
-                                   return false;
+                                   return true;
                             }
                      }
-                     return true;
               }
-              return true;
+              if (feedbackEntities.isEmpty() == false) {
+
+                     for (FeedbackEntity feedbackEntity : feedbackEntities) {
+                            if (feedbackEntity.getIsDelete() == false) {
+                                   return true;
+                            }
+                     }
+              }
+              return false;
        }
 
        @Transactional
@@ -374,12 +376,12 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               return null;
        }
 
-       @Transactional
-       @Override
-       public Boolean isHasForeignKeyEntity(AccountDTO dtoObj) {
-              // Account không có thuộc tinhgs khóa ngoại
-              return true;
-       }
+       // @Transactional
+       // @Override
+       // public Boolean isHasForeignKeyEntity(AccountDTO dtoObj) {
+       //        // Account không có thuộc tinhgs khóa ngoại
+       //        return true;
+       // }
 
        
 

@@ -69,7 +69,7 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
               busDTO.setListTicketEntities_Id(listTicketEntities_Id);
               busDTO.setListPenaltyTicketEntities_Id(listPenaltyTicketEntities_Id);
 
-              busDTO.setBusRoutes_Id(entity.getBusRoutesEntity() != null ? entity.getBusRoutesEntity().getRoutesId() : null);
+              busDTO.setRoutesId(entity.getBusRoutesEntity() != null ? entity.getBusRoutesEntity().getRoutesId() : null);
 
               return busDTO;
        }
@@ -116,7 +116,7 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
               }
               busEntity.setListPenaltyTicketEntities(listPenaltyTicketEntities);
 
-              busEntity.setBusRoutesEntity(busRoutesRepo.findByRoutesId(dto.getBusRoutes_Id()).orElse(null));
+              busEntity.setBusRoutesEntity(busRoutesRepo.findByRoutesId(dto.getRoutesId()).orElse(null));
               
 
               return busEntity;
