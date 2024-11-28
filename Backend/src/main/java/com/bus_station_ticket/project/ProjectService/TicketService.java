@@ -1,5 +1,8 @@
 package com.bus_station_ticket.project.ProjectService;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.http.HttpRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,17 +18,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
+import com.bus_station_ticket.project.ProjectDTO.AccountDTO;
 import com.bus_station_ticket.project.ProjectDTO.TicketDTO;
 import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
+import com.bus_station_ticket.project.ProjectEntity.DiscountEntity;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
 import com.bus_station_ticket.project.ProjectEntity.PaymentEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.TicketMapping;
 import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
+import com.bus_station_ticket.project.ProjectRepository.DiscountRepo;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
+import com.bus_station_ticket.project.ProjectRepository.PaymentRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
+import com.bus_station_ticket.project.VNPay.VNPayService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, Long> {
@@ -40,7 +50,25 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        private BusRoutesRepo busRoutesRepo;
 
        @Autowired
+       private PaymentService paymentService;
+
+       @Autowired
+       private PaymentRepo paymentRepo;
+
+       @Autowired
+       private DiscountRepo discountRepo;
+
+       @Autowired
+       private BusService busService;
+
+       @Autowired
+       private AccountService accountService;
+
+       @Autowired
        private TicketMapping ticketMapping;
+
+       @Autowired
+       private VNPayService vnPayService;
 
        // Lấy một đối tượng TicketEntity theo giá trị
        // Input: ticketId (Long)
@@ -321,7 +349,6 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
                      // mang dem cac chuyen co trong ve
                      List<Long> listRoutesId = new ArrayList<>();
 
-
                      for (TicketEntity e : ticketEntities) {
 
                             if (listRoutesId.contains(e.getRoutes_Id()) == false) {
@@ -363,7 +390,9 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
                             // mapping de lay thong tin routes
                             BusRoutesEntity busRoutesEntity = this.busRoutesRepo.findByRoutesId(id).orElse(null);
 
-                            String inforRoutes = busRoutesEntity.getRoutesId() + "-" + busRoutesEntity.getDepartureLocation() + "-" + busRoutesEntity.getDestinationLocation();
+                            String inforRoutes = busRoutesEntity.getRoutesId() + "-"
+                                          + busRoutesEntity.getDepartureLocation() + "-"
+                                          + busRoutesEntity.getDestinationLocation();
 
                             routes.put(inforRoutes, sumMoneyRoutes);
                      }
@@ -377,8 +406,254 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               responseObject.setStatus("failure");
               responseObject.setData(ticketEntities);
               responseObject.addMessage("mess", "There are no statistics from day " + dateA + " to day " + dateB);
-              
+
               return responseObject;
+       }
+
+       // // Hàm đặt vé
+       // @Transactional(propagation = Propagation.REQUIRED, isolation =
+       // Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       // public ResponseObject createTicketAndPayment(HttpServletRequest request,
+       // String returnUrl, String seat,
+       // Long busId, String departureLocation,
+       // String destinationLocation, LocalDateTime departureTime, LocalDateTime
+       // arivalTime, Long discountId,
+       // String token) throws Exception {
+
+       // ResponseObject responseObject = new ResponseObject();
+
+       // // kiểm tra ghế có hợp lệ không
+
+       // // Kiểm tra ghế có trôngs không
+       // ResponseBoolAndMess check = this.busService.isValSeat(seat, busId,
+       // departureLocation, destinationLocation,
+       // departureTime, arivalTime);
+
+       // if (check.getValueBool()) {
+
+       // // Phân giải token lấy username
+       // AccountDTO accountDTO = this.accountService.geAccountDTOHasLogin();
+
+       // // Lấy thông tin chuyến của bus chạy
+       // BusRoutesEntity busRoutesEntity =
+       // this.busRoutesRepo.findByBusEntity_Id(busId).orElse(null);
+
+       // // Lấy thông tin của discount
+       // DiscountEntity discountEntity = null;
+       // float discountPercentage = 0;
+       // if (discountId != null) {
+       // discountEntity = this.discountRepo.findByDiscountId(discountId).orElse(null);
+       // if (discountEntity != null) {
+
+       // // lay phan tram giam gia
+       // discountPercentage = discountEntity.getDiscountPercentage();
+
+       // // giam so luong
+       // discountEntity.setAmount(discountEntity.getAmount() - 1);
+       // }
+       // }
+
+       // float finalAmount = 0;
+
+       // LocalDateTime now = LocalDateTime.now();
+
+       // // Tạo payment
+       // PaymentEntity paymentEntity = new PaymentEntity();
+       // paymentEntity.setPaymentTime(now);
+       // paymentEntity.setOriginalAmount(busRoutesEntity.getPrice());
+
+       // if (discountEntity != null) {
+       // // tinh tien giam gia
+       // float discountAmount = busRoutesEntity.getPrice() * discountPercentage;
+
+       // finalAmount = busRoutesEntity.getPrice() - busRoutesEntity.getPrice() *
+       // discountPercentage;
+
+       // // set
+       // paymentEntity.setDiscountAmount(discountAmount);
+
+       // paymentEntity.setFinalAmount(finalAmount);
+       // } else {
+       // paymentEntity.setDiscountAmount(0);
+
+       // finalAmount = busRoutesEntity.getPrice();
+
+       // paymentEntity.setFinalAmount(finalAmount);
+       // }
+
+       // paymentEntity.setPaymentMethod("VNPay");
+
+       // paymentEntity.setStatus("pending");
+
+       // paymentEntity.setListTicketEntities(new ArrayList<>());
+
+       // paymentEntity.setIsDelete(false);
+
+       // // them payment vao db
+       // ResponseBoolAndMess checkAddPayment =
+       // this.paymentService.save(paymentEntity);
+
+       // if (checkAddPayment.getValueBool()) {
+       // // Tạo ticket để khóa ghế đó lại
+       // TicketDTO ticketDTO = new TicketDTO();
+
+       // ticketDTO.setAccountEnity_Id(accountDTO.getUserName());
+       // ticketDTO.setBusEntity_Id(busId);
+       // ticketDTO.setBusRoutesEntity_Id(busRoutesEntity.getRoutesId());
+       // ticketDTO.setPaymentEntity_Id(paymentEntity.getPaymentId());
+       // ticketDTO.setDiscountEntity_Id(
+       // discountEntity != null ? discountEntity.getDiscountId() : null);
+       // ticketDTO.setSeatNumber(seat);
+       // ticketDTO.setDepartureDate(departureTime);
+
+       // ticketDTO.setPrice(finalAmount);
+       // ticketDTO.setPhoneNumber(accountDTO.getPhoneNumber());
+
+       // ticketDTO.setStatus("pending");
+
+       // ticketDTO.setListFeedbackEntities_Id(new ArrayList<>());
+
+       // ticketDTO.setIsDelete(false);
+
+       // // luu vao db
+       // TicketEntity ticketEntity =
+       // this.repo.save(this.ticketMapping.toEntity(ticketDTO));
+
+       // // Neu luu ve thanh cong
+       // if (ticketEntity != null) {
+
+       // // gọi đến VNPayService
+
+       // // chuyen ma hoa don qua string
+       // String ticketId = String.valueOf(ticketEntity.getTicketId());
+       // String url = this.vnPayService.createOrder(request, finalAmount, ticketId,
+       // returnUrl);
+
+       // responseObject.setStatus("success");
+       // responseObject.setData(url);
+       // responseObject.addMessage("mess", "Link VNPay");
+       // return responseObject;
+       // }
+       // }else{
+       // throw new Exception("Lỗi giao dịch");
+       // }
+
+       // } else {
+       // responseObject.setStatus("failure");
+       // responseObject.setData(seat);
+       // responseObject.addMessage("mess", "The seat is already occupied, please
+       // reserve another seat");
+
+       // return responseObject;
+       // }
+
+       // }
+
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       public ResponseObject createTicketAndPayment(HttpServletRequest request, String returnUrl, String seat,
+                     Long busId, String departureLocation,
+                     String destinationLocation, LocalDateTime departureTime, LocalDateTime arivalTime, Long discountId,
+                     String token) throws Exception {
+
+              ResponseObject responseObject = new ResponseObject();
+
+              // Kiểm tra ghế có hợp lệ không
+              ResponseBoolAndMess check = this.busService.isValSeat(seat, busId, departureLocation, destinationLocation,
+                            departureTime, arivalTime);
+
+              if (!check.getValueBool()) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "The seat is already occupied, please reserve another seat");
+                     return responseObject;
+              }
+
+              // Phân giải token lấy username
+              AccountDTO accountDTO = this.accountService.geAccountDTOHasLogin();
+
+              // Lấy thông tin chuyến của bus chạy
+              BusRoutesEntity busRoutesEntity = this.busRoutesRepo.findByBusEntity_Id(busId)
+                            .orElseThrow(() -> new IllegalArgumentException("Bus route not found for busId: " + busId));
+
+              // Lấy thông tin discount
+              DiscountEntity discountEntity = discountId != null
+                            ? this.discountRepo.findByDiscountId(discountId).orElse(null)
+                            : null;
+              float discountPercentage = (discountEntity != null) ? discountEntity.getDiscountPercentage() : 0;
+
+              // Giảm số lượng discount
+              if (discountEntity != null) {
+                     discountEntity.setAmount(discountEntity.getAmount() - 1);
+              }
+
+              // Tính toán giá trị thanh toán
+              BigDecimal originalPrice = BigDecimal.valueOf(busRoutesEntity.getPrice());
+              BigDecimal discountAmount = originalPrice.multiply(BigDecimal.valueOf(discountPercentage));
+              BigDecimal finalAmount = originalPrice.subtract(discountAmount);
+
+              // Tạo payment
+              PaymentEntity paymentEntity = new PaymentEntity();
+              paymentEntity.setPaymentTime(LocalDateTime.now());
+              paymentEntity.setOriginalAmount(originalPrice.floatValue());
+              paymentEntity.setDiscountAmount(discountAmount.floatValue());
+              paymentEntity.setFinalAmount(finalAmount.floatValue());
+              paymentEntity.setPaymentMethod("VNPay");
+              paymentEntity.setStatus("pending");
+              paymentEntity.setIsDelete(false);
+
+              PaymentEntity savedPayment = this.paymentRepo.save(paymentEntity);
+              if (savedPayment == null || savedPayment.getPaymentId() == null) {
+                     throw new RuntimeException("Failed to save payment entity.");
+              }
+
+              // Tạo ticket để khóa ghế
+              TicketDTO ticketDTO = new TicketDTO();
+              ticketDTO.setTicketId(1L);
+              ticketDTO.setAccountEnity_Id(accountDTO.getUserName());
+              ticketDTO.setBusEntity_Id(busId);
+              ticketDTO.setBusRoutesEntity_Id(busRoutesEntity.getRoutesId());
+              ticketDTO.setPaymentEntity_Id(savedPayment.getPaymentId());
+              ticketDTO.setDiscountEntity_Id(discountEntity != null ? discountEntity.getDiscountId() : null);
+              ticketDTO.setSeatNumber(seat);
+              ticketDTO.setDepartureDate(departureTime);
+              ticketDTO.setPrice(finalAmount.floatValue());
+              ticketDTO.setPhoneNumber(accountDTO.getPhoneNumber());
+              ticketDTO.setStatus("pending");
+              ticketDTO.setIsDelete(false);
+
+              TicketEntity ticketEntity = this.ticketMapping.toEntity(ticketDTO);
+              ticketEntity.setTicketId(null);
+
+              TicketEntity savedTicket = this.repo.save(ticketEntity);
+
+              if (savedTicket == null || savedTicket.getTicketId() == null) {
+                     throw new RuntimeException("Failed to save ticket entity.");
+              }
+
+              // Gọi VNPayService
+
+              String ticketId = String.valueOf(savedTicket.getTicketId());
+              String url = this.vnPayService.createOrder(request, finalAmount.floatValue(), String.valueOf(savedPayment.getPaymentId()),  ticketId, returnUrl);
+
+              responseObject.setStatus("success");
+              responseObject.setData(url);
+              responseObject.addMessage("mess", "Link VNPay");
+              return responseObject;
+       }
+
+       // Hàm xử lý giao dịch trả về
+       public ResponseObject returnFronVNPay (HttpServletRequest request){
+              Map<String,String> result = this.vnPayService.orderReturn(request);
+
+              // Kiểm tra kết quả giao dịch 
+              String vnp_ResponseCode = result.get("vnp_ResponseCode");
+              String vnp_TransactionStatus = result.get("vnp_TransactionStatus");
+
+              // Nếu thành công
+              if(vnp_ResponseCode.equals(vnp_TransactionStatus)){
+                     
+              }
+              return null;
+
        }
 
 }
