@@ -94,7 +94,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               if (optional.isPresent()) {
                      Boolean check = foreignKeyViolationIfDelete(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             this.repo.delete(optional.get());
                             return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
                      }
@@ -132,7 +132,8 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
        public ResponseBoolAndMess update(EmployeeEntity entityObj) {
               Optional<EmployeeEntity> optional = this.repo.findByDriverId(entityObj.getDriverId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false) {
+                     entityObj.setDriverId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
@@ -157,7 +158,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               if (optional.isPresent()) {
                      Boolean check = foreignKeyViolationIfHidden(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             EmployeeEntity employeeEntity = optional.get();
                             employeeEntity.setIsDelete(check);
                             this.repo.save(employeeEntity);
@@ -179,11 +180,11 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
                             .findByEmployeeEntity_Id(entityObj.getDriverId());
 
-              if (busEntities.isEmpty() == false && penaltyTicketEntities.isEmpty() == false) {
-                     return false;
+              if (busEntities.isEmpty() == false || penaltyTicketEntities.isEmpty() == false) {
+                     return true;
               }
 
-              return true;
+              return false;
        }
 
        @Transactional
@@ -195,23 +196,23 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
                             .findByEmployeeEntity_Id(entityObj.getDriverId());
 
-              if (busEntities.isEmpty() == false && penaltyTicketEntities.isEmpty() == false) {
+              if (busEntities.isEmpty() == false) {
 
                      for (BusEntity e : busEntities) {
                             if (e.getIsDelete() == false) {
-                                   return false;
+                                   return true;
                             }
                      }
-
+              }
+              if (penaltyTicketEntities.isEmpty() == false) {
                      for (PenaltyTicketEntity e : penaltyTicketEntities) {
                             if (e.getIsDelete() == false) {
-                                   return false;
+                                   return true;
                             }
                      }
-                     return true;
               }
 
-              return true;
+              return false;
        }
 
        @Transactional
@@ -223,11 +224,11 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
 
        
 
-       @Override
-       public Boolean isHasForeignKeyEntity(EmployeeDTO dtoObj) {
-              // Employee khong co thuoc tinh khoa ngoai
-              return true;
-       }
+       // @Override
+       // public Boolean isHasForeignKeyEntity(EmployeeDTO dtoObj) {
+       //        // Employee khong co thuoc tinh khoa ngoai
+       //        return true;
+       // }
 
        // Phan nhan vien lai xe
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)

@@ -1,7 +1,10 @@
 package com.bus_station_ticket.project.ProjectService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,21 +14,17 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
+import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.TicketDTO;
 import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
-import com.bus_station_ticket.project.ProjectEntity.DiscountEntity;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
 import com.bus_station_ticket.project.ProjectEntity.PaymentEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.TicketMapping;
-import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
-import com.bus_station_ticket.project.ProjectRepository.BusRepo;
 import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
-import com.bus_station_ticket.project.ProjectRepository.DiscountRepo;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
-import com.bus_station_ticket.project.ProjectRepository.PaymentRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 
 @Service
@@ -35,22 +34,10 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        private TicketRepo repo;
 
        @Autowired
-       private AccountRepo accountRepo;
-
-       @Autowired
-       private BusRepo busRepo;
-
-       @Autowired
-       private DiscountRepo discountRepo;
+       private FeedbackRepo feedbackRepo;
 
        @Autowired
        private BusRoutesRepo busRoutesRepo;
-
-       @Autowired
-       private PaymentRepo paymentRepo;
-
-       @Autowired
-       private FeedbackRepo feedbackRepo;
 
        @Autowired
        private TicketMapping ticketMapping;
@@ -113,7 +100,7 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               if (optional.isPresent()) {
                      Boolean check = foreignKeyViolationIfDelete(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             this.repo.delete(optional.get());
                             return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
                      }
@@ -143,12 +130,9 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
               // kiem tra thuoc tinnh khoa ngoai
 
-              if (isHasForeignKeyEntity(dtoObj)) {
-                     TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
+              TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
 
-                     return save(ticketEntity);
-              }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              return save(ticketEntity);
 
        }
 
@@ -158,7 +142,9 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
               Optional<TicketEntity> optional = this.repo.findByTicketId(entityObj.getTicketId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isRoutesIdVal(entityObj) == true) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isRoutesIdVal(entityObj) == true
+                            && foreignKeyViolationIfHidden(entityObj) == false) {
+                     entityObj.setTicketId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
@@ -172,12 +158,10 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
               // kiem tra thuoc tinnh khoa ngoai
 
-              if (isHasForeignKeyEntity(dtoObj)) {
-                     TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
+              TicketEntity ticketEntity = this.ticketMapping.toEntity(dtoObj);
 
-                     return update(ticketEntity);
-              }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              return update(ticketEntity);
+
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -189,10 +173,10 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               if (optional.isPresent()) {
                      Boolean check = foreignKeyViolationIfHidden(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             TicketEntity ticketEntity = optional.get();
                             ticketEntity.setIsDelete(true);
-                            this.save(ticketEntity);
+                            this.repo.save(ticketEntity);
                             return new ResponseBoolAndMess(true, MESS_HIDDEN_SUCCESS);
                      }
                      return new ResponseBoolAndMess(false, MESS_HIDDEN_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
@@ -208,10 +192,10 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               List<FeedbackEntity> feedbackEntities = this.feedbackRepo.findByTicketEntity_Id(entityObj.getTicketId());
 
               if (feedbackEntities.isEmpty() == false) {
-                     return false;
+                     return true;
               }
 
-              return true;
+              return false;
        }
 
        @Transactional
@@ -224,13 +208,13 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               if (feedbackEntities.isEmpty() == false) {
                      for (FeedbackEntity e : feedbackEntities) {
                             if (e.getIsDelete() == false) {
-                                   return false;
+                                   return true;
                             }
                      }
-                     return true;
+                     return false;
               }
 
-              return true;
+              return false;
        }
 
        @Transactional
@@ -258,31 +242,37 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               return true;
        }
 
-       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       @Override
-       public Boolean isHasForeignKeyEntity(TicketDTO dtoObj) {
-              // Ticket co 5 thuoc tinh khoa ngoai: account_name, bus_id, route_id,
-              // payment_id, discount_id
-              // kiem tra
-              AccountEntity accountEntity = this.accountRepo.findByUserName(dtoObj.getAccountEnity_Id()).orElse(null);
-              BusEntity busEntity = this.busRepo.findByBusId(dtoObj.getBusEntity_Id()).orElse(null);
-              BusRoutesEntity busRoutesEntity = this.busRoutesRepo.findByRoutesId(dtoObj.getBusRoutesEntity_Id())
-                            .orElse(null);
-              PaymentEntity paymentEntity = this.paymentRepo.findByPaymentId(dtoObj.getPaymentEntity_Id()).orElse(null);
-              DiscountEntity discountEntity = this.discountRepo.findByDiscountId(dtoObj.getDiscountEntity_Id())
-                            .orElse(null);
+       // @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation
+       // = Isolation.READ_COMMITTED)
+       // @Override
+       // public Boolean isHasForeignKeyEntity(TicketDTO dtoObj) {
+       // // Ticket co 5 thuoc tinh khoa ngoai: account_name, bus_id, route_id,
+       // // payment_id, discount_id
+       // // kiem tra
+       // AccountEntity accountEntity =
+       // this.accountRepo.findByUserName(dtoObj.getAccountEnity_Id()).orElse(null);
+       // BusEntity busEntity =
+       // this.busRepo.findByBusId(dtoObj.getBusEntity_Id()).orElse(null);
+       // BusRoutesEntity busRoutesEntity =
+       // this.busRoutesRepo.findByRoutesId(dtoObj.getBusRoutesEntity_Id())
+       // .orElse(null);
+       // PaymentEntity paymentEntity =
+       // this.paymentRepo.findByPaymentId(dtoObj.getPaymentEntity_Id()).orElse(null);
+       // DiscountEntity discountEntity =
+       // this.discountRepo.findByDiscountId(dtoObj.getDiscountEntity_Id())
+       // .orElse(null);
 
-              if (accountEntity != null
-                            && busEntity != null
-                            && busRoutesEntity != null
-                            && paymentEntity != null
-                            && discountEntity != null) {
+       // if (accountEntity != null
+       // && busEntity != null
+       // && busRoutesEntity != null
+       // && paymentEntity != null
+       // && discountEntity != null) {
 
-                     return true;
-              }
+       // return true;
+       // }
 
-              return false;
-       }
+       // return false;
+       // }
 
        // kiểm tra xem routes id có được phân cho bus chạy không
        @Transactional
@@ -294,6 +284,101 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
                      return true;
               }
               return false;
+       }
+
+       // thong kê
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public ResponseObject statisticTicketRangeDay(LocalDateTime dateA, LocalDateTime dateB) {
+
+              ResponseObject responseObject = new ResponseObject();
+
+              // Lấy dữ liệu tất cả các vé trong phạm vi ngày A và ngày B
+              List<TicketEntity> ticketEntities = this.repo.findTicketsWithinDateRange(dateA, dateB);
+
+              if (ticketEntities.isEmpty() == false) {
+                     responseObject.setStatus("success");
+                     List<TicketDTO> ticketDTOs = new ArrayList<>();
+
+                     // mapping
+                     for (TicketEntity ticketEntity : ticketEntities) {
+                            ticketDTOs.add(this.ticketMapping.toDTO(ticketEntity));
+                     }
+
+                     responseObject.setData(ticketDTOs);
+                     responseObject.addMessage("mess", "Statistics from day " + dateA + " to day " + dateB);
+                     responseObject.addMessage("size", ticketEntities.size());
+
+                     // doanh thu va so luong cac ve da duoc thanh toan thanh cong
+                     int countTicketSuccess = 0;
+                     float sumMoney = 0;
+
+                     // so luong cac ve dang cho thanh toan (pending)
+                     int countTicketPending = 0;
+
+                     // so luong cac ve dang thanh toan that bai (failure)
+                     int countTicketFailure = 0;
+
+                     // mang dem cac chuyen co trong ve
+                     List<Long> listRoutesId = new ArrayList<>();
+
+
+                     for (TicketEntity e : ticketEntities) {
+
+                            if (listRoutesId.contains(e.getRoutes_Id()) == false) {
+                                   listRoutesId.add(e.getRoutes_Id());
+                            }
+
+                            if (e.getStatus().equals("success")) {
+                                   countTicketSuccess++;
+                                   sumMoney += e.getPrice();
+                            }
+                            if (e.getStatus().equals("pending")) {
+                                   countTicketPending++;
+                            }
+                            if (e.getStatus().equals("failure")) {
+                                   countTicketFailure++;
+                            }
+                     }
+
+                     responseObject.addMessage("numberTicketSuccess", countTicketSuccess);
+                     responseObject.addMessage("sumMoneyTicketSuccess", sumMoney);
+
+                     responseObject.addMessage("numberTicketPending", countTicketPending);
+
+                     responseObject.addMessage("numberTicketFailure", countTicketFailure);
+
+                     // doanh thu cua cac chuyen
+                     List<Object> list = new ArrayList<>();
+                     Map<String, Float> routes = new HashMap<>();
+
+                     for (Long id : listRoutesId) {
+
+                            float sumMoneyRoutes = 0;
+
+                            for (TicketEntity e : ticketEntities) {
+                                   if (e.getRoutes_Id().equals(id) && e.getStatus().equals("success")) {
+                                          sumMoneyRoutes += e.getPrice();
+                                   }
+                            }
+                            // mapping de lay thong tin routes
+                            BusRoutesEntity busRoutesEntity = this.busRoutesRepo.findByRoutesId(id).orElse(null);
+
+                            String inforRoutes = busRoutesEntity.getRoutesId() + "-" + busRoutesEntity.getDepartureLocation() + "-" + busRoutesEntity.getDestinationLocation();
+
+                            routes.put(inforRoutes, sumMoneyRoutes);
+                     }
+                     list.add(routes);
+
+                     responseObject.addMessage("revenueOfRoutes", list);
+
+                     return responseObject;
+              }
+
+              responseObject.setStatus("failure");
+              responseObject.setData(ticketEntities);
+              responseObject.addMessage("mess", "There are no statistics from day " + dateA + " to day " + dateB);
+              
+              return responseObject;
        }
 
 }

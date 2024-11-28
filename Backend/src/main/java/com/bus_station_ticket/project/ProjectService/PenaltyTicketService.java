@@ -1,7 +1,10 @@
 package com.bus_station_ticket.project.ProjectService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +14,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
+import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.PenaltyTicketDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
 import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.PenaltyTicketMapping;
-import com.bus_station_ticket.project.ProjectRepository.BusRepo;
-import com.bus_station_ticket.project.ProjectRepository.EmployeeRepo;
 import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
 
 @Service
@@ -25,12 +27,6 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
 
        @Autowired
        private PenaltyTicketRepo repo;
-
-       @Autowired
-       private BusRepo busRepo;
-
-       @Autowired
-       private EmployeeRepo employeeRepo;
 
        @Autowired
        private PenaltyTicketMapping penaltyTicketMapping;
@@ -93,7 +89,7 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
               if (optional.isPresent()) {
                      Boolean check = foreignKeyViolationIfDelete(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             this.repo.delete(optional.get());
                             return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
                      }
@@ -123,12 +119,11 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
        public ResponseBoolAndMess save_toDTO(PenaltyTicketDTO dtoObj) {
 
               // kiem tra thuoc tinh khoa ngoai
-              if (isHasForeignKeyEntity(dtoObj)) {
-                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
 
-                     return save(penaltyTicketEntity);
-              }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
+
+              return save(penaltyTicketEntity);
+
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -137,7 +132,9 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
 
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false
+                            && foreignKeyViolationIfHidden(entityObj) == false) {
+                     entityObj.setPenaltyTicketId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
@@ -150,12 +147,11 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
        public ResponseBoolAndMess update_toDTO(PenaltyTicketDTO dtoObj) {
 
               // kiem tra thuoc tinh khoa ngoai
-              if (isHasForeignKeyEntity(dtoObj)) {
-                     PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
 
-                     return update(penaltyTicketEntity);
-              }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION);
+              PenaltyTicketEntity penaltyTicketEntity = this.penaltyTicketMapping.toEntity(dtoObj);
+
+              return update(penaltyTicketEntity);
+
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -167,7 +163,7 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
               if (optional.isPresent()) {
                      Boolean check = foreignKeyViolationIfHidden(optional.get());
 
-                     if (check) {
+                     if (check == false) {
                             PenaltyTicketEntity penaltyTicketEntity = optional.get();
                             penaltyTicketEntity.setIsDelete(true);
                             this.repo.save(penaltyTicketEntity);
@@ -183,14 +179,14 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
        public Boolean foreignKeyViolationIfDelete(PenaltyTicketEntity entityObj) {
 
               // PenaltyTicket has no foreign key
-              return true;
+              return false;
        }
 
        @Transactional
        @Override
        public Boolean foreignKeyViolationIfHidden(PenaltyTicketEntity entityObj) {
 
-              return true;
+              return false;
        }
 
        @Transactional
@@ -207,21 +203,91 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
               return true;
        }
 
+       // @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation
+       // = Isolation.READ_COMMITTED)
+       // @Override
+       // public Boolean isHasForeignKeyEntity(PenaltyTicketDTO dtoObj) {
+       // // PenaltyTicket co 2 thuocj tinh khoa ngoai bus_number va driverId
+       // // kiem tra
+
+       // BusEntity busEntity =
+       // this.busRepo.findByBusId(dtoObj.getBusEntity_Id()).orElse(null);
+       // EmployeeEntity employeeEntity =
+       // this.employeeRepo.findByDriverId(dtoObj.getEmployeeEntity_Id())
+       // .orElse(null);
+
+       // if (busEntity != null && employeeEntity != null) {
+       // return true;
+       // }
+
+       // return false;
+       // }
+
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       @Override
-       public Boolean isHasForeignKeyEntity(PenaltyTicketDTO dtoObj) {
-              // PenaltyTicket co 2 thuocj tinh khoa ngoai bus_number va driverId
-              // kiem tra
+       public ResponseObject statisticPenaltyTicketRangeDay(LocalDateTime dateA, LocalDateTime dateB) {
 
-              BusEntity busEntity = this.busRepo.findByBusId(dtoObj.getBusEntity_Id()).orElse(null);
-              EmployeeEntity employeeEntity = this.employeeRepo.findByDriverId(dtoObj.getEmployeeEntity_Id())
-                            .orElse(null);
+              ResponseObject responseObject = new ResponseObject();
+              List<PenaltyTicketEntity> ticketEntities = this.repo.findByPenaltyDayBetween(dateA, dateB);
 
-              if (busEntity != null && employeeEntity != null) {
-                     return true;
+              if (ticketEntities.isEmpty() == false) {
+
+                     responseObject.setStatus("success");
+                     responseObject.addMessage("mess", "Statistics from day " + dateA + " to day " + dateB);
+
+                     List<PenaltyTicketDTO> penaltyTicketDTOs = new ArrayList<>();
+
+                     List<Long> driverIds = new ArrayList<>();
+
+                     float sumMoneyPenalty = 0;
+                     float sumMoneyPenaltyNoProcess = 0;
+                     // mapping
+                     for (PenaltyTicketEntity e : ticketEntities) {
+                            penaltyTicketDTOs.add(this.penaltyTicketMapping.toDTO(e));
+
+                            if (e.getResponsibility() == true) {
+                                   sumMoneyPenalty += e.getPrice();
+                            }
+
+                            if (e.getResponsibility() == false) {
+                                   sumMoneyPenaltyNoProcess += e.getPrice();
+                            }
+
+                            if (driverIds.contains(e.getEmployeeEntity().getDriverId()) == false) {
+                                   driverIds.add(e.getEmployeeEntity().getDriverId());
+                            }
+                     }
+
+                     responseObject.setData(penaltyTicketDTOs);
+                     responseObject.addMessage("size", penaltyTicketDTOs.size());
+
+                     responseObject.addMessage("sumMoneyPenalty", sumMoneyPenalty);
+                     responseObject.addMessage("sumMoneyPenaltyNoProcess", sumMoneyPenaltyNoProcess);
+
+                     // so tien phat cua tung tai xe
+                     List<Object> list = new ArrayList<>();
+                     Map<Long, Float> info = new HashMap<>();
+
+                     for (Long id : driverIds) {
+
+                            float sumMoney = 0;
+                            for (PenaltyTicketEntity e : ticketEntities) {
+                                   if (e.getEmployeeEntity().getDriverId().equals(id)) {
+                                          sumMoney += e.getPrice();
+                                   }
+                            }
+                            info.put(id, sumMoney);
+                     }
+                     list.add(info);
+                     responseObject.addMessage("sumMoneyPenaltyDriverId", list);
+
+                     return responseObject;
+
               }
+              responseObject.setStatus("failure");
+              responseObject.setData(ticketEntities);
+              responseObject.addMessage("mess", "There are no statistics from day " + dateA + " to day " + dateB);
 
-              return false;
+              return responseObject;
        }
 
 }
