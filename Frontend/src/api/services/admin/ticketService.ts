@@ -11,7 +11,7 @@ export const getTickets = async (): Promise<Ticket[]> => {
   });
 };
 
-export const getTicketById = async (ticketId: string): Promise<Ticket> => {
+export const getTicketById = async (ticketId: number): Promise<Ticket> => {
   return apiRequest(async () => {
     const response = await apiClient.get<ApiResponse<Ticket>>(`/tickets/${ticketId}`);
     return response.data.data!;
@@ -32,14 +32,14 @@ export const updateTicket = async (ticket: Partial<Ticket>): Promise<Ticket> => 
   });
 };
 
-export const deleteTicket = async (ticketId: string): Promise<Ticket> => {
+export const deleteTicket = async (ticketId: number): Promise<Ticket> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete<ApiResponse<Ticket>>(`/tickets/${ticketId}`);
+    const response = await apiClient.delete<ApiResponse<Ticket>>(`/tickets/delete/${ticketId}`);
     return response.data.data!;
   });
 };
 
-export const hideTicket = async (ticketId: string): Promise<Ticket> => {
+export const hideTicket = async (ticketId: number): Promise<Ticket> => {
   return apiRequest(async () => {
     const response = await apiClient.delete<ApiResponse<Ticket>>(`/tickets/hidden/${ticketId}`);
     return response.data.data!;
