@@ -34,7 +34,7 @@ export const updateFeedback = async (feedback: Partial<Feedback>): Promise<ApiRe
 
 export const deleteFeedback = async (feedbackId: string): Promise<ApiResponse<Feedback>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete(`/feedbacks/${feedbackId}`);
+    const response = await apiClient.delete(`/feedbacks/delete/${feedbackId}`);
     return response.data;
   });
 };

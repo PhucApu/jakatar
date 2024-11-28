@@ -151,12 +151,17 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
 
               // Nếu kết quả có
-              if (optionalAccount.isPresent() && isForeignKeyEmpty(accountEnity) == false) {
-                     // Mã hóa mật khẩu trước khi thêm vào csdl
-                     AccountEntity accountEntityEncode = encodePassWord(accountEnity);
+              if (optionalAccount.isPresent() && isForeignKeyEmpty(accountEnity) == false && foreignKeyViolationIfHidden(accountEnity) == false) {
+                     // kiem tra xem nguoi dung co cap nhat pass khong
+                     if(isPassWordUpdate(accountEnity)){
+                            // Mã hóa mật khẩu mới trước khi thêm vào csdl
+                            AccountEntity accountEntityEncode = encodePassWord(accountEnity);
 
-                     // sửa AccountEntity vào
-                     this.repo.save(accountEntityEncode);
+                            // sửa AccountEntity vào
+                            this.repo.save(accountEntityEncode);
+                            return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
+                     }
+                     this.repo.save(accountEnity);
 
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
@@ -191,7 +196,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
                      // kiem tra khoa ngoai trước khi xóa
                      Boolean checkForeignKey = foreignKeyViolationIfDelete(optionalAccount.get());
 
-                     if (checkForeignKey) {
+                     if (checkForeignKey == false) {
                             // Xóa
                             this.repo.delete(optionalAccount.get());
                             return new ResponseBoolAndMess(true, MESS_DELETE_SUCCESS);
@@ -213,7 +218,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
                      // kiem tra khoa ngoai truoc khi an
                      Boolean checkForeignKey = foreignKeyViolationIfHidden(optional.get());
 
-                     if (checkForeignKey) {
+                     if (checkForeignKey == false) {
                             AccountEntity accountEntity = optional.get();
                             accountEntity.setIsDelete(true);
                             // cap nhat lai
@@ -241,10 +246,10 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
               // kiểm tra
               // Nếu có thực thể tham chiếu khóa ngoại
-              if (ticketEntities.isEmpty() == false && feedbackEntities.isEmpty() == false) {
-                     return false;
+              if (ticketEntities.isEmpty() == false || feedbackEntities.isEmpty() == false) {
+                     return true;
               }
-              return true;
+              return false;
        }
 
        @Transactional
@@ -261,22 +266,23 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
               // kiểm tra
               // Nếu có thực thể tham chiếu khóa ngoại
-              if (ticketEntities.isEmpty() == false && feedbackEntities.isEmpty() == false) {
-
-                     for (FeedbackEntity feedbackEntity : feedbackEntities) {
-                            if (feedbackEntity.getIsDelete() == false) {
-                                   return false;
-                            }
-                     }
+              if (ticketEntities.isEmpty() == false) {
 
                      for (TicketEntity ticketEntity : ticketEntities) {
                             if (ticketEntity.getIsDelete() == false) {
-                                   return false;
+                                   return true;
                             }
                      }
-                     return true;
               }
-              return true;
+              if (feedbackEntities.isEmpty() == false) {
+
+                     for (FeedbackEntity feedbackEntity : feedbackEntities) {
+                            if (feedbackEntity.getIsDelete() == false) {
+                                   return true;
+                            }
+                     }
+              }
+              return false;
        }
 
        @Transactional
@@ -295,6 +301,26 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               accountEntity.setPassWord(encodePass);
 
               return accountEntity;
+       }
+
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public Boolean isPassWordUpdate(AccountEntity accountEntity){
+              
+              String pass = accountEntity.getPassWord();
+
+              // lay data doi tuong cu
+              AccountEntity accountEntityOld = this.repo.findByUserName(accountEntity.getUserName()).orElse(null);
+
+              // encode
+              String passEncocdeNew = bCryptPasswordEncoder.encode(pass);
+              String passEncodeOld = accountEntityOld.getPassWord();
+
+              if(passEncocdeNew.equals(passEncodeOld) == true){
+                     return false;
+              }
+              return true;
+
+
        }
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
@@ -326,11 +352,11 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
        public String getTokenJwt() {
-              
+
               Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
               if (authentication != null && authentication.isAuthenticated()) {
-                     
+
                      // Lấy ra UserDetails
                      Object principal = authentication.getPrincipal();
 
@@ -342,16 +368,87 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
                             // lay doi tuong duoc xac thuc trong csdl
                             AccountEntity acc = this.repo.findById(username).orElse(null);
-                            
 
                             return jwtService.token(acc);
                      }
-                     return null; 
+                     return null;
               }
               return null;
        }
 
 
 
+       public AccountRepo getRepo() {
+              return repo;
+       }
+
+
+
+       public void setRepo(AccountRepo repo) {
+              this.repo = repo;
+       }
+
+
+
+       public FeedbackRepo getFeedbackRepo() {
+              return feedbackRepo;
+       }
+
+
+
+       public void setFeedbackRepo(FeedbackRepo feedbackRepo) {
+              this.feedbackRepo = feedbackRepo;
+       }
+
+
+
+       public TicketRepo getTicketRepo() {
+              return ticketRepo;
+       }
+
+
+
+       public void setTicketRepo(TicketRepo ticketRepo) {
+              this.ticketRepo = ticketRepo;
+       }
+
+
+
+       public AccountMapping getAccountMapping() {
+              return accountMapping;
+       }
+
+
+
+       public void setAccountMapping(AccountMapping accountMapping) {
+              this.accountMapping = accountMapping;
+       }
+
+
+
+       public JwtService getJwtService() {
+              return jwtService;
+       }
+
+
+
+       public void setJwtService(JwtService jwtService) {
+              this.jwtService = jwtService;
+       }
+
+
+
+       public BCryptPasswordEncoder getbCryptPasswordEncoder() {
+              return bCryptPasswordEncoder;
+       }
+
+       // @Transactional
+       // @Override
+       // public Boolean isHasForeignKeyEntity(AccountDTO dtoObj) {
+       //        // Account không có thuộc tinhgs khóa ngoại
+       //        return true;
+       // }
+
+       
 
 }

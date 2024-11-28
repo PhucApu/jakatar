@@ -53,7 +53,7 @@ export default function Table({
       </Dropdown>
     ),
     ignoreRowClick: true,
-    allowOverflow: true,
+    allowoverflow: true,
   };
 
   return (

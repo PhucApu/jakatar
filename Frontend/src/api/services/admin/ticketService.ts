@@ -34,7 +34,7 @@ export const updateTicket = async (ticket: Partial<Ticket>): Promise<ApiResponse
 
 export const deleteTicket = async (ticketId: string): Promise<ApiResponse<Ticket>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete(`/tickets/${ticketId}`);
+    const response = await apiClient.delete(`/tickets/delete/${ticketId}`);
     return response.data;
   });
 };

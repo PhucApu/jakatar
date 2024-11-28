@@ -34,7 +34,7 @@ export const updateDiscount = async (discount: Partial<Discount>): Promise<ApiRe
 
 export const deleteDiscount = async (discountId: string): Promise<ApiResponse<Discount>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete(`/discounts/${discountId}`);
+    const response = await apiClient.delete(`/discounts/delete/${discountId}`);
     return response.data;
   });
 };

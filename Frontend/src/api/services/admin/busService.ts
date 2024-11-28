@@ -34,7 +34,7 @@ export const updateBus = async (bus: Partial<Bus>): Promise<ApiResponse<Bus>> =>
 
 export const deleteBus = async (busId: string): Promise<ApiResponse<Bus>> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete(`/buses/${busId}`);
+    const response = await apiClient.delete(`/buses/delete/${busId}`);
     return response.data;
   });
 };
