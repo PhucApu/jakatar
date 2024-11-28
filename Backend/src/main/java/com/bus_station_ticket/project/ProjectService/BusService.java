@@ -337,10 +337,10 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
                                    return new ResponseBoolAndMess(false, "Seat is not availible");
                             }
                      }
-                     return new ResponseBoolAndMess(false, "Seat is availible");
+                     return new ResponseBoolAndMess(true, "Seat is availible");
               }
 
-              return new ResponseBoolAndMess(false, "Seat is not availible");
+              return new ResponseBoolAndMess(true, "Seat is availible");
        }
 
 }

@@ -376,6 +376,72 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               return null;
        }
 
+
+
+       public AccountRepo getRepo() {
+              return repo;
+       }
+
+
+
+       public void setRepo(AccountRepo repo) {
+              this.repo = repo;
+       }
+
+
+
+       public FeedbackRepo getFeedbackRepo() {
+              return feedbackRepo;
+       }
+
+
+
+       public void setFeedbackRepo(FeedbackRepo feedbackRepo) {
+              this.feedbackRepo = feedbackRepo;
+       }
+
+
+
+       public TicketRepo getTicketRepo() {
+              return ticketRepo;
+       }
+
+
+
+       public void setTicketRepo(TicketRepo ticketRepo) {
+              this.ticketRepo = ticketRepo;
+       }
+
+
+
+       public AccountMapping getAccountMapping() {
+              return accountMapping;
+       }
+
+
+
+       public void setAccountMapping(AccountMapping accountMapping) {
+              this.accountMapping = accountMapping;
+       }
+
+
+
+       public JwtService getJwtService() {
+              return jwtService;
+       }
+
+
+
+       public void setJwtService(JwtService jwtService) {
+              this.jwtService = jwtService;
+       }
+
+
+
+       public BCryptPasswordEncoder getbCryptPasswordEncoder() {
+              return bCryptPasswordEncoder;
+       }
+
        // @Transactional
        // @Override
        // public Boolean isHasForeignKeyEntity(AccountDTO dtoObj) {
