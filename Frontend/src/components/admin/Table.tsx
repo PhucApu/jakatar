@@ -46,7 +46,7 @@ export default function Table({ columns, rows, searchableFields = [], onEdit, on
     cell: (row) => (
       <Dropdown size='sm' inline label='Chỉnh sửa' dismissOnClick={false}>
         <Dropdown.Item onClick={() => onEdit(row)}>Cập nhật</Dropdown.Item>
-        <Dropdown.Item onClick={() => console.log('Delete item:', row)}>Xóa</Dropdown.Item>
+        <Dropdown.Item onClick={() => onDelete(row)}>Xóa</Dropdown.Item>
       </Dropdown>
     ),
     ignoreRowClick: true,
