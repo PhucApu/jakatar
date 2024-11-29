@@ -151,13 +151,17 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               Optional<AccountEntity> optionalAccount = this.repo.findByUserName(accountEnity.getUserName());
 
               // Nếu kết quả có
-              if (optionalAccount.isPresent() && isForeignKeyEmpty(accountEnity) == false && foreignKeyViolationIfHidden(accountEnity) == false) {
+              if (optionalAccount.isPresent() && isForeignKeyEmpty(accountEnity) == false) {
                      // kiem tra xem nguoi dung co cap nhat pass khong
                      if(isPassWordUpdate(accountEnity)){
                             // Mã hóa mật khẩu mới trước khi thêm vào csdl
                             AccountEntity accountEntityEncode = encodePassWord(accountEnity);
 
                             // sửa AccountEntity vào
+                            if(foreignKeyViolationIfHidden(accountEnity)){
+                                   return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
+                            }
+
                             this.repo.save(accountEntityEncode);
                             return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
                      }

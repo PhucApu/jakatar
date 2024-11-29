@@ -132,7 +132,12 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
        public ResponseBoolAndMess update(EmployeeEntity entityObj) {
               Optional<EmployeeEntity> optional = this.repo.findByDriverId(entityObj.getDriverId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false ) {
+
+                     if(foreignKeyViolationIfHidden(entityObj)){
+                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
+                     }
+
                      entityObj.setDriverId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);

@@ -1,8 +1,7 @@
 package com.bus_station_ticket.project.ProjectService;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.http.HttpRequest;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -170,8 +169,10 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
               Optional<TicketEntity> optional = this.repo.findByTicketId(entityObj.getTicketId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isRoutesIdVal(entityObj) == true
-                            && foreignKeyViolationIfHidden(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isRoutesIdVal(entityObj) == true) {
+                     if(foreignKeyViolationIfHidden(entityObj)){
+                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
+                     }
                      entityObj.setTicketId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
@@ -586,8 +587,10 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               }
 
               // Tính toán giá trị thanh toán
+              // Tính toán giá trị thanh toán
               BigDecimal originalPrice = BigDecimal.valueOf(busRoutesEntity.getPrice());
-              BigDecimal discountAmount = originalPrice.multiply(BigDecimal.valueOf(discountPercentage));
+              BigDecimal discountAmount = originalPrice.multiply(BigDecimal.valueOf(discountPercentage))
+                            .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
               BigDecimal finalAmount = originalPrice.subtract(discountAmount);
 
               // Tạo payment
@@ -620,6 +623,8 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               ticketDTO.setStatus("pending");
               ticketDTO.setIsDelete(false);
 
+              ticketDTO.setListFeedbackEntities_Id(new ArrayList<>());
+
               TicketEntity ticketEntity = this.ticketMapping.toEntity(ticketDTO);
               ticketEntity.setTicketId(null);
 
@@ -632,7 +637,11 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               // Gọi VNPayService
 
               String ticketId = String.valueOf(savedTicket.getTicketId());
-              String url = this.vnPayService.createOrder(request, finalAmount.floatValue(), String.valueOf(savedPayment.getPaymentId()),  ticketId, returnUrl);
+              String url = this.vnPayService.createOrder(request, finalAmount.intValue(),
+                            String.valueOf(savedPayment.getPaymentId()), ticketId, returnUrl);
+
+              // String url = this.vnPayService.createOrder(request, convertToNumeric(100000),
+              // "test 2", returnUrl);
 
               responseObject.setStatus("success");
               responseObject.setData(url);
@@ -641,19 +650,66 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        }
 
        // Hàm xử lý giao dịch trả về
-       public ResponseObject returnFronVNPay (HttpServletRequest request){
-              Map<String,String> result = this.vnPayService.orderReturn(request);
+       public ResponseObject returnFronVNPay(HttpServletRequest request) {
 
-              // Kiểm tra kết quả giao dịch 
+              ResponseObject responseObject = new ResponseObject();
+
+              Map<String, String> result = this.vnPayService.orderReturn(request);
+
+              // Kiểm tra kết quả giao dịch
               String vnp_ResponseCode = result.get("vnp_ResponseCode");
               String vnp_TransactionStatus = result.get("vnp_TransactionStatus");
 
-              // Nếu thành công
-              if(vnp_ResponseCode.equals(vnp_TransactionStatus)){
-                     
-              }
-              return null;
+              // Lấy mã payment
+              Long paymentId = Long.parseLong(result.get("vnp_TxnRef"));
 
+              // Nếu thành công
+              if (vnp_ResponseCode.equals(vnp_TransactionStatus)) {
+
+                     // Cập nhật trạng thái payment
+                     PaymentEntity paymentEntity = this.paymentService.getById(paymentId);
+                     paymentEntity.setStatus("success");
+
+                     PaymentEntity paymentEntity2 = this.paymentRepo.save(paymentEntity);
+
+                     // cap nhatj trang thai ticket
+                     if (paymentEntity2.getStatus().equals("success")) {
+                            List<TicketEntity> ticketEntities = this.repo.findByPaymentEntity_Id(paymentId);
+
+                            for (TicketEntity e : ticketEntities) {
+                                   e.setStatus("success");
+                                   this.repo.save(e);
+                            }
+
+                            responseObject.setStatus("success");
+                            responseObject.setData(ticketEntities);
+                            responseObject.addMessage("mess", "Payment successful");
+
+                            return responseObject;
+                     }
+
+              }
+
+              // Cập nhật trạng thái payment
+              PaymentEntity paymentEntity = this.paymentService.getById(paymentId);
+              paymentEntity.setStatus("failure");
+              PaymentEntity paymentEntity2 = this.paymentRepo.save(paymentEntity);
+
+              // cap nhatj trang thai ticket
+              if (paymentEntity2.getStatus().equals("failure")) {
+                     List<TicketEntity> ticketEntities = this.repo.findByPaymentEntity_Id(paymentId);
+
+                     for (TicketEntity e : ticketEntities) {
+                            e.setStatus("failure");
+                            this.repo.save(e);
+                     }
+
+                     responseObject.setStatus("failure");
+                     responseObject.setData(ticketEntities);
+                     responseObject.addMessage("mess", "Payment no successful");
+              }
+
+              return responseObject;
        }
 
 }
