@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types'; 
 
-DropdownSearch.propTypes = {
-  label: PropTypes.string.isRequired,
-  helper: PropTypes.string.isRequired
+interface DropdownSearchProps {
+  label: string;
+  helper: string;
 }
 
-export default function DropdownSearch({...props}) {
+export default function DropdownSearch({...props}: DropdownSearchProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 

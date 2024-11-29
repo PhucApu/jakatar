@@ -16,6 +16,7 @@ import { getBuses } from '../../api/services/admin/busService';
 import { getBusRoutes } from '../../api/services/admin/busRouteService';
 import { getPayments } from '../../api/services/admin/paymentService';
 import { getDiscounts } from '../../api/services/admin/discountService';
+import { formatDate } from '../../utils/dateFormat';
 
 export default function Ticket() {
   const [data, setData] = useState<Ticket[]>([]);
@@ -45,10 +46,10 @@ export default function Ticket() {
     { name: 'ID Xe buýt', selector: (row) => row.busEntity_Id, sortable: true },
     { name: 'ID Tuyến', selector: (row) => row.busRoutesEntity_Id, sortable: true },
     { name: 'Số ghế', selector: (row) => row.seatNumber, sortable: true },
-    { name: 'Ngày khởi hành', selector: (row) => row.departureDate, sortable: true },
+    { name: 'Ngày khởi hành', selector: (row) => formatDate(row.departureDate) , sortable: true },
     { name: 'Số điện thoại', selector: (row) => row.phoneNumber, sortable: true },
-    { name: 'Trạng thái', selector: (row) => row.status, sortable: true },
-    { name: 'Giá tiền', selector: (row) => row.price, sortable: true },
+    { name: 'Trạng thái', selector: (row) => row.status.toUpperCase(), sortable: true },
+    { name: 'Giá tiền', selector: (row) => row.price.toLocaleString('vi-VN') + 'đ', sortable: true },
     {
       name: 'Tình trạng',
       selector: (row) => (row.isDelete ? 'Không hiển thị' : 'Hiển thị'),

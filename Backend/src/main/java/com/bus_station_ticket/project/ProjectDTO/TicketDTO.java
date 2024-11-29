@@ -1,6 +1,6 @@
 package com.bus_station_ticket.project.ProjectDTO;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.validation.constraints.Min;
@@ -35,7 +35,7 @@ public class TicketDTO {
        private String seatNumber;
 
        @NotNull(message = "departureDate cannot be null")
-       private LocalDate departureDate;
+       private LocalDateTime departureDate;
 
        @NotNull(message = "price cannot be null")
        @Min(value = 0, message = "Price must be greater than or equal to 0")
@@ -61,7 +61,7 @@ public class TicketDTO {
        
 
        public TicketDTO(Long ticketId, String accountEnity_Id, Long busEntity_Id, Long busRoutesEntity_Id,
-                     Long paymentEntity_Id, Long discountEntity_Id, String seatNumber, LocalDate departureDate,
+                     Long paymentEntity_Id, Long discountEntity_Id, String seatNumber, LocalDateTime departureDate,
                      float price, String phoneNumber, String status, List<Long> listFeedbackEntities_Id,
                      Boolean isDelete) {
               this.ticketId = ticketId;
@@ -123,10 +123,10 @@ public class TicketDTO {
        public void setSeatNumber(String seatNumber) {
               this.seatNumber = seatNumber;
        }
-       public LocalDate getDepartureDate() {
+       public LocalDateTime getDepartureDate() {
               return departureDate;
        }
-       public void setDepartureDate(LocalDate departureDate) {
+       public void setDepartureDate(LocalDateTime departureDate) {
               this.departureDate = departureDate;
        }
        public float getPrice() {
