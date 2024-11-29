@@ -24,6 +24,7 @@ import com.bus_station_ticket.project.ProjectDTO.BusDTO;
 import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
 import com.bus_station_ticket.project.ProjectService.BusRoutesService;
 import com.bus_station_ticket.project.ProjectService.BusService;
+import com.bus_station_ticket.project.ProjectService.TicketService;
 
 import jakarta.validation.Valid;
 
@@ -35,7 +36,10 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
        private BusService busService;
 
        @Autowired
-       private BusRoutesService busRoutesService;;
+       private BusRoutesService busRoutesService;
+
+       @Autowired
+       private TicketService ticketService;
 
        // Lấy tất cả các BusEntity có
        // path: "/buses"
@@ -291,8 +295,11 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
        }
 
        @PostMapping("/check_seat")
-       public ResponseEntity<ResponseObject> checkSeat(@RequestParam("seat") String seat, @RequestParam("busId") Long busId, @RequestParam("departureLocation") String departureLocation,
-       @RequestParam("destinationLocation") String destinationLocation, @RequestParam("departureTime") LocalDateTime departureTime, @RequestParam("arivalTime") LocalDateTime arivalTime) {
+       public ResponseEntity<ResponseObject> checkSeat(@RequestParam("seat") String seat,
+                     @RequestParam("busId") Long busId, @RequestParam("departureLocation") String departureLocation,
+                     @RequestParam("destinationLocation") String destinationLocation,
+                     @RequestParam("departureTime") LocalDateTime departureTime,
+                     @RequestParam("arivalTime") LocalDateTime arivalTime) {
 
               ResponseObject responseObject = new ResponseObject();
 
@@ -315,6 +322,19 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
 
+       }
+
+       @GetMapping("/list_empty_seat")
+       public ResponseEntity<ResponseObject> getListSeatEmpty(@RequestParam("busId") Long busId,
+                     @RequestParam("departureLocation") String departureLocation,
+                     @RequestParam("destinationLocation") String destinationLocation,
+                     @RequestParam("departureTime") LocalDateTime departureTime,
+                     @RequestParam("arivalTime") LocalDateTime arivalTime) {
+
+              ResponseObject responseObject = this.busService.getListSeatBusEmpty(busId, departureLocation,
+                            destinationLocation, departureTime, arivalTime);
+
+              return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
 
 }

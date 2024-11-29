@@ -2,7 +2,9 @@ package com.bus_station_ticket.project.ProjectService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
+import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.BusDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
@@ -148,7 +151,8 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
               Optional<BusEntity> optional = this.repo.findByBusId(entityObj.getBusId());
 
               if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false
-                            && isDuplicatBusNumber(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false) {
+                            && isDuplicatBusNumber(entityObj) == false
+                            && foreignKeyViolationIfHidden(entityObj) == false) {
 
                      // entityObj.setBusId(null);
                      this.repo.save(entityObj);
@@ -343,19 +347,90 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        public ResponseBoolAndMess isValSeat(String seat, Long busId, String departureLocation,
                      String destinationLocation, LocalDateTime departureTime, LocalDateTime arivalTime) {
 
+              if( isValSeatFormat(busId, seat) == false){
+                     return new ResponseBoolAndMess(false, "Seat is not availible. Seat " + seat + " may not in the correct format");
+              }
+
               List<TicketEntity> ticketEntities = this.ticketRepo.findByBusAndRoutes(busId, departureLocation,
                             destinationLocation, departureTime, arivalTime);
-
-              if (ticketEntities.isEmpty() == false) {
+              if (ticketEntities.isEmpty() ==     false) {
                      for (TicketEntity e : ticketEntities) {
                             if (e.getSeatNumber().equals(seat) && e.getStatus().equals("failure") == false) {
-                                   return new ResponseBoolAndMess(false, "Seat is not availible");
+                                   return new ResponseBoolAndMess(false, "Seat is not availible. Seat " + seat + " may be overbooked");
                             }
                      }
-                     return new ResponseBoolAndMess(true, "Seat is availible");
+                     return new ResponseBoolAndMess(true, "Seat is availible.");
               }
 
               return new ResponseBoolAndMess(true, "Seat is availible");
+       }
+
+       // kiểm tra các ghế còn trống
+       // Mặc định các ghế sẽ có dạng mã <busId> + "_"+ [A01,A40] ví dụ 1_A01,1_A02
+
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public ResponseObject getListSeatBusEmpty(Long busId, String departureLocation, String destinationLocation,
+                     LocalDateTime departureTime, LocalDateTime arrivalTime) {
+
+              ResponseObject responseObject = new ResponseObject();
+
+              List<String> seatData = getDataSeatFromBus(busId);
+
+              List<Object> rs = new ArrayList<>();
+
+              // ma ghe va trang thai co trong hay khong
+              Map<String, Boolean> seatStatus = new HashMap<>();
+
+              for (String seat : seatData) {
+                     ResponseBoolAndMess check = isValSeat(seat, busId, departureLocation,
+                                   destinationLocation, departureTime, arrivalTime);
+                     seatStatus.put(seat, check.getValueBool());
+              }
+              rs.add(seatStatus);
+
+              responseObject.setStatus("success");
+              responseObject.addMessage("busId", busId);
+              responseObject.addMessage("departureLocation", departureLocation);
+              responseObject.addMessage("destinationLocation", destinationLocation);
+              responseObject.addMessage("departureTime", departureTime);
+              responseObject.addMessage("arrivalTime", arrivalTime);
+              responseObject.setData(rs);
+
+              return responseObject;
+       }
+
+       @Transactional
+       public List<String> getDataSeatFromBus(Long busId) {
+
+              List<String> seatData = new ArrayList<>();
+              Optional<BusEntity> optional = this.repo.findByBusId(busId);
+
+              if (optional.isPresent()) {
+                     for (int i = 1; i <= 40; i++) {
+                            String seat = "";
+                            if (i < 10) {
+                                   seat = busId + "_" + "A0" + i;
+                            } else {
+                                   seat = busId + "_" + "A" + i;
+                            }
+                            seatData.add(seat);
+                     }
+              }
+
+              return seatData;
+
+       }
+
+       @Transactional
+       // Kiểm tra ghế có hợp lệ không
+       public Boolean isValSeatFormat(Long busId, String seat) {
+
+              List<String> dataSeat = getDataSeatFromBus(busId);
+
+              if (dataSeat.contains(seat)) {
+                     return true;
+              }
+              return false;
        }
 
 }
