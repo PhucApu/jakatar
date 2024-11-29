@@ -7,6 +7,7 @@ import { BusRoute } from '@type/model/BusRoute';
 export const getBusRoutes = async (): Promise<BusRoute[]> => {
   return apiRequest(async () => {
     const response = await apiClient.get<ApiResponse<BusRoute[]>>('/busroutes');
+    console.log("response api busRouter: ",response.data.data);
     return response.data.data || [];
   });
 };
@@ -14,6 +15,7 @@ export const getBusRoutes = async (): Promise<BusRoute[]> => {
 export const getBusRouteById = async (routesId: number): Promise<BusRoute> => {
   return apiRequest(async () => {
     const response = await apiClient.get<ApiResponse<BusRoute>>(`/busroutes/${routesId}`);
+    
     return response.data.data!;
   });
 };

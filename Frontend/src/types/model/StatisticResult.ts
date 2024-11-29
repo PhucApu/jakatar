@@ -6,7 +6,7 @@ export interface StatisticResult {
   revenueOfRoutes?: { [route: string]: number }[]; // Doanh thu theo tuyến xe
   sumMoneyPenalty?: number; // Tổng số tiền phạt
   sumMoneyPenaltyDriverId?: { [driverId: string]: number }[]; // Tiền phạt theo ID tài xế
-  size?: number; // Số lượng
+  size: number | null | undefined; // Số lượng
   sumMoneyPenaltyNoProcess?: number; // Tiền phạt chưa xử lý
   numberTicketPending?: number; // Số vé đang chờ xử lý
   numberTicketFailure?: number; // Số vé thất bại
