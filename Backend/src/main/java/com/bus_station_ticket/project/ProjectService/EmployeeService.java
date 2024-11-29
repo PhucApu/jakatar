@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
+import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.EmployeeDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
@@ -272,5 +273,36 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               }
               return new ResponseBoolAndMess(false,
                             "Deletion of bus driver assignment with " + busId + " code no successfully");
+       }
+
+       // trả dữ liệu mã nhân viên và mã xe
+       public ResponseObject getAllDriverIdAndBusId() {
+
+              ResponseObject responseObject = new ResponseObject();
+
+              List<EmployeeEntity> employeeEntities = this.repo.findAll();
+              List<BusEntity> busEntities = this.busRepo.findAll();
+
+              List<Long> driverId = new ArrayList<>();
+              List<Long> busId = new ArrayList<>();
+
+              if(employeeEntities.isEmpty() == false){
+
+                     for(EmployeeEntity e: employeeEntities){
+                            driverId.add(e.getDriverId());;
+                     }
+              }
+              if(busEntities.isEmpty() == false){
+                     for(BusEntity e : busEntities){
+                            busId.add(e.getBusId());
+                     }
+              }
+
+              responseObject.setStatus("success");
+              responseObject.addMessage("dataBusId", busId);
+              responseObject.addMessage("dataDriverId", driverId);
+              responseObject.setData(employeeEntities);
+
+              return responseObject;
        }
 }
