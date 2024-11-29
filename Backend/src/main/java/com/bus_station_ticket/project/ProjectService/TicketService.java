@@ -554,27 +554,37 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        // }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-       public ResponseObject createTicketAndPayment(HttpServletRequest request, String returnUrl, String seat,
-                     Long busId, String departureLocation,
-                     String destinationLocation, LocalDateTime departureTime, LocalDateTime arivalTime, Long discountId,
+       public ResponseObject createMultipleTicketsAndPayment(
+                     HttpServletRequest request,
+                     String returnUrl,
+                     List<String> seats, // Danh sách ghế
+                     Long busId,
+                     String departureLocation,
+                     String destinationLocation,
+                     LocalDateTime departureTime,
+                     LocalDateTime arrivalTime,
+                     Long discountId,
                      String token) throws Exception {
 
               ResponseObject responseObject = new ResponseObject();
 
-              // Kiểm tra ghế có hợp lệ không
-              ResponseBoolAndMess check = this.busService.isValSeat(seat, busId, departureLocation, destinationLocation,
-                            departureTime, arivalTime);
+              // Kiểm tra từng ghế trong danh sách
+              for (String seat : seats) {
+                     ResponseBoolAndMess check = this.busService.isValSeat(seat, busId, departureLocation,
+                                   destinationLocation, departureTime, arrivalTime);
 
-              if (!check.getValueBool()) {
-                     responseObject.setStatus("failure");
-                     responseObject.addMessage("mess", "The seat is already occupied, please reserve another seat");
-                     return responseObject;
+                     if (!check.getValueBool()) {
+                            responseObject.setStatus("failure");
+                            responseObject.addMessage("mess",
+                                          "One or more seats are already occupied. Please choose other seats.");
+                            return responseObject;
+                     }
               }
 
               // Phân giải token lấy username
               AccountDTO accountDTO = this.accountService.geAccountDTOHasLogin();
 
-              // Lấy thông tin chuyến của bus chạy
+              // Lấy thông tin chuyến bus
               BusRoutesEntity busRoutesEntity = this.busRoutesRepo.findByBusEntity_Id(busId)
                             .orElseThrow(() -> new IllegalArgumentException("Bus route not found for busId: " + busId));
 
@@ -584,19 +594,19 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
                             : null;
               float discountPercentage = (discountEntity != null) ? discountEntity.getDiscountPercentage() : 0;
 
-              // Giảm số lượng discount
+              // Giảm số lượng discount (nếu có)
               if (discountEntity != null) {
-                     discountEntity.setAmount(discountEntity.getAmount() - 1);
+                     discountEntity.setAmount(discountEntity.getAmount() - seats.size());
               }
 
               // Tính toán giá trị thanh toán
-              // Tính toán giá trị thanh toán
-              BigDecimal originalPrice = BigDecimal.valueOf(busRoutesEntity.getPrice());
+              BigDecimal originalPrice = BigDecimal.valueOf(busRoutesEntity.getPrice())
+                            .multiply(BigDecimal.valueOf(seats.size()));
               BigDecimal discountAmount = originalPrice.multiply(BigDecimal.valueOf(discountPercentage))
                             .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
               BigDecimal finalAmount = originalPrice.subtract(discountAmount);
 
-              // Tạo payment
+              // Tạo payment duy nhất
               PaymentEntity paymentEntity = new PaymentEntity();
               paymentEntity.setPaymentTime(LocalDateTime.now());
               paymentEntity.setOriginalAmount(originalPrice.floatValue());
@@ -611,40 +621,42 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
                      throw new RuntimeException("Failed to save payment entity.");
               }
 
-              // Tạo ticket để khóa ghế
-              TicketDTO ticketDTO = new TicketDTO();
-              ticketDTO.setTicketId(1L);
-              ticketDTO.setAccountEnity_Id(accountDTO.getUserName());
-              ticketDTO.setBusEntity_Id(busId);
-              ticketDTO.setBusRoutesEntity_Id(busRoutesEntity.getRoutesId());
-              ticketDTO.setPaymentEntity_Id(savedPayment.getPaymentId());
-              ticketDTO.setDiscountEntity_Id(discountEntity != null ? discountEntity.getDiscountId() : null);
-              ticketDTO.setSeatNumber(seat);
-              ticketDTO.setDepartureDate(departureTime);
-              ticketDTO.setPrice(finalAmount.floatValue());
-              ticketDTO.setPhoneNumber(accountDTO.getPhoneNumber());
-              ticketDTO.setStatus("pending");
-              ticketDTO.setIsDelete(false);
+              // Tạo danh sách ticket
+              List<TicketEntity> ticketEntities = new ArrayList<>();
+              for (String seat : seats) {
+                     TicketDTO ticketDTO = new TicketDTO();
+                     ticketDTO.setAccountEnity_Id(accountDTO.getUserName());
+                     ticketDTO.setBusEntity_Id(busId);
+                     ticketDTO.setBusRoutesEntity_Id(busRoutesEntity.getRoutesId());
+                     ticketDTO.setPaymentEntity_Id(savedPayment.getPaymentId());
+                     ticketDTO.setDiscountEntity_Id(discountEntity != null ? discountEntity.getDiscountId() : null);
+                     ticketDTO.setSeatNumber(seat);
+                     ticketDTO.setDepartureDate(departureTime);
+                     ticketDTO.setPrice(finalAmount.floatValue() / seats.size()); // Giá mỗi vé
+                     ticketDTO.setPhoneNumber(accountDTO.getPhoneNumber());
+                     ticketDTO.setStatus("pending");
+                     ticketDTO.setIsDelete(false);
+                     ticketDTO.setListFeedbackEntities_Id(new ArrayList<>());
 
-              ticketDTO.setListFeedbackEntities_Id(new ArrayList<>());
+                     TicketEntity ticketEntity = this.ticketMapping.toEntity(ticketDTO);
+                     ticketEntity.setTicketId(null);
+                     ticketEntities.add(ticketEntity);
+              }
 
-              TicketEntity ticketEntity = this.ticketMapping.toEntity(ticketDTO);
-              ticketEntity.setTicketId(null);
+              // Lưu tất cả ticket
+              List<TicketEntity> savedTickets = this.repo.saveAll(ticketEntities);
 
-              TicketEntity savedTicket = this.repo.save(ticketEntity);
-
-              if (savedTicket == null || savedTicket.getTicketId() == null) {
-                     throw new RuntimeException("Failed to save ticket entity.");
+              if (savedTickets.isEmpty()) {
+                     throw new RuntimeException("Failed to save tickets.");
               }
 
               // Gọi VNPayService
+              String ticketIds = savedTickets.stream()
+                            .map(ticket -> String.valueOf(ticket.getTicketId()))
+                            .reduce((a, b) -> a + "," + b).orElse("");
 
-              String ticketId = String.valueOf(savedTicket.getTicketId());
               String url = this.vnPayService.createOrder(request, finalAmount.intValue(),
-                            String.valueOf(savedPayment.getPaymentId()), ticketId, returnUrl);
-
-              // String url = this.vnPayService.createOrder(request, convertToNumeric(100000),
-              // "test 2", returnUrl);
+                            String.valueOf(savedPayment.getPaymentId()), ticketIds, returnUrl);
 
               responseObject.setStatus("success");
               responseObject.setData(url);
@@ -653,6 +665,7 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        }
 
        // Hàm xử lý giao dịch trả về
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
        public ResponseObject returnFronVNPay(HttpServletRequest request) {
 
               ResponseObject responseObject = new ResponseObject();
@@ -664,7 +677,8 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               String vnp_TransactionStatus = result.get("vnp_TransactionStatus");
 
               // Lấy mã payment
-              Long paymentId = Long.parseLong(result.get("vnp_TxnRef"));
+              String[] temp = result.get("vnp_TxnRef").split("_");
+              Long paymentId = Long.parseLong(temp[0]);
 
               // Nếu thành công
               if (vnp_ResponseCode.equals(vnp_TransactionStatus)) {
@@ -684,8 +698,14 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
                                    this.repo.save(e);
                             }
 
+                            List<TicketEntity> ticketEntities2 = this.repo.findByPaymentEntity_Id(paymentId);
+                            List<TicketDTO> ticketDTOs = new ArrayList<>();
+                            for (TicketEntity e : ticketEntities2) {
+                                   ticketDTOs.add(this.ticketMapping.toDTO(e));
+                            }
+
                             responseObject.setStatus("success");
-                            responseObject.setData(ticketEntities);
+                            responseObject.setData(ticketDTOs);
                             responseObject.addMessage("mess", "Payment successful");
 
                             return responseObject;
@@ -707,12 +727,19 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
                             this.repo.save(e);
                      }
 
+                     List<TicketDTO> ticketDTOs = new ArrayList<>();
+                     for (TicketEntity e : ticketEntities) {
+                            ticketDTOs.add(this.ticketMapping.toDTO(e));
+                     }
+
                      responseObject.setStatus("failure");
-                     responseObject.setData(ticketEntities);
+                     responseObject.setData(ticketDTOs);
                      responseObject.addMessage("mess", "Payment no successful");
+                     responseObject.addMessage("size", ticketDTOs.size());
               }
 
               return responseObject;
        }
 
+       
 }

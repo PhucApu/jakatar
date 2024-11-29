@@ -31,7 +31,7 @@ public class TicketDTO {
        private Long discountEntity_Id;
 
        @NotBlank(message = "seatNumber cannot be blank")
-       @Size(max = 3, message = "The seat number cannot exceed 3 characters")
+       @Size(max = 5, message = "The seat number cannot exceed 3 characters")
        private String seatNumber;
 
        @NotNull(message = "departureDate cannot be null")
