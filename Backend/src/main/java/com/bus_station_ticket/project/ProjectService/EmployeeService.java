@@ -184,11 +184,11 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
                             .findByEmployeeEntity_Id(entityObj.getDriverId());
 
-              if (busEntities.isEmpty() == false || penaltyTicketEntities.isEmpty() == false) {
-                     return true;
+              if (busEntities.isEmpty() == true && penaltyTicketEntities.isEmpty() == true) {
+                     return false;
               }
 
-              return false;
+              return true;
        }
 
        @Transactional
