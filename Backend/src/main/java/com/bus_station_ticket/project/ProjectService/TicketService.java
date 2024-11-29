@@ -741,5 +741,85 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
               return responseObject;
        }
 
-       
+       // hàm tra cứu vé
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public ResponseObject getByTicketIdAndUserName(Long ticketId, String username) {
+
+              AccountDTO accountEntity = this.accountService.geAccountDTOHasLogin();
+              ResponseObject responseObject = new ResponseObject();
+
+              if (accountEntity != null && accountEntity.getUserName().equals(username)) {
+                     Optional<TicketEntity> optional = this.repo.findByTicketId(ticketId);
+                     if (optional.isPresent()) {
+                            if (optional.get().getAccountEntity().getUserName().equals(username)) {
+                                   responseObject.setStatus("success");
+                                   responseObject.addMessage("mess", "Found ticket");
+                                   responseObject.setData(this.ticketMapping.toDTO(optional.get()));
+
+                                   return responseObject;
+                            }
+                            responseObject.setStatus("failure");
+                            responseObject.addMessage("mess", "Not found ticket");
+                            responseObject.setData(null);
+
+                            return responseObject;
+
+                     }
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Not found ticket");
+                     responseObject.setData(null);
+
+                     return responseObject;
+              }
+              responseObject.setStatus("failure");
+              responseObject.addMessage("mess", "Ticket viewing is not allowed");
+              responseObject.setData(null);
+
+              return responseObject;
+       }
+
+       // Hàm tra cứu theo ngày dateA đến dateB và theo username
+       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
+       public ResponseObject getByTicketIdAndUserNameAndDateRange(String username, LocalDateTime dateA,
+                     LocalDateTime dateB) {
+
+              AccountDTO accountEntity = this.accountService.geAccountDTOHasLogin();
+              ResponseObject responseObject = new ResponseObject();
+
+              if (accountEntity != null && accountEntity.getUserName().equals(username)) {
+
+                     List<TicketDTO> ticketEntitiesReturn = new ArrayList<>();
+
+                     if (dateA.isBefore(dateB)) {
+                            List<TicketEntity> ticketEntities = this.repo.findTicketsWithinDateRange(dateA, dateB);
+
+                            for (TicketEntity e : ticketEntities) {
+                                   if (e.getAccountEntity().getUserName().equals(username)) {
+                                          ticketEntitiesReturn.add(this.ticketMapping.toDTO(e));
+                                   }
+                            }
+
+                            responseObject.setStatus("success");
+                            responseObject.addMessage("mess", "Found tickets");
+                            responseObject.setData(ticketEntitiesReturn);
+
+                            return responseObject;
+
+                     }
+
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Not Found tickets");
+                     responseObject.setData(ticketEntitiesReturn);
+
+                     return responseObject;
+              }
+
+              responseObject.setStatus("failure");
+              responseObject.addMessage("mess", "Ticket viewing is not allowed");
+              responseObject.setData(null);
+
+              return responseObject;
+
+       }
+
 }
