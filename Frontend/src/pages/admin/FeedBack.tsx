@@ -24,6 +24,7 @@ import {
 import {
   getTickets
 } from '../../api/services/admin/ticketService';
+import { formatDate } from '../../utils/dateFormat';
 
 
 
@@ -46,7 +47,7 @@ export default function Feedback() {
     { name: 'ID Vé', selector: (row) => row.ticketEntity_Id, sortable: true },
     { name: 'Nội dung', selector: (row) => row.content, sortable: false },
     { name: 'Đánh giá', selector: (row) => row.rating, sortable: true },
-    { name: 'Ngày bình luận', selector: (row) => row.dateComment, sortable: true },
+    { name: 'Ngày bình luận', selector: (row) => formatDate(row.dateComment) , sortable: true },
     {
       name: 'Tình trạng',
       selector: (row) => (row.isDelete ? 'Không hiển thị' : 'Hiển thị'),

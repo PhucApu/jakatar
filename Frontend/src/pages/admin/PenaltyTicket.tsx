@@ -10,6 +10,7 @@ import type { PenaltyTicket } from '@type/model/PenaltyTicket';
 import { getPenaltyTickets, createPenaltyTicket, updatePenaltyTicket, deletePenaltyTicket } from '../../api/services/admin/penaltyTicketService';
 import { getBuses } from '../../api/services/admin/busService';
 import { getEmployees } from '../../api/services/admin/employeeService';
+import { formatDate } from '../../utils/dateFormat';
 
 export default function PenaltyTicket() {
   const [data, setData] = useState<PenaltyTicket[]>([]);
@@ -27,10 +28,10 @@ export default function PenaltyTicket() {
     { name: 'ID Biên bản', selector: (row) => row.penaltyTicketId, sortable: true },
     { name: 'ID Xe buýt', selector: (row) => row.busEntity_Id, sortable: true },
     { name: 'ID Nhân viên', selector: (row) => row.employeeEntity_Id, sortable: true },
-    { name: 'Ngày xử phạt', selector: (row) => row.penaltyDay, sortable: true },
+    { name: 'Ngày xử phạt', selector: (row) => formatDate(row.penaltyDay) , sortable: true },
     { name: 'Mô tả', selector: (row) => row.description, sortable: false },
     { name: 'Trách nhiệm', selector: (row) => (row.responsibility ? 'Có' : 'Không'), sortable: true },
-    { name: 'Giá tiền', selector: (row) => row.price, sortable: true },
+    { name: 'Giá tiền', selector: (row) => row.price.toLocaleString('vi-VN') + 'đ', sortable: true },
     { name: 'Tình trạng', selector: (row) => (row.isDelete ? 'Không hiển thị' : 'Hiển thị'), sortable: true },
   ];
 
