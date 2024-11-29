@@ -25,7 +25,7 @@ export default function BusRoute() {
     { name: 'Điểm khởi hành', selector: (row) => row.departureLocation, sortable: true },
     { name: 'Điểm đến', selector: (row) => row.destinationLocation, sortable: true },
     { name: 'Khoảng cách (km)', selector: (row) => row.distanceKilometer, sortable: true },
-    { name: 'Giá vé', selector: (row) => row.price, sortable: true },
+    { name: 'Giá vé', selector: (row) => row.price.toLocaleString('vi-VN') + 'đ', sortable: true },
     { name: 'Tình trạng', selector: (row) => (row.isDelete ? 'Không hiển thị' : 'Hiển thị'), sortable: true },
   ];
 

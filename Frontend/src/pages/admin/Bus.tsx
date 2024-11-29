@@ -38,6 +38,7 @@ export default function Bus() {
   const fetchBuses = async () => {
     try {
       const busesData = await getBuses();
+      console.log(busesData);
       setData(busesData);
     } catch (error: any) {
       setError(error.message);
@@ -140,7 +141,7 @@ export default function Bus() {
           item.busId === updatedBus.busId ? updatedBus : item
         )
       );
-      fetchBuses
+      // fetchBuses
         toast.success('Cập nhật buýt thành công', { autoClose: 800 });
       } else {
         const newBus = await createBus(formData as Bus);
