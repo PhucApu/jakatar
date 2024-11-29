@@ -6,11 +6,17 @@ import { HiPlus } from 'react-icons/hi';
 import { Spinner } from "flowbite-react";
 import type { TableColumn } from '@type/common/TableColumn';
 import type { EmployeeBus } from '@type/model/EmployeeBus';
-
 import { updateEmployeeBus, deleteEmployeeBus } from '../../api/services/admin/tripService';
 import { getBuses } from '../../api/services/admin/busService';
 import { getEmployees } from '../../api/services/admin/employeeService';
 
+
+
+// Đảm bảo rằng mỗi tài xế chỉ được gán cho một xe buýt nếu chưa được gán trước đó.
+// Không tìm thấy tài xế hoặc xe buýt.
+// Xe buýt đã được gán cho tài xế trước đó.
+// Lỗi khi thực hiện lệnh chèn vào bảng quan hệ.
+// một tài có thể lái nhiều bus ngược lại là cook
 export default function Trip() {
   const [data, setData] = useState<EmployeeBus[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,7 +24,7 @@ export default function Trip() {
   const [error, setError] = useState<string | null>(null);
 
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+//   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [formData, setFormData] = useState<Partial<EmployeeBus>>({});
 
   // trạng thái danh sách busID
@@ -28,8 +34,8 @@ export default function Trip() {
 
 
   const columns: TableColumn<EmployeeBus>[] = [
-    { name: 'Mã nhân viên', selector: (row) => row.driverId, sortable: true },
     { name: 'Mã xe', selector: (row) => row.busId, sortable: true },
+    { name: 'Mã nhân viên', selector: (row) => row.driverId, sortable: true },
   ];  
 
   // lấy dữ liệu id buses
@@ -44,7 +50,7 @@ export default function Trip() {
         driverId: bus.listEmployeeEntities_Id,
       }));
   
-      console.log(employeeData); // Log the processed data to verify
+      console.log(">>>data",employeeData); // Log the processed data to verify
   
       // Set the data
       setData(employeeData);
@@ -56,7 +62,7 @@ export default function Trip() {
   };
 
 
-  // lấy dữ liệu bảng employee
+  // lấy dữ liệu bảng bus
   const fetchBuses= async () => {
     try {
       const busData = await getBuses();
@@ -87,22 +93,18 @@ export default function Trip() {
   }, []);
 
   const handleOpenModal = (item: EmployeeBus | null = null) => {
-    if (item) {
-      setIsEditMode(true);
-      setFormData(item);
-    } else {
-      setIsEditMode(false);
+  
+    //   setIsEditMode(false);
       setFormData({
-        driverId: 0,
-        busId: 0
+        busId: 0,
+        driverId: 0
       });
-    }
-    setOpenModal(true);
+      setOpenModal(true);
   };
 
   const validDataCheck = (): boolean => {
     if (!formData.driverId || !formData.busId) {
-      toast.error("Vui lòng chọn cả Mã nhân viên và Mã xe", { autoClose: 800 });
+      toast.error("Vui lòng chọn cả mã nhân viên và mã xe đầy đủ", { autoClose: 800 });
       return false;
     }
     return true;
@@ -113,31 +115,15 @@ export default function Trip() {
     setActionLoading(true);
 
     try {
-        if (isEditMode) {
-            // Chế độ chỉnh sửa
-            const result = await updateEmployeeBus(formData.driverId!, formData.busId!);
-
-            // Cập nhật trực tiếp state `data`
+            const result = await updateEmployeeBus(formData.busId!, formData.driverId!);
             setData((prevData) =>
                 prevData.map((item) =>
                     item.driverId === result.driverId && item.busId === result.busId ? result : item
                 )
             );
             fetchEmployeeBuses();
-            toast.success("Cập nhật lịch phân công thành công", { autoClose: 800 });
-        } else {
-            // Chế độ thêm mới
-            const result1 = await updateEmployeeBus(formData.driverId!, formData.busId!);
-            // const newAssignment: EmployeeBus = {
-            //     driverId: formData.driverId!,
-            //     busId: formData.busId!,
-            // };
-
-            setData((prevData) => [...prevData, result1]);
             toast.success("Thêm lịch phân công thành công", { autoClose: 800 });
-            fetchEmployeeBuses();
-        }
-        setOpenModal(false); // Đóng modal sau khi thêm/sửa thành công
+            setOpenModal(false); // Đóng modal sau khi thêm/sửa thành công
     } catch (err: any) {
         const errorMessage =
             err.response?.data?.message || // Lấy thông báo từ server nếu có
@@ -152,18 +138,17 @@ export default function Trip() {
   
 
   // hàm để xóa một employee_bus
-  const handleDelete = async (driverId: number, busId: number) => {
+  const handleDelete = async (busId: number, driverId: number) => {
     if (window.confirm("Bạn có chắc muốn xóa lịch phân công này không?")) {
       setActionLoading(true);
-  
       try {
-        await deleteEmployeeBus(driverId, busId); // Gọi API xóa
-        // setData((prevData) =>
-        //   prevData.filter((item) => !(item.driverId === driverId && item.busId === busId))
-        // );
+        await deleteEmployeeBus(busId, driverId); // Gọi API xóa
+        setData((prevData) =>
+          prevData.filter((item) => !(item.driverId === driverId && item.busId === busId))
+        );
   
         toast.success("Xóa lịch phân công thành công", { autoClose: 800 });
-        fetchEmployeeBuses();
+        // fetchEmployeeBuses();
       } catch (err: any) {
         const errorMessage =
           err.response?.data?.message || // Lấy thông báo từ server nếu có
@@ -195,15 +180,15 @@ export default function Trip() {
   return (
     <div className='p-4 mx-auto'>
       <h1 className='uppercase font-semibold text-2xl tracking-wide mb-4'>
-        Quản lý tuyến xe buýt
+        Quản lý lịch phân công
       </h1>
       <Button onClick={() => handleOpenModal()} size='sm'>
         <HiPlus className='mr-2 h-5 w-5' />
-        Thêm tuyến
+        Thêm lịch phân công
       </Button>
-      <Table rows={data} columns={columns} onEdit={handleOpenModal} onDelete={(row) => handleDelete(row.driverId, row.busID)} />
+      <Table rows={data} columns={columns}  onDelete={(row) => handleDelete(row.busID, row.driverId)} />
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
-        <Modal.Header>{isEditMode ? 'Cập nhật' : 'Thêm lịch phân công'}</Modal.Header>
+        <Modal.Header>Thêm lịch phân công</Modal.Header>
         <Modal.Body>
           <div className='space-y-6'>
           <div className='space-y-2 flex flex-col'>
@@ -224,7 +209,7 @@ export default function Trip() {
             <div className='space-y-2 flex flex-col'>
               <label htmlFor='busId'>Mã xe</label>
               <select id="" className="rounded-lg border-gray-200 bg-gray-50" 
-                name='busID'
+                name='busId'
                 value={formData.busId || ''}
                 onChange={handleChange}
               >
@@ -239,7 +224,7 @@ export default function Trip() {
           </div>
           <HR className='my-4' />
           <div className='flex flex-row-reverse gap-2'>
-            <Button onClick={handleSave} >{ isEditMode ? 'Cập nhật' : 'Thêm'}</Button>
+            <Button onClick={handleSave} >Thêm lịch</Button>
             <Button color='gray' onClick={() => setOpenModal(false)}>
               Hủy
             </Button>
