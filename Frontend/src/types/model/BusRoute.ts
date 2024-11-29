@@ -7,5 +7,5 @@ export interface BusRoute {
   arivalTime: string;
   price: number;
   isDelete: boolean;
-  listTicketEntities_Id: any[];
+  listBusEntities_Id: number[];
 }

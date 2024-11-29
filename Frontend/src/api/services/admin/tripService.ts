@@ -21,12 +21,6 @@ export const updateEmployeeBus = async (busId: number, driverId: number): Promis
   };
 
 
-// export const updateEmployeeBus = async (employeeBus: Partial<EmployeeBus>): Promise<EmployeeBus> => {
-//     return apiRequest(async () => {
-//       const response = await apiClient.put<ApiResponse<EmployeeBus>>('/update/bus_and_employee', employeeBus);
-//       return response.data.data!;
-//     });
-//   };
 
 
 
@@ -41,9 +35,3 @@ export const deleteEmployeeBus = async (busId: number, driverId: number): Promis
 
   
 
-//   export const deleteEmployeeBus = async (employeeBus: number): Promise<EmployeeBus> => {
-//     return apiRequest(async () => {
-//       const response = await apiClient.delete<ApiResponse<EmployeeBus>>(`/delete/bus_and_employee/${employeeBus}`);
-//       return response.data.data!;
-//     });
-//   };

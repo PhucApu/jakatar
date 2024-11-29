@@ -279,17 +279,17 @@ export default function PenaltyTicket() {
                 placeholder='Nhập giá tiền phạt'
               />
             </div>
-            {/* <div className="space-y-2">
-              <label htmlFor="responsibility">Trách nhiệm</label>
+            <div className="space-y-2">
+              <label htmlFor="responsibility">Đã đóng phạt</label>
               <Select
                 name="responsibility"
                 value={formData.responsibility ? '1' : '0'}
                 onChange={handleChange}
               >
-                <option value="0">Không</option>
-                <option value="1">Có</option>
+                <option value="0">Chưa</option>
+                <option value="1">Rồi</option>
               </Select>
-            </div> */}
+            </div>
             <div className="space-y-2">
               <label htmlFor="isDelete">Tình trạng</label>
               <Select
