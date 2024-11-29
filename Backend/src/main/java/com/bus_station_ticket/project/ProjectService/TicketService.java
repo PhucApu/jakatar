@@ -169,11 +169,9 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
 
               Optional<TicketEntity> optional = this.repo.findByTicketId(entityObj.getTicketId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isRoutesIdVal(entityObj) == true) {
-                     if(foreignKeyViolationIfHidden(entityObj)){
-                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
-                     }
-                     entityObj.setTicketId(null);
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isRoutesIdVal(entityObj) == true
+                            && foreignKeyViolationIfHidden(entityObj) == false) {
+
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
@@ -231,19 +229,24 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
        @Override
        public Boolean foreignKeyViolationIfHidden(TicketEntity entityObj) {
 
-              // Ticket foreign key Feedback
-              List<FeedbackEntity> feedbackEntities = this.feedbackRepo.findByTicketEntity_Id(entityObj.getTicketId());
+              if (entityObj.getIsDelete()) {
+                     // Ticket foreign key Feedback
+                     List<FeedbackEntity> feedbackEntities = this.feedbackRepo
+                                   .findByTicketEntity_Id(entityObj.getTicketId());
 
-              if (feedbackEntities.isEmpty() == false) {
-                     for (FeedbackEntity e : feedbackEntities) {
-                            if (e.getIsDelete() == false) {
-                                   return true;
+                     if (feedbackEntities.isEmpty() == false) {
+                            for (FeedbackEntity e : feedbackEntities) {
+                                   if (e.getIsDelete() == false) {
+                                          return true;
+                                   }
                             }
+                            return false;
                      }
+
                      return false;
               }
-
               return false;
+
        }
 
        @Transactional

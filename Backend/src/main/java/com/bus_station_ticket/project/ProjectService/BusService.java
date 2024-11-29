@@ -128,7 +128,8 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION + " or " + " Matching license plate number");
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + "," + MESS_FOREIGN_KEY_VIOLATION + " or "
+                            + " Matching license plate number");
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
@@ -146,18 +147,16 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        public ResponseBoolAndMess update(BusEntity entityObj) {
               Optional<BusEntity> optional = this.repo.findByBusId(entityObj.getBusId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isDuplicatBusNumber(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false
+                            && isDuplicatBusNumber(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false) {
 
-                     if(foreignKeyViolationIfHidden(entityObj)){
-                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
-                     }
-
-                     entityObj.setBusId(null);
+                     // entityObj.setBusId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
               return new ResponseBoolAndMess(false,
-                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION + " or " + " Matching license plate number");
+                            MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION
+                                          + " or " + " Matching license plate number");
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -217,37 +216,40 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        public Boolean foreignKeyViolationIfHidden(BusEntity entityObj) {
               // Bus foreign key employee, ticket, penalty_tiket
 
-              List<EmployeeEntity> employeeEntities = this.employeeRepo.findByBusEntityId(entityObj.getBusId());
+              if (entityObj.getIsDelete() == true) {
+                     List<EmployeeEntity> employeeEntities = this.employeeRepo.findByBusEntityId(entityObj.getBusId());
 
-              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusEntity_Id(entityObj.getBusId());
+                     List<TicketEntity> ticketEntities = this.ticketRepo.findByBusEntity_Id(entityObj.getBusId());
 
-              List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
-                            .findByBusEntity_Id(entityObj.getBusId());
+                     List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
+                                   .findByBusEntity_Id(entityObj.getBusId());
 
-              // kiem tra
-              if (employeeEntities.isEmpty() == false) {
+                     // kiem tra
+                     if (employeeEntities.isEmpty() == false) {
 
-                     for (EmployeeEntity e : employeeEntities) {
-                            if (e.getIsDelete() == false) {
-                                   return true;
+                            for (EmployeeEntity e : employeeEntities) {
+                                   if (e.getIsDelete() == false) {
+                                          return true;
+                                   }
                             }
                      }
-              }
-              if (ticketEntities.isEmpty() == false) {
+                     if (ticketEntities.isEmpty() == false) {
 
-                     for (TicketEntity e : ticketEntities) {
-                            if (e.getIsDelete() == false) {
-                                   return true;
+                            for (TicketEntity e : ticketEntities) {
+                                   if (e.getIsDelete() == false) {
+                                          return true;
+                                   }
                             }
                      }
-              }
-              if (penaltyTicketEntities.isEmpty() == false) {
+                     if (penaltyTicketEntities.isEmpty() == false) {
 
-                     for (PenaltyTicketEntity penaltyTicketEntity : penaltyTicketEntities) {
-                            if (penaltyTicketEntity.getIsDelete() == false) {
-                                   return true;
+                            for (PenaltyTicketEntity penaltyTicketEntity : penaltyTicketEntities) {
+                                   if (penaltyTicketEntity.getIsDelete() == false) {
+                                          return true;
+                                   }
                             }
                      }
+                     return false;
               }
               return false;
        }
@@ -275,14 +277,22 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        // }
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public Boolean isDuplicatBusNumber (BusEntity busEntity){
-              // kiem tra xem bien so bus co trung khong
-              BusEntity busEntity2 = this.repo.findByBusNumber(busEntity.getBusNumber()).orElse(null);
+       public Boolean isDuplicatBusNumber(BusEntity busEntity) {
+              // Kiểm tra biển số xe trong database
+              Optional<BusEntity> existingBusEntity = this.repo.findByBusNumber(busEntity.getBusNumber());
 
-              if(busEntity2 != null){
-                     return true;
+              // Nếu không tìm thấy xe nào, không trùng
+              if (existingBusEntity.isEmpty()) {
+                     return false;
               }
-              return false;
+
+              // Nếu tìm thấy xe nhưng là chính nó (cùng ID), không trùng
+              if (existingBusEntity.get().getBusId().equals(busEntity.getBusId())) {
+                     return false;
+              }
+
+              // Nếu tìm thấy xe khác với cùng biển số, trùng
+              return true;
        }
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)

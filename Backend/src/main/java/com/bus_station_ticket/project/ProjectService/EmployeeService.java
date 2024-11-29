@@ -132,13 +132,9 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
        public ResponseBoolAndMess update(EmployeeEntity entityObj) {
               Optional<EmployeeEntity> optional = this.repo.findByDriverId(entityObj.getDriverId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false ) {
-
-                     if(foreignKeyViolationIfHidden(entityObj)){
-                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
-                     }
-
-                     entityObj.setDriverId(null);
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false
+                            && foreignKeyViolationIfHidden(entityObj) == false) {
+                     // entityObj.setDriverId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
@@ -195,29 +191,34 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
        @Transactional
        @Override
        public Boolean foreignKeyViolationIfHidden(EmployeeEntity entityObj) {
-              // Employee foreign key bus, penalty_ticket
-              List<BusEntity> busEntities = this.busRepo.findByEmployeeEntity_Id(entityObj.getDriverId());
 
-              List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
-                            .findByEmployeeEntity_Id(entityObj.getDriverId());
+              if (entityObj.getIsDelete()) {
+                     // Employee foreign key bus, penalty_ticket
+                     List<BusEntity> busEntities = this.busRepo.findByEmployeeEntity_Id(entityObj.getDriverId());
 
-              if (busEntities.isEmpty() == false) {
+                     List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
+                                   .findByEmployeeEntity_Id(entityObj.getDriverId());
 
-                     for (BusEntity e : busEntities) {
-                            if (e.getIsDelete() == false) {
-                                   return true;
+                     if (busEntities.isEmpty() == false) {
+
+                            for (BusEntity e : busEntities) {
+                                   if (e.getIsDelete() == false) {
+                                          return true;
+                                   }
                             }
                      }
-              }
-              if (penaltyTicketEntities.isEmpty() == false) {
-                     for (PenaltyTicketEntity e : penaltyTicketEntities) {
-                            if (e.getIsDelete() == false) {
-                                   return true;
+                     if (penaltyTicketEntities.isEmpty() == false) {
+                            for (PenaltyTicketEntity e : penaltyTicketEntities) {
+                                   if (e.getIsDelete() == false) {
+                                          return true;
+                                   }
                             }
                      }
-              }
 
+                     return false;
+              }
               return false;
+
        }
 
        @Transactional
@@ -227,12 +228,10 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               return false;
        }
 
-       
-
        // @Override
        // public Boolean isHasForeignKeyEntity(EmployeeDTO dtoObj) {
-       //        // Employee khong co thuoc tinh khoa ngoai
-       //        return true;
+       // // Employee khong co thuoc tinh khoa ngoai
+       // return true;
        // }
 
        // Phan nhan vien lai xe
@@ -255,7 +254,8 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
                                           "Assign bus driver with " + busId + " code no successfully");
                      }
                      return new ResponseBoolAndMess(false,
-                                          "Assign bus driver with " + busId + " code no successfully because it had already been assigned before");
+                                   "Assign bus driver with " + busId
+                                                 + " code no successfully because it had already been assigned before");
               }
               return new ResponseBoolAndMess(false, "Assign bus driver with " + busId + " code no successfully");
 
