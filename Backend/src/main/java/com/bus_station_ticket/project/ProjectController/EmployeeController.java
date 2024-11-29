@@ -260,4 +260,12 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
 
+       @GetMapping("/bus_and_employee")
+       public ResponseEntity<ResponseObject> getBusIdAndDriverId (){
+
+              ResponseObject responseObject = this.employeeService.getAllDriverIdAndBusId();
+
+              return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+       }
+
 }
