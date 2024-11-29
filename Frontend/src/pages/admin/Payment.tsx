@@ -9,6 +9,8 @@ import { Spinner } from "flowbite-react";
 import type { TableColumn } from '@type/common/TableColumn';
 import type { Payment } from '@type/model/Payment';
 
+import { formatDate } from '../../utils/dateFormat';
+
 // Import API services
 import {
   getPayments,
@@ -28,12 +30,12 @@ export default function Payment() {
 
   const columns: TableColumn<Payment>[] = [
     { name: 'ID Thanh Toán', selector: (row) => row.paymentId, sortable: true },
-    { name: 'Thời Gian Thanh Toán', selector: (row) => row.paymentTime, sortable: true },
-    { name: 'Số Tiền Gốc', selector: (row) => row.originalAmount, sortable: true },
-    { name: 'Số Tiền Giảm', selector: (row) => row.discountAmount, sortable: true },
-    { name: 'Số Tiền Cuối Cùng', selector: (row) => row.finalAmount, sortable: true },
+    { name: 'Thời Gian Thanh Toán', selector: (row) => formatDate(row.paymentTime) , sortable: true },
+    { name: 'Số Tiền Gốc', selector: (row) => row.originalAmount.toLocaleString('vi-VN') + 'đ', sortable: true },
+    { name: 'Số Tiền Giảm', selector: (row) => row.discountAmount.toLocaleString('vi-VN') + 'đ', sortable: true },
+    { name: 'Số Tiền Cuối Cùng', selector: (row) => row.finalAmount.toLocaleString('vi-VN') + 'đ', sortable: true },
     { name: 'Phương Thức Thanh Toán', selector: (row) => row.paymentMethod, sortable: true },
-    { name: 'Trạng Thái', selector: (row) => row.status, sortable: true },
+    { name: 'Trạng Thái', selector: (row) => row.status.toUpperCase(), sortable: true },
     {
       name: 'Tình Trạng',
       selector: (row) => (row.isDelete ? 'Không hiển thị' : 'Hiển thị'),

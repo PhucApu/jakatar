@@ -14,6 +14,7 @@ import {
   updateDiscount,
   deleteDiscount,
 } from '../../api/services/admin/discountService';
+import { formatDate } from '../../utils/dateFormat';
 
 export default function Discount() {
   const [data, setData] = useState<Discount[]>([]);
@@ -26,9 +27,9 @@ export default function Discount() {
 
   const columns: TableColumn<Discount>[] = [
     { name: 'ID Giảm giá', selector: (row) => row.discountId, sortable: true },
-    { name: 'Phần trăm giảm giá (%)', selector: (row) => row.discountPercentage, sortable: true },
-    { name: 'Ngày bắt đầu', selector: (row) => row.validFrom, sortable: true },
-    { name: 'Ngày kết thúc', selector: (row) => row.validUntil, sortable: true },
+    { name: 'Phần trăm giảm giá (%)', selector: (row) => row.discountPercentage + '%', sortable: true },
+    { name: 'Ngày bắt đầu', selector: (row) => formatDate(row.validFrom) , sortable: true },
+    { name: 'Ngày kết thúc', selector: (row) => formatDate(row.validUntil), sortable: true },
     { name: 'Số tiền giảm', selector: (row) => row.amount, sortable: true },
     {
       name: 'Tình trạng',
