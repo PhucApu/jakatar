@@ -11,7 +11,6 @@ import type { Bus } from '@type/model/Bus';
 import { getBuses, createBus, updateBus, deleteBus } from '../../api/services/admin/busService';
 import { getBusRoutes } from '../../api/services/admin/busRouteService';
 
-
 export default function Bus() {
   const [data, setData] = useState<Bus[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -26,7 +25,7 @@ export default function Bus() {
   const columns: TableColumn<Bus>[] = [
     { name: 'Mã buýt', selector: (row) => row.busId, sortable: true },
     { name: 'Biển kiểm soát', selector: (row) => row.busNumber, sortable: true },
-    { name: 'Mã tuyến', selector: (row) => row.routesId, sortable: true },
+    { name: 'Mã tuyến', selector: (row) => row.routesEntity_Id, sortable: true },
     { name: 'Sức chứa', selector: (row) => row.capacity, sortable: true },
     { name: 'Hãng xe', selector: (row) => row.brand, sortable: true },
     {
@@ -39,6 +38,7 @@ export default function Bus() {
   const fetchBuses = async () => {
     try {
       const busesData = await getBuses();
+      console.log(">>> buses",busesData )
       setData(busesData);
     } catch (error: any) {
       setError(error.message);
@@ -49,6 +49,7 @@ export default function Bus() {
   const fetchBusRoutes = async () => {
     try {
       const busesRouterData = await getBusRoutes();
+      console.log(">>> router",busesRouterData )
       setRouters(busesRouterData);
     } catch (error: any) {
       toast(error.message);
@@ -57,14 +58,9 @@ export default function Bus() {
     }
   };
 
-//   const getRouterId = routers.map((router) => (
-//     router.routesId
-//   ))
-//   console.log(">>> getRouterId",getRouterId)
-
   useEffect(() => {
-      fetchBuses();
-      fetchBusRoutes();
+    fetchBuses();
+    fetchBusRoutes();
   }, []);
 
   const handleOpenModal = (item: Bus | null = null) => {
@@ -79,7 +75,7 @@ export default function Bus() {
         capacity: 0, 
         brand: '', 
         isDelete: false,  
-        routesId: null,
+        routesEntity_Id: 0,
         listEmployeeEntities_Id: [],
         listTicketEntities_Id: [],
         listPenaltyTicketEntities_Id: []
@@ -100,10 +96,10 @@ export default function Bus() {
       return false;
     }
 
-    // if (!formData.routesId) {
-    //   toast.error('Mã tuyến không để trống', { autoClose: 800 });
-    //   return false;
-    // }
+    if (!formData.routesEntity_Id) {
+      toast.error('Mã tuyến không để trống', { autoClose: 800 });
+      return false;
+    }
   
     // Kiểm tra capacity
     if (!formData.capacity || formData.capacity < 5) {
@@ -245,21 +241,17 @@ export default function Bus() {
             </div>
             <div className='space-y-2 flex flex-col'>
               <label htmlFor='routesId'>Mã tuyến xe</label>
-              <select id="" className="rounded-lg border-gray-200 bg-gray-50" name='routesId'
-                value={formData.routesId || ''}
+              <select id="" className="rounded-lg border-gray-200 bg-gray-50" name='routesEntity_Id'
+                value={formData.routesEntity_Id || ''}
                 onChange={handleChange}
                 // disabled={isEditMode}
-                // onChange={(e) => setFormData((prev) => ({ ...prev, routesEntity_Id: Number(e.target.value) }))}
               >
                 <option value="" disabled className=''>Chọn mã tuyến</option>
-                <option value="null" className=''>Chưa phân tuyến</option>
                 {routers.map((router) => (
                   <option key={router.routesId} value={router.routesId}>
                     {router.routesId}
                   </option>
-                  
                 ))}
-                
               </select>
             </div>
           </div>

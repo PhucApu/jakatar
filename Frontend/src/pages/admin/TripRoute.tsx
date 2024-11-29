@@ -59,7 +59,7 @@ export default function BusRoute() {
         arivalTime: '',
         price: 0,
         isDelete: false,
-        listTicketEntities_Id: []
+        listBusEntities_Id: []
       });
     }
     setOpenModal(true);

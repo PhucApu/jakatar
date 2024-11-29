@@ -4,7 +4,7 @@ export interface Bus {
   capacity: number;
   brand: string;
   isDelete: boolean;
-  routesId: number;
+  routesId: number | null;
   listEmployeeEntities_Id: number[];
   listTicketEntities_Id: any[];
   listPenaltyTicketEntities_Id: number[];
