@@ -208,11 +208,11 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
                             .findByBusEntity_Id(entityObj.getBusId());
 
               // kiem tra
-              if (employeeEntities.isEmpty() == false || ticketEntities.isEmpty() == false
-                            || penaltyTicketEntities.isEmpty() == false) {
-                     return true;
+              if (employeeEntities.isEmpty() == true && ticketEntities.isEmpty() == true
+                            && penaltyTicketEntities.isEmpty() == true) {
+                     return false;
               }
-              return false;
+              return true;
        }
 
        @Transactional
