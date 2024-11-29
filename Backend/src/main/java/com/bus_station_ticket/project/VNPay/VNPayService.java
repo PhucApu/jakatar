@@ -31,7 +31,7 @@ public class VNPayService {
        }
 
        @Transactional
-       public String createOrder(HttpServletRequest request, float amount, String paymentId, String paymentInfor, String returnUrl)
+       public String createOrder(HttpServletRequest request, int amount, String paymentId, String paymentInfor, String returnUrl)
                      throws UnsupportedEncodingException {
               // VNPAY Parameters
               String vnpVersion = "2.1.0";
@@ -40,6 +40,7 @@ public class VNPayService {
               String vnpIpAddr = getIpAddress(request);
               String orderType = "order-type";
               String locale = "vn";
+
 
               // Build VNPAY parameters
               Map<String, String> vnpParams = new HashMap<>();
@@ -226,16 +227,17 @@ public class VNPayService {
               }
        }
 
-       // public void createOrderAndHandleFailure(HttpServletRequest request, int amount, String orderInfo,
-       //               String returnUrl)
-       //               throws UnsupportedEncodingException {
-       //        String vnpTxnRef = getRandomNumber(8); // Tạo mã giao dịch
+       // public void createOrderAndHandleFailure(HttpServletRequest request, int
+       // amount, String orderInfo,
+       // String returnUrl)
+       // throws UnsupportedEncodingException {
+       // String vnpTxnRef = getRandomNumber(8); // Tạo mã giao dịch
 
-       //        // Tạo đơn hàng
-       //        String paymentUrl = createOrder(request, amount, orderInfo, returnUrl);
-       //        System.out.println("Payment URL: " + paymentUrl);
+       // // Tạo đơn hàng
+       // String paymentUrl = createOrder(request, amount, orderInfo, returnUrl);
+       // System.out.println("Payment URL: " + paymentUrl);
 
-       //        // Xử lý thanh toán thất bại trong vòng 10 phút (600000 ms)
-       //        new Thread(() -> handleFailedPayment(vnpTxnRef, 600000)).start();
+       // // Xử lý thanh toán thất bại trong vòng 10 phút (600000 ms)
+       // new Thread(() -> handleFailedPayment(vnpTxnRef, 600000)).start();
        // }
 }

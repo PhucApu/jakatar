@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.TicketDTO;
+import com.bus_station_ticket.project.ProjectService.AccountService;
 import com.bus_station_ticket.project.ProjectService.TicketService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -28,6 +30,9 @@ public class TicketController implements RestApiSimpleControllerInf<TicketDTO, L
 
        @Autowired
        private TicketService ticketService;
+
+       @Autowired
+       private AccountService accountService;
 
        @GetMapping
        @Override
@@ -211,15 +216,15 @@ public class TicketController implements RestApiSimpleControllerInf<TicketDTO, L
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
 
-
        // thong ke
        @GetMapping("/statistics")
-       public ResponseEntity<ResponseObject> getStatisticsTickets (@RequestParam("dateA") LocalDateTime dateA, @RequestParam("dateB") LocalDateTime dateB){
+       public ResponseEntity<ResponseObject> getStatisticsTickets(@RequestParam("dateA") LocalDateTime dateA,
+                     @RequestParam("dateB") LocalDateTime dateB) {
 
               ResponseObject responseObject = new ResponseObject();
 
-              if(dateA.isBefore(dateB)){
-                     responseObject = this.ticketService.statisticTicketRangeDay(dateA,dateB);
+              if (dateA.isBefore(dateB)) {
+                     responseObject = this.ticketService.statisticTicketRangeDay(dateA, dateB);
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
@@ -227,5 +232,52 @@ public class TicketController implements RestApiSimpleControllerInf<TicketDTO, L
               responseObject.addMessage("mess", "The statistical date entered is incorrect");
               responseObject.setData(null);
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
-       } 
+       }
+
+       @PostMapping("/create_payment")
+       public ResponseEntity<ResponseObject> creatPayment(HttpServletRequest request,
+                     @RequestParam("returnUrl") String returnUrl, @RequestParam("seat") String seat,
+                     @RequestParam("busId") Long busId, @RequestParam("departureLocation") String departureLocation,
+                     @RequestParam("destinationLocation") String destinationLocation,
+                     @RequestParam("departureTime") LocalDateTime departureTime,
+                     @RequestParam("arivalTime") LocalDateTime arivalTime, @RequestParam("discountId") Long discountId,
+                     @RequestParam("token") String token) {
+
+              try {
+                     String baseUrl = request.getScheme() + "://" + request.getServerName() + ":"
+                                   + request.getServerPort() + "/vnpay-payment-return";
+
+                     ResponseObject responseObject = this.ticketService.createTicketAndPayment(request, baseUrl, seat,
+                                   busId, departureLocation, destinationLocation, departureTime, arivalTime, discountId,
+                                   token);
+
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              } catch (Exception e) {
+                     e.printStackTrace();
+                     ResponseObject responseObject = new ResponseObject();
+                     responseObject.setStatus(MESS_FAILURE);
+                     responseObject.addMessage("mess", "Exception '/create_payment' ");
+                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+              }
+       }
+
+       @GetMapping("/vnpay-payment-return")
+       public ResponseEntity<ResponseObject> resultPayment(HttpServletRequest request) {
+
+              if (this.accountService.geAccountDTOHasLogin() != null) {
+                     ResponseObject responseObject = this.ticketService.returnFronVNPay(request);
+
+                     if (responseObject.getStatus().equals(MESS_SUCCESS)) {
+                            return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+                     }
+                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+              }
+              ResponseObject responseObject = new ResponseObject();
+              responseObject.setStatus("failure");
+              responseObject.setData("400 - UNAUTHORIZED");
+              responseObject.addMessage("mess",
+                            "Unauthorized - Your information is wrong. Please check username and password");
+
+              return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseObject);
+       }
 }
