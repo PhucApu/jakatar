@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Dropdown, TextInput } from 'flowbite-react';
 
@@ -28,7 +28,6 @@ export default function Table({
     const value = e.target.value.toLowerCase();
     setSearch(value);
 
-    // Ensure rows are defined and not empty before filtering
     if (!rows || rows.length === 0) return;
 
     const fieldsToSearch =
@@ -44,6 +43,10 @@ export default function Table({
     setData(filteredData);
   };
 
+  useEffect(() => {
+    setData(rows);
+  }, [rows]);
+
   const actionColumn = {
     name: 'Actions',
     cell: (row: any) => (
@@ -52,7 +55,7 @@ export default function Table({
         <Dropdown.Item onClick={() => onDelete && onDelete(row)}>Xóa</Dropdown.Item>
       </Dropdown>
     ),
-    ignoreRowClick: true,
+    ignorerowclick: true,
     allowoverflow: true,
   };
 
