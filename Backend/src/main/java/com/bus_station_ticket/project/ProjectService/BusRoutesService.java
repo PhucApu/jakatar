@@ -146,7 +146,12 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               // Kiem tra
               Optional<BusRoutesEntity> optional = this.repo.findByRoutesId(entityObj.getRoutesId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isDuplicateLocations(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isDuplicateLocations(entityObj) == false) {
+
+                     
+                     if(foreignKeyViolationIfHidden(entityObj)){
+                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
+                     }
 
                      entityObj.setRoutesId(null);
                      this.repo.save(entityObj);

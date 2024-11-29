@@ -146,7 +146,12 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        public ResponseBoolAndMess update(BusEntity entityObj) {
               Optional<BusEntity> optional = this.repo.findByBusId(entityObj.getBusId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false && isDuplicatBusNumber(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isDuplicatBusNumber(entityObj) == false) {
+
+                     if(foreignKeyViolationIfHidden(entityObj)){
+                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
+                     }
+
                      entityObj.setBusId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);

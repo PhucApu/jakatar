@@ -25,6 +25,7 @@ public interface SimpleServiceInf<ENTITY,DTO,ID> {
        
        
        public final String MESS_FOREIGN_KEY_VIOLATION = "Foreign key violation error";
+       public final String MESS_FOREIGN_KEY_EMPTY = "Foreign key empty error";
        
        // Entity
        public ENTITY getById(ID id);

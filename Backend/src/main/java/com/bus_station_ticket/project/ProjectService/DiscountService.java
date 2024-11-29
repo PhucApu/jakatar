@@ -127,7 +127,12 @@ public class DiscountService implements SimpleServiceInf<DiscountEntity, Discoun
 
               Optional<DiscountEntity> optional = this.repo.findByDiscountId(entityObj.getDiscountId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false ) {
+
+                     if(foreignKeyViolationIfHidden(entityObj)){
+                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
+                     }
+
                      entityObj.setDiscountId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);

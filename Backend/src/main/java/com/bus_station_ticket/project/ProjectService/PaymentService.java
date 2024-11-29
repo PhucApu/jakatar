@@ -126,7 +126,12 @@ public class PaymentService implements SimpleServiceInf<PaymentEntity, PaymentDT
 
               Optional<PaymentEntity> optional = this.repo.findByPaymentId(entityObj.getPaymentId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false ) {
+
+                     if(foreignKeyViolationIfHidden(entityObj)){
+                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
+                     }
+
                      entityObj.setPaymentId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);

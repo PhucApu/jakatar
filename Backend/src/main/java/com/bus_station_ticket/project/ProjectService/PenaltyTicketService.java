@@ -132,8 +132,10 @@ public class PenaltyTicketService implements SimpleServiceInf<PenaltyTicketEntit
 
               Optional<PenaltyTicketEntity> optional = this.repo.findByPenaltyTicketId(entityObj.getPenaltyTicketId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false
-                            && foreignKeyViolationIfHidden(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false) {
+                     if(foreignKeyViolationIfHidden(entityObj)){
+                            return new ResponseBoolAndMess(true, MESS_FOREIGN_KEY_VIOLATION);
+                     }
                      entityObj.setPenaltyTicketId(null);
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
