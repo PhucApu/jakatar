@@ -1,7 +1,9 @@
 package com.bus_station_ticket.project.ProjectService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -278,30 +280,22 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
        // trả dữ liệu mã nhân viên và mã xe
        public ResponseObject getAllDriverIdAndBusId() {
 
+              Map<Long, Long> busId_driverId = new HashMap<>();
+
               ResponseObject responseObject = new ResponseObject();
 
               List<EmployeeEntity> employeeEntities = this.repo.findAll();
-              List<BusEntity> busEntities = this.busRepo.findAll();
 
-              List<Long> driverId = new ArrayList<>();
-              List<Long> busId = new ArrayList<>();
-
-              if(employeeEntities.isEmpty() == false){
-
-                     for(EmployeeEntity e: employeeEntities){
-                            driverId.add(e.getDriverId());;
-                     }
-              }
-              if(busEntities.isEmpty() == false){
-                     for(BusEntity e : busEntities){
-                            busId.add(e.getBusId());
+              for (EmployeeEntity e : employeeEntities) {
+                     List<BusEntity> busEntities = e.getListBusEntity();
+                     for (BusEntity b : busEntities) {
+                            busId_driverId.put(b.getBusId(), e.getDriverId());;
                      }
               }
 
               responseObject.setStatus("success");
-              responseObject.addMessage("dataBusId", busId);
-              responseObject.addMessage("dataDriverId", driverId);
-              responseObject.setData(employeeEntities);
+              responseObject.addMessage("mess", "All data BusEmployee Table. <busId : driverId>");
+              responseObject.setData(busId_driverId);
 
               return responseObject;
        }
