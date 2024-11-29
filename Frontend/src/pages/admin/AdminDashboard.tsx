@@ -61,6 +61,9 @@ const AdminDashboard = () => {
     }).format(amount);
   };
 
+
+ 
+
   // Dữ liệu biểu đồ
   const chartData = {
     labels: Object.keys(ticketStats?.revenueOfRoutes?.[0] || {}),
@@ -75,6 +78,12 @@ const AdminDashboard = () => {
     ],
   };
 
+  const checkEmpty = (amount: number | null | undefined): string => {
+    return amount === null || amount === undefined || isNaN(amount) ? "0 VND" : `${amount.toLocaleString()} VND`;
+  };
+  const checkEmtyTotal = (amount: number | null | undefined): string =>{
+    return amount === null || amount === undefined || isNaN(amount) ? "0 Vé" : `${amount.toLocaleString()} Vé`;
+  }
   return (
     <div className="p-4 mx-auto max-w-4xl">
       <h1 className="uppercase font-semibold text-2xl tracking-wide mb-4">Thống kê</h1>
@@ -125,19 +134,19 @@ const AdminDashboard = () => {
         {ticketStats && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold">Kết quả thống kê vé</h2>
-            <p><strong>Tổng vé:</strong> {ticketStats.size}</p>
-            <p><strong>Doanh thu thành công:</strong> {formatCurrency(ticketStats.sumMoneyTicketSuccess)} VND</p>
-            <p><strong>Số vé thành công:</strong> {ticketStats.numberTicketSuccess}</p>
-            <p><strong>Số vé đang xử lý:</strong> {ticketStats.numberTicketPending}</p>
+            <p><strong>Tổng vé:</strong> {checkEmtyTotal(ticketStats.size)}</p>
+            <p><strong>Doanh thu thành công:</strong> {checkEmpty(ticketStats.sumMoneyTicketSuccess)} </p>
+            <p><strong>Số vé thành công:</strong> {checkEmpty(ticketStats.numberTicketSuccess)}</p>
+            <p><strong>Số vé đang xử lý:</strong> {checkEmpty(ticketStats.numberTicketPending)}</p>
           </div>
         )}
 
         {penaltyStats && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold">Kết quả thống kê vé phạt</h2>
-            <p><strong>Tổng số vé phạt:</strong> {penaltyStats.size}</p>
-            <p><strong>Tổng tiền phạt:</strong> {formatCurrency(penaltyStats.sumMoneyPenalty)} VND</p>
-            <p><strong>Tiền phạt chưa xử lý:</strong> {formatCurrency(penaltyStats.sumMoneyPenaltyNoProcess)} VND</p>
+            <p><strong>Tổng số vé phạt:</strong> {checkEmtyTotal(penaltyStats.size)}</p>
+            <p><strong>Tổng tiền phạt:</strong> {checkEmpty(penaltyStats.sumMoneyPenalty)} </p>
+            <p><strong>Tiền phạt chưa xử lý:</strong> {checkEmpty(penaltyStats.sumMoneyPenaltyNoProcess)} </p>
           </div>
         )}
       </div>
