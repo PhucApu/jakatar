@@ -73,6 +73,7 @@ public class SecurityConfig {
                             )
                             // Cấu hình phân quyền
                             .authorizeHttpRequests(request -> request
+                                          .requestMatchers("/tickets/vnpay-payment-return").permitAll()
                                           .requestMatchers(ADMIN_ACCESS_PATH)
                                           .hasAnyRole("ADMIN")
                                           // .requestMatchers("/datas", "/user").hasAnyRole("USER", "ADMIN")

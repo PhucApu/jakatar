@@ -80,9 +80,9 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
                      for (BusRoutesEntity e : listBusRoutesEntities) {
                             listBusRoutesDTOs.add(busRoutesMapping.toDTO(e));
                      }
-                     return  listBusRoutesDTOs;
+                     return listBusRoutesDTOs;
               }
-              return  listBusRoutesDTOs;
+              return listBusRoutesDTOs;
        }
 
        // Thêm một đối tượng BusRoutesEntity vào database
@@ -93,14 +93,16 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
        public ResponseBoolAndMess save(BusRoutesEntity busRoutesEntity) {
 
               // // Kiểm tra
-              // Optional<BusRoutesEntity> optional = this.repo.findByRoutesId(busRoutesEntity.getRoutesId());
+              // Optional<BusRoutesEntity> optional =
+              // this.repo.findByRoutesId(busRoutesEntity.getRoutesId());
 
               if (isForeignKeyEmpty(busRoutesEntity) == false && isDuplicateLocations(busRoutesEntity) == false) {
                      busRoutesEntity.setRoutesId(null);
                      this.repo.save(busRoutesEntity);
                      return new ResponseBoolAndMess(true, MESS_SAVE_SUCCESS);
               }
-              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + " or " + MESS_FOREIGN_KEY_VIOLATION + " or " + " Same arrival and departure points");
+              return new ResponseBoolAndMess(false, MESS_SAVE_FAILURE + " or " + MESS_FOREIGN_KEY_VIOLATION + " or "
+                            + " Same arrival and departure points");
        }
 
        // Thêm một đối tượng BusRoutesEntity vào database
@@ -146,15 +148,17 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               // Kiem tra
               Optional<BusRoutesEntity> optional = this.repo.findByRoutesId(entityObj.getRoutesId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && isDuplicateLocations(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false) {
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false
+                            && isDuplicateLocations(entityObj) == false
+                            && foreignKeyViolationIfHidden(entityObj) == false) {
 
-                     entityObj.setRoutesId(null);
+                     // entityObj.setRoutesId(null);
                      this.repo.save(entityObj);
-
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
 
-              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or " + MESS_FOREIGN_KEY_VIOLATION + " or " + " Same arrival and departure points");
+              return new ResponseBoolAndMess(false, MESS_UPDATE_FAILURE + "," + MESS_OBJECT_NOT_EXIST + " or "
+                            + MESS_FOREIGN_KEY_VIOLATION + " or " + " Same arrival and departure points");
        }
 
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
@@ -210,22 +214,25 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
        @Override
        public Boolean foreignKeyViolationIfHidden(BusRoutesEntity entityObj) {
               // BusRoutes foriegn key bus
+              if (entityObj.getIsDelete()) {
+                     // lay danh sach bus tham chieu den BusRoutes duoc xoa
+                     List<BusEntity> listBusEntities = this.busRepo.findByRoutes_Id(entityObj.getRoutesId());
 
-              // lay danh sach bus tham chieu den BusRoutes duoc xoa
-              List<BusEntity> listBusEntities = this.busRepo.findByRoutes_Id(entityObj.getRoutesId());
-
-              // kiem tra
-              // neu co thuc the
-              if (listBusEntities.isEmpty() == false) {
-                     for (BusEntity e : listBusEntities) {
-                            if (e.getIsDelete() == false) {
-                                   return true;
+                     // kiem tra
+                     // neu co thuc the
+                     if (listBusEntities.isEmpty() == false) {
+                            for (BusEntity e : listBusEntities) {
+                                   if (e.getIsDelete() == false) {
+                                          return true;
+                                   }
                             }
+                            return false;
                      }
+
                      return false;
               }
-
               return false;
+
        }
 
        @Transactional
@@ -237,27 +244,43 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
 
        // @Override
        // public Boolean isHasForeignKeyEntity(BusRoutesDTO dtoObj) {
-       //        // BusRouter khong co thuoc tinh khoa ngoai
-       //        return true;
+       // // BusRouter khong co thuoc tinh khoa ngoai
+       // return true;
        // }
 
        // kiem tra xem co trung diem denn diem di khong
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public Boolean isDuplicateLocations (BusRoutesEntity busRoutesEntity){
+       public Boolean isDuplicateLocations(BusRoutesEntity busRoutesEntity) {
 
-              BusRoutesEntity busRoutesEntity2 = this.repo.findByDepartureLocationAndDestinationLocation(busRoutesEntity.getDepartureLocation(), busRoutesEntity.getDestinationLocation()).orElse(null);
+              // Tìm tuyến có điểm đi và điểm đến giống trong database
+              Optional<BusRoutesEntity> existingBusRoutesEntity = this.repo
+                            .findByDepartureLocationAndDestinationLocation(
+                                          busRoutesEntity.getDepartureLocation(),
+                                          busRoutesEntity.getDestinationLocation());
 
-              if(busRoutesEntity2 != null){
-                     return true;
+              // Nếu không tìm thấy tuyến nào, không trùng
+              if (existingBusRoutesEntity.isEmpty()) {
+                     return false;
               }
-              return false;
+
+              // Nếu tìm thấy tuyến nhưng là chính nó (cùng ID), không trùng
+              if (existingBusRoutesEntity.get().getRoutesId().equals(busRoutesEntity.getRoutesId())) {
+                     return false;
+              }
+
+              // Nếu tìm thấy tuyến khác với cùng điểm đi và điểm đến, trùng
+              return true;
+
        }
 
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public BusRoutesDTO getByDepartureLocationAndDestinationLocation (String departureLocation, String destinationLocation){
-              BusRoutesEntity busRoutesEntity = this.repo.findByDepartureLocationAndDestinationLocation(departureLocation, destinationLocation).orElse(null);
+       public BusRoutesDTO getByDepartureLocationAndDestinationLocation(String departureLocation,
+                     String destinationLocation) {
+              BusRoutesEntity busRoutesEntity = this.repo
+                            .findByDepartureLocationAndDestinationLocation(departureLocation, destinationLocation)
+                            .orElse(null);
 
-              if(busRoutesEntity != null){
+              if (busRoutesEntity != null) {
                      return this.busRoutesMapping.toDTO(busRoutesEntity);
               }
               return null;

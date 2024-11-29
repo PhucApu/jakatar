@@ -129,9 +129,8 @@ public class FeedbackService implements SimpleServiceInf<FeedbackEntity, Feedbac
        public ResponseBoolAndMess update(FeedbackEntity entityObj) {
               Optional<FeedbackEntity> optional = this.repo.findByFeedbackId(entityObj.getFeedbackId());
 
-              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false
-                            && foreignKeyViolationIfHidden(entityObj) == false) {
-                     entityObj.setFeedbackId(null);
+              if (optional.isPresent() && isForeignKeyEmpty(entityObj) == false && foreignKeyViolationIfHidden(entityObj) == false) {
+                     
                      this.repo.save(entityObj);
                      return new ResponseBoolAndMess(true, MESS_UPDATE_SUCCESS);
               }
