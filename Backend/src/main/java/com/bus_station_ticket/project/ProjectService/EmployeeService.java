@@ -247,7 +247,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               if (employeeEntity != null && busEntity != null) {
 
                      // kiem tra xem co duoc phan tu truoc khonng
-                     if (employeeEntity.getListBusEntity().contains(busEntity) == false) {
+                     if (busEntity.getListEmployeeEntities().contains(employeeEntity) == false) {
                             int value = this.repo.insertBusAndEmplyee(busId, driverId);
                             if (value > 0) {
                                    return new ResponseBoolAndMess(true,
@@ -270,7 +270,7 @@ public class EmployeeService implements SimpleServiceInf<EmployeeEntity, Employe
               int value = this.repo.deleteBusAndEmplyee(busId, driverId);
 
               if (value > 0) {
-                     return new ResponseBoolAndMess(false,
+                     return new ResponseBoolAndMess(true,
                                    "Deletion of bus driver assignment with " + busId + " code successfully");
               }
               return new ResponseBoolAndMess(false,
