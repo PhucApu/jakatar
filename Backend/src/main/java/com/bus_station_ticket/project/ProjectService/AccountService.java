@@ -236,22 +236,19 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        public Boolean foreignKeyViolationIfDelete(AccountEntity entityObj) {
 
               // Accounnt foreign key Feedback and Ticket
-              if (entityObj.getIsBlock()) {
-                     // lấy những đối tượng ticket và feedback tham chiếu khóa ngoại đến account
-                     List<TicketEntity> ticketEntities = this.ticketRepo
-                                   .findByAccountEntity_userName(entityObj.getUserName());
+              // lấy những đối tượng ticket và feedback tham chiếu khóa ngoại đến account
+              List<TicketEntity> ticketEntities = this.ticketRepo
+                            .findByAccountEntity_userName(entityObj.getUserName());
 
-                     List<FeedbackEntity> feedbackEntities = this.feedbackRepo
-                                   .findByAccountEntity_userName(entityObj.getUserName());
+              List<FeedbackEntity> feedbackEntities = this.feedbackRepo
+                            .findByAccountEntity_userName(entityObj.getUserName());
 
-                     // kiểm tra
-                     // Nếu có thực thể tham chiếu khóa ngoại
-                     if (ticketEntities.isEmpty() == false || feedbackEntities.isEmpty() == false) {
-                            return true;
-                     }
+              // kiểm tra
+              // Nếu có thực thể tham chiếu khóa ngoại
+              if (ticketEntities.isEmpty() == true && feedbackEntities.isEmpty() == true) {
                      return false;
               }
-              return false;
+              return true;
 
        }
 
