@@ -52,7 +52,7 @@ export default function Discount() {
 
   useEffect(() => {
     fetchDiscounts();
-  }, []);
+  },[]);
 
   const handleOpenModal = (item: Discount | null = null) => {
     if (item) {
@@ -117,10 +117,12 @@ export default function Discount() {
         setData((prevData) =>
           prevData.map((item) => (item.discountId === result.discountId ? result : item))
         );
+        await fetchDiscounts();
         toast.success("Cập nhật giảm giá thành công", { autoClose: 800 });
       } else {
         const result = await createDiscount(formData as Discount);
         setData((prevData) => [...prevData, result]);
+        await fetchDiscounts(); // Đồng bộ lại danh sách
         toast.success("Thêm giảm giá thành công", { autoClose: 800 });
       }
       setOpenModal(false);
@@ -150,6 +152,7 @@ export default function Discount() {
       setActionLoading(true);
       try {
         await deleteDiscount(discountId);
+        // fetchDiscounts();
         setData((prevData) => prevData.filter((item) => item.discountId !== discountId));
         toast.success("Xóa giảm giá thành công", { autoClose: 800 });
       } catch (error: any) {

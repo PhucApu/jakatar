@@ -16,13 +16,15 @@ export const getStatisticsTickets = async (
   dateB: string
 ): Promise<StatisticResult> => {
   return apiRequest(async () => {
-    const response = await apiClient.get<ApiResponse<StatisticResult>>('/statistics', {
+    const response = await apiClient.get<ApiResponse<StatisticResult>>('/tickets/statistics', {
       params: {
         dateA,
         dateB,
       },
     });
-    return response.data.data || {};
+    console.log(">>DATA1:",response.data.message);
+    // return response.data.data!;
+    return response.data.message || {};
   });
 };
 
@@ -37,12 +39,14 @@ export const getStatisticsPenaltyTickets = async (
   dateB: string
 ): Promise<StatisticResult> => {
   return apiRequest(async () => {
-    const response = await apiClient.get<ApiResponse<StatisticResult>>('/statistics', {
+    const response = await apiClient.get<ApiResponse<StatisticResult>>('/penaltytickets/statistics', {
       params: {
         dateA,
         dateB,
       },
     });
-    return response.data.data || {};
+    console.log(">>DATA:",response);
+    // return response.data.data!;
+    return response.data.message || {};
   });
 };
