@@ -7,6 +7,7 @@ import { Bus } from '@type/model/Bus';
 export const getBuses = async (): Promise<Bus[]> => {
   return apiRequest(async () => {
     const response = await apiClient.get<ApiResponse<Bus[]>>('/buses');
+    console.log("response api bus: ",response.data.data);
     return response.data.data || [];
   });
 };

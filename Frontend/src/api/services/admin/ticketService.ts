@@ -45,3 +45,41 @@ export const hideTicket = async (ticketId: number): Promise<Ticket> => {
     return response.data.data!;
   });
 };
+
+
+// lấy ticket theo ticketId và userName
+export const getTicketByIdAndUserName = async (
+  ticketId: number,
+  userName: string
+): Promise<Ticket> => {
+  return apiRequest(async () => {
+    const response = await apiClient.get<ApiResponse<Ticket>>('/tickets/ticket_by_ticketId_username', {
+      params: {
+        ticketId,
+        userName,
+      },
+    });
+    console.log(">>DATA1:",response.data.data);
+    // return response.data.data!;
+    return response.data.data || {};
+  });
+};
+
+
+// lấy danh sách ticket theo dateA đến dateB
+export const getListTicketDateAToDateB = async (
+  dateA: string,
+  dateB: string
+): Promise<Ticket> => {
+  return apiRequest(async () => {
+    const response = await apiClient.get<ApiResponse<Ticket>>('/tickets/statistics', {
+      params: {
+        dateA,
+        dateB,
+      },
+    });
+    console.log(">>DATA2:",response.data.data);
+    // return response.data.data!;
+    return response.data.data || {};
+  });
+};
