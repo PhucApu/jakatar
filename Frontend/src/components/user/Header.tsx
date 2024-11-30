@@ -39,7 +39,7 @@ export default function Header() {
         {/* Avatar with Dropdown */}
         <div className="relative order-2 items-center">
           <img
-            src="/avatar_apu_2.jpg" // Replace with actual user avatar
+            src="/avt_user.png" // Replace with actual user avatar
             alt="User Avatar"
             className=" w-12 h-12 rounded-full cursor-pointer"
             onClick={toggleDropdown} // Handle toggle on click
@@ -69,13 +69,13 @@ export default function Header() {
                   <FaHistory className="mr-2 text-[#74C0FC]" />
                   Lịch sử mua vé
                 </a>
-                <a
+                {/* <a
                   href="/thong-tin/dia-chi"
                   className="flex items-center p-2 hover:bg-gray-100"
                 >
                   <FaMapMarkerAlt className="mr-2 text-[#63E6BE]" />
                   Địa chỉ của bạn
-                </a>
+                </a> */}
                 <a
                   href="/thong-tin/dat-lai-mat-khau"
                   className="flex items-center p-2 hover:bg-gray-100"

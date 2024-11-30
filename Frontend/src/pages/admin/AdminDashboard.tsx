@@ -1,68 +1,92 @@
-import { useState } from 'react';
-import { getStatisticsTickets, getStatisticsPenaltyTickets } from '../../api/services/admin/statictisService';
-import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
+import { useState } from "react";
+import { getStatisticsTickets, getStatisticsPenaltyTickets } from "../../api/services/admin/statictisService";
+import { Line } from "react-chartjs-2";
+import { Spinner } from "flowbite-react";
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import "chart.js/auto";
 
 const AdminDashboard = () => {
-  const [dateA, setDateA] = useState(''); // Giá trị ban đầu là rỗng
-  const [dateB, setDateB] = useState('');
-  const [ticketStats, setTicketStats] = useState(null);
-  const [penaltyStats, setPenaltyStats] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [dateA, setDateA] = useState(""); // Ngày bắt đầu
+  const [dateB, setDateB] = useState(""); // Ngày kết thúc
+  const [ticketStats, setTicketStats] = useState<any>(null); // Dữ liệu thống kê vé
+  const [penaltyStats, setPenaltyStats] = useState<any>(null); // Dữ liệu thống kê vé phạt
+  const [loading, setLoading] = useState(false); // Trạng thái tải
 
+  // Fetch thống kê vé
   const fetchTicketStatistics = async () => {
+    if (!dateA || !dateB) {
+      toast.error("Vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc!", { autoClose: 800 });
+      return;
+    }
     setLoading(true);
     try {
-      // Gọi API với dateA và dateB
       const data = await getStatisticsTickets(dateA, dateB);
       setTicketStats(data);
-      console.log(">>> statistics ticket: ", data)
-    } catch (error) {
-      console.error('Error fetching ticket statistics:', error);
+      console.log("Thống kê vé:", data);
+    } catch (error: any) {
+      console.error("Lỗi lấy thống kê vé:", error);
+      toast.error("Có lỗi xảy ra khi lấy dữ liệu thống kê vé.", { autoClose: 800 });
     } finally {
       setLoading(false);
     }
   };
 
+  // Fetch thống kê vé phạt
   const fetchPenaltyStatistics = async () => {
+    if (!dateA || !dateB) {
+      toast.error("Vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc!", { autoClose: 800 });
+      return;
+    }
     setLoading(true);
     try {
       const data = await getStatisticsPenaltyTickets(dateA, dateB);
       setPenaltyStats(data);
-      console.log(">>> statistics ticket penaty: ", data)
+      console.log("Thống kê vé phạt:", data);
     } catch (error) {
-      console.error('Error fetching penalty ticket statistics:', error);
+      console.error("Lỗi lấy thống kê vé phạt:", error);
+      toast.error("Có lỗi xảy ra khi lấy dữ liệu thống kê vé phạt.", { autoClose: 800 });
     } finally {
       setLoading(false);
     }
   };
 
-  // Cấu hình dữ liệu biểu đồ
+  // format tiền
+  const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0, // Số thập phân, nếu cần
+      maximumFractionDigits: 0, // Số thập phân, nếu cần
+    }).format(amount);
+  };
+
+
+ 
+
+  // Dữ liệu biểu đồ
   const chartData = {
-    labels: ticketStats?.dates || [],
+    labels: Object.keys(ticketStats?.revenueOfRoutes?.[0] || {}),
     datasets: [
       {
-        label: 'Tổng số vé',
-        data: ticketStats?.ticketCounts || [],
-        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Tổng số vé phạt',
-        data: penaltyStats?.penaltyCounts || [],
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1,
+        label: "Doanh thu theo tuyến xe",
+        data: Object.values(ticketStats?.revenueOfRoutes?.[0] || {}),
+        backgroundColor: "rgba(75, 192, 192, 0.5)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 2,
       },
     ],
   };
 
+  const checkEmpty = (amount: number | null | undefined): string => {
+    return amount === null || amount === undefined || isNaN(amount) ? "0 VND" : `${amount.toLocaleString()} VND`;
+  };
+  const checkEmtyTotal = (amount: number | null | undefined): string =>{
+    return amount === null || amount === undefined || isNaN(amount) ? "0 Vé" : `${amount.toLocaleString()} Vé`;
+  }
   return (
-    <div className="p-4 mx-auto">
-      <h1 className="uppercase font-semibold text-2xl tracking-wide mb-4">
-        Thống kê
-      </h1>
+    <div className="p-4 mx-auto max-w-4xl">
+      <h1 className="uppercase font-semibold text-2xl tracking-wide mb-4">Thống kê</h1>
 
       {/* Bộ lọc ngày */}
       <div className="space-y-6 mb-6">
@@ -86,45 +110,57 @@ const AdminDashboard = () => {
             className="border rounded p-2 w-full"
           />
         </div>
-        <button
-          onClick={fetchTicketStatistics}
-          className="bg-blue-500 text-white p-2 rounded mr-4"
-        >
-          Lấy thống kê vé
-        </button>
-        <button
-          onClick={fetchPenaltyStatistics}
-          className="bg-red-500 text-white p-2 rounded"
-        >
-          Lấy thống kê vé phạt
-        </button>
+        <div className="flex space-x-48 mt-5">
+          <button 
+            onClick={fetchTicketStatistics}
+            className="bg-blue-500 text-white p-2 rounded mr-32"
+          >
+            Lấy thống kê vé
+          </button>
+          <button
+            onClick={fetchPenaltyStatistics}
+            className="bg-red-500 text-white p-2 rounded"
+          >
+            Lấy thống kê vé phạt
+          </button>
+        </div>
       </div>
 
-      {/* Loading state */}
-      {loading && <p>Đang tải dữ liệu...</p>}
+      {/* Loading */}
+      {loading && <div><Spinner aria-label="Default status example" /></div>}
 
-      {/* Hiển thị thống kê */}
-      <div className="space-y-6">
-        <h2 className="text-xl font-bold">Kết quả thống kê</h2>
-        <div>
-          <h3 className="text-lg font-semibold">Tổng số vé:</h3>
-          <p>{ticketStats?.totalTickets || 'Chưa có dữ liệu'}</p>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold">Tổng số vé phạt:</h3>
-          <p>{penaltyStats?.totalPenaltyTickets || 'Chưa có dữ liệu'}</p>
-        </div>
+      {/* Hiển thị kết quả thống kê */}
+      <div className="flex space-x-40 mb-5 mt-5">
+        {ticketStats && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold">Kết quả thống kê vé</h2>
+            <p><strong>Tổng vé:</strong> {checkEmtyTotal(ticketStats.size)}</p>
+            <p><strong>Doanh thu thành công:</strong> {checkEmpty(ticketStats.sumMoneyTicketSuccess)} </p>
+            <p><strong>Số vé thành công:</strong> {checkEmpty(ticketStats.numberTicketSuccess)}</p>
+            <p><strong>Số vé đang xử lý:</strong> {checkEmpty(ticketStats.numberTicketPending)}</p>
+          </div>
+        )}
+
+        {penaltyStats && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold">Kết quả thống kê vé phạt</h2>
+            <p><strong>Tổng số vé phạt:</strong> {checkEmtyTotal(penaltyStats.size)}</p>
+            <p><strong>Tổng tiền phạt:</strong> {checkEmpty(penaltyStats.sumMoneyPenalty)} </p>
+            <p><strong>Tiền phạt chưa xử lý:</strong> {checkEmpty(penaltyStats.sumMoneyPenaltyNoProcess)} </p>
+          </div>
+        )}
       </div>
 
       {/* Biểu đồ */}
-      <div className="mt-6">
-        <h2 className="text-xl font-bold">Biểu đồ thống kê</h2>
-        {ticketStats && penaltyStats ? (
+      {ticketStats && ticketStats.revenueOfRoutes && (
+        <div className="mt-6">
+          <h2 className="text-xl font-bold">Biểu đồ doanh thu theo tuyến xe</h2>
           <Line data={chartData} />
-        ) : (
-          <p>Chưa có dữ liệu để hiển thị biểu đồ.</p>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* ToastContainer for notifications */}
+      <ToastContainer />
     </div>
   );
 };

@@ -21,7 +21,8 @@ export default function Bus() {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [formData, setFormData] = useState<Partial<Bus>>({});
 
-  const [routers, setRouters] = useState<{ routesId: number }[]>([]);
+  // trạng thái danh sách busRouterID
+  const [busRouter, setBusRouter] = useState<{ routesId: number }[]>([]);
 
   const columns: TableColumn<Bus>[] = [
     { name: 'Mã buýt', selector: (row) => row.busId, sortable: true },
@@ -36,10 +37,28 @@ export default function Bus() {
     },
   ];
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [busesData, busesRouterData] = await Promise.all([getBuses(), getBusRoutes()]);
+        setData(busesData);
+        setBusRouter(busesRouterData);
+      } catch (error: any) {
+        setError(error.message);
+        toast.error(error.message, { autoClose: 800 });
+      } finally {
+        setLoading(false);
+      }
+    }; 
+  
+    fetchData();
+  });
+
   const fetchBuses = async () => {
     try {
       const busesData = await getBuses();
       setData(busesData);
+      console.log(">>> bus:GUI ", busesData)
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -49,7 +68,8 @@ export default function Bus() {
   const fetchBusRoutes = async () => {
     try {
       const busesRouterData = await getBusRoutes();
-      setRouters(busesRouterData);
+      setBusRouter(busesRouterData);
+      console.log(">>> bus routes:GUi ", busesRouterData)
     } catch (error: any) {
       toast(error.message);
     } finally {
@@ -62,10 +82,13 @@ export default function Bus() {
 //   ))
 //   console.log(">>> getRouterId",getRouterId)
 
-  useEffect(() => {
-      fetchBuses();
-      fetchBusRoutes();
-  }, []);
+  // useEffect(() => {
+  //     fetchBuses();
+  //     fetchBusRoutes();
+  // }, [row]);
+
+
+
 
   const handleOpenModal = (item: Bus | null = null) => {
     if (item) {
@@ -146,11 +169,13 @@ export default function Bus() {
             item.busId === updatedBus.busId ? updatedBus : item
           )
         );
+        fetchBuses();
         toast.success('Cập nhật buýt thành công', { autoClose: 800 });
       } else {
         const newBus = await createBus(formData as Bus);
         toast.success('Thêm buýt thành công', { autoClose: 800 });
         setData((prev) => [...prev, newBus]);
+        fetchBuses();
       }
       setOpenModal(false);
     } catch (error: any) {
@@ -166,6 +191,7 @@ export default function Bus() {
       try {
         await deleteBus(id);
         setData((prev) => prev.filter((item) => item.busId !== id));
+        fetchBuses();
         toast.success('Xóa buýt thành công', { autoClose: 800 });
       } catch (error: any) {
         toast.error(error.message || 'Lỗi khi xóa buýt', { autoClose: 800 });
@@ -179,7 +205,7 @@ export default function Bus() {
     const { name, value } = e.target;
     setFormData((prev) => ({
         ...prev,
-        [name]: name === 'capacity' || name === 'routesEntity_Id'|| name === 'busId'
+        [name]: name === 'capacity' || name === 'busId' || name === 'routesId'
             ? Number(value)
             : name === 'isDelete'
             ? value === '1'
@@ -253,7 +279,7 @@ export default function Bus() {
               >
                 <option value="" disabled className=''>Chọn mã tuyến</option>
                 <option value="null" className=''>Chưa phân tuyến</option>
-                {routers.map((router) => (
+                {busRouter.map((router) => (
                   <option key={router.routesId} value={router.routesId}>
                     {router.routesId}
                   </option>
