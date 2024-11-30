@@ -8,7 +8,7 @@ interface PrivateRouteProps {
 }
 
 const ProtectedRoute : React.FC<PrivateRouteProps> = ({ children }) => {
-  const user = useSelector((state: RootState) => state.auth.user);
+  const user = useSelector((state: RootState) => state.user);
 
   if(!user) {
     return <Navigate to="/dang-nhap" replace />;

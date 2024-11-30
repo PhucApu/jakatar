@@ -17,20 +17,23 @@ import FeedBack from '../pages/admin/FeedBack';
 import UnAuthorized from '../pages/shared/UnAuthorized';
 import PenaltyTicket from '../pages/admin/PenaltyTicket';
 import Account from '../pages/admin/Account';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 export default function AdminRoute() {
-  const { user } = useSelector((state: RootState) => state.auth);
+  const user = useSelector((state: RootState) => state.user);
 
-  // if (!user) {
-  //   return <Navigate to="/dang-nhap" replace />;
-  // }
+  const userRole = user.currentUser?.role;
 
-  // if(user.role !== 'ADMIN') {
-  //   return <Navigate to="/unauthorized" replace />;
-  // }
+  if(userRole === 'ROLE_USER') {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  if (userRole !== 'ROLE_ADMIN' && userRole !== 'ROLE_MANAGER') {
+    return <Navigate to="/unauthorized" replace />;
+  }
 
   return (
-    <>
+    <ProtectedRoute>
       <div className='flex h-screen'>
         <AdminSidebar />
 
@@ -54,6 +57,6 @@ export default function AdminRoute() {
           </Routes>
         </div>
       </div>
-    </>
+    </ProtectedRoute>
   );
 }

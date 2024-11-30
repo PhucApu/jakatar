@@ -25,7 +25,7 @@ import { RootState } from '../redux/store';
 import UnAuthorized from '../pages/shared/UnAuthorized';
 
 function UserRoute() {
-  const { user } = useSelector((state: RootState) => state.auth);
+  const user  = useSelector((state: RootState) => state.user);
 
   return (
     <>

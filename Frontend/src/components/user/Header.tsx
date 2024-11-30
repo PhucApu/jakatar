@@ -13,8 +13,9 @@ import {
 } from 'react-icons/fa';
 import { IoSettings } from 'react-icons/io5';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { userClear } from '../../redux/userSlice';
 
 export default function Header() {
   const location = useLocation();
@@ -25,6 +26,13 @@ export default function Header() {
   };
 
   const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+
+  function handleLogout() {
+    localStorage.removeItem('jwtToken')
+    dispatch(userClear());
+    navigate('/');
+  }
 
   return (
     <MegaMenu className='bg-gray-100'>
@@ -91,7 +99,7 @@ export default function Header() {
                         <FaKey className='mr-2 text-[#FFA726]' />
                         Đặt lại mật khẩu
                       </a>
-                      <a href='/' className='flex items-center p-2 hover:bg-gray-100'>
+                      <a className='flex items-center p-2 hover:bg-gray-100' onClick={handleLogout}>
                         <FaSignOutAlt className='mr-2 text-[#fa003e]' />
                         Đăng xuất
                       </a>
