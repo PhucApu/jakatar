@@ -1,4 +1,4 @@
 export interface EmployeeBus {
-    driverId: number;
     busId: number;
+    driverId: number;
   }

@@ -1,11 +1,78 @@
-import { useState } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { FaStar } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Feedback } from "@type/model/Feedback";
+import { createFeedback } from "../../api/services/admin/feedbackService";
 
 export default function FeedBack() {
   const [rating, setRating] = useState(0);
+  const [formData, setFormData] = useState<Partial<Feedback>>({
+    ticketEntity_Id: 0,
+    content: "",
+    rating: 0,
+    isDelete: false,  // Default value for isDelete
+  });
+  const [loading, setLoading] = useState(false);
+  
 
-  const handleStarClick = (index) => {
+  // Giả sử lấy username từ thông tin đăng nhập
+  const username = "phuc"; // Thay bằng cách lấy giá trị từ auth state/context.
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "ticketEntity_Id" || name === "rating" ? Number(value) : value,
+    }));
+  };
+
+  const handleStarClick = (index: number) => {
     setRating(index);
+    setFormData((prev) => ({ ...prev, rating: index }));
+  };
+
+  const handleSubmit = async () => {
+    // Kiểm tra điều kiện các trường bắt buộc không được để trống
+    if (!formData.ticketEntity_Id || !formData.content || !rating) {
+      toast.error("Vui lòng nhập đầy đủ thông tin form feedback!",{autoClose:1000});
+      return;
+    }
+    if (!Number(formData.ticketEntity_Id)) {
+      toast.error("Vui lòng nhập mã vé xe (chuyến đi) là một số !",{autoClose:1000});
+      return;
+    }
+
+    // Chuyển đổi thời gian hiện tại sang định dạng 'yyyy-MM-ddThh:mm'
+    const currentDateTime = new Date();
+    const dateComment = currentDateTime.toISOString().slice(0, 16); // Định dạng: 'yyyy-MM-ddThh:mm'
+
+    const feedbackData: Feedback = {
+      ...formData,
+      feedbackId: 0, // Chưa có id khi tạo mới
+      accountEnity_userName: username, // Lấy từ người dùng đăng nhập
+      // dateComment: new Date().toISOString(), // Tự động tạo thời gian gửi
+      dateComment: dateComment, // Sử dụng định dạng datetime-local
+      isDelete: false, // Giả định ban đầu chưa xoá
+      
+    } as Feedback;
+
+
+    try {
+      setLoading(true);
+      const response = await createFeedback(feedbackData);
+      toast.success("Gửi đánh giá thành công!",{autoClose: 800});
+      setFormData({ ticketEntity_Id: 0, content: "", rating: 0, isDelete: false });
+      setRating(0);
+    } catch (error) {
+      console.error(error);
+      toast.error("Mã vé không tồn tại, vui lòng thử lại!",{autoClose:800});
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,11 +99,17 @@ export default function FeedBack() {
               Đánh giá và góp ý
             </h2>
             <input
-              type="text"
+              type="number"
+              name="ticketEntity_Id"
+              value={formData.ticketEntity_Id || ""}
+              onChange={handleChange}
               className="w-full h-12 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-10"
               placeholder="Mã chuyến đi (mã vé)"
             />
             <textarea
+              name="content"
+              value={formData.content || ""}
+              onChange={handleChange}
               className="w-full h-24 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-2xl border border-gray-200 focus:outline-none pl-4 mb-10"
               placeholder="Nội dung cần góp ý đánh giá trong chuyến đi đó"
             ></textarea>
@@ -53,12 +126,21 @@ export default function FeedBack() {
               ))}
             </div>
 
-            <button className="w-full h-12 text-white text-base font-semibold leading-6 rounded-full transition-all duration-700 hover:bg-cyan-800 bg-cyan-600 shadow-sm">
-              Xác nhận đánh giá
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`w-full h-12 text-white text-base font-semibold leading-6 rounded-full transition-all duration-700 ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "hover:bg-cyan-800 bg-cyan-600"
+              } shadow-sm`}
+            >
+              {loading ? "Đang gửi..." : "Xác nhận đánh giá"}
             </button>
           </div>
         </div>
       </div>
+      <ToastContainer />
     </section>
   );
 }
