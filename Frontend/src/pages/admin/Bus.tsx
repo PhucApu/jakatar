@@ -37,6 +37,23 @@ export default function Bus() {
     },
   ];
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [busesData, busesRouterData] = await Promise.all([getBuses(), getBusRoutes()]);
+        setData(busesData);
+        setBusRouter(busesRouterData);
+      } catch (error: any) {
+        setError(error.message);
+        toast.error(error.message, { autoClose: 800 });
+      } finally {
+        setLoading(false);
+      }
+    }; 
+  
+    fetchData();
+  });
+
   const fetchBuses = async () => {
     try {
       const busesData = await getBuses();
@@ -65,10 +82,13 @@ export default function Bus() {
 //   ))
 //   console.log(">>> getRouterId",getRouterId)
 
-  useEffect(() => {
-      fetchBuses();
-      fetchBusRoutes();
-  }, []);
+  // useEffect(() => {
+  //     fetchBuses();
+  //     fetchBusRoutes();
+  // }, [row]);
+
+
+
 
   const handleOpenModal = (item: Bus | null = null) => {
     if (item) {
@@ -149,11 +169,13 @@ export default function Bus() {
             item.busId === updatedBus.busId ? updatedBus : item
           )
         );
+        fetchBuses();
         toast.success('Cập nhật buýt thành công', { autoClose: 800 });
       } else {
         const newBus = await createBus(formData as Bus);
         toast.success('Thêm buýt thành công', { autoClose: 800 });
         setData((prev) => [...prev, newBus]);
+        fetchBuses();
       }
       setOpenModal(false);
     } catch (error: any) {
@@ -169,6 +191,7 @@ export default function Bus() {
       try {
         await deleteBus(id);
         setData((prev) => prev.filter((item) => item.busId !== id));
+        fetchBuses();
         toast.success('Xóa buýt thành công', { autoClose: 800 });
       } catch (error: any) {
         toast.error(error.message || 'Lỗi khi xóa buýt', { autoClose: 800 });
