@@ -233,4 +233,20 @@ public class TicketController implements RestApiSimpleControllerInf<TicketDTO, L
               responseObject.setData(null);
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
+
+       @GetMapping("/ticket_by_ticketId_username")
+       public ResponseEntity<ResponseObject> getByTicketIdAndUserName(@RequestParam("ticketId") Long ticketId, @RequestParam("username") String username) {
+
+              ResponseObject responseObject = this.ticketService.getByTicketIdAndUserName(ticketId,username);
+
+              return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+       }
+
+       @GetMapping("/ticket_by_date_username")
+       public ResponseEntity<ResponseObject> getByTicketIdAndUserNameAndDateRange(@RequestParam("username") String username, @RequestParam("dateA") LocalDateTime dateA, @RequestParam("dateB") LocalDateTime dateB) {
+
+              ResponseObject responseObject = this.ticketService.getByTicketIdAndUserNameAndDateRange(username, dateA, dateB);
+
+              return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+       }
 }

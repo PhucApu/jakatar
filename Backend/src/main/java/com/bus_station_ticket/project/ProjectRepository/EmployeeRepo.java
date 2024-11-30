@@ -40,8 +40,8 @@ public interface EmployeeRepo extends JpaRepository<EmployeeEntity, Long> {
 
        @Modifying
        @Query(value = """
-                            INSERT INTO  (bus_id, driver_id)
-                            VALUES (:busId, :driverId
+                            INSERT INTO bus_employee (bus_id, driver_id)
+                            VALUES (:busId, :driverId)
                      """, nativeQuery = true)
        public int insertBusAndEmplyee(@Param("busId") Long busId, @Param("driverId") Long driverId);
 
