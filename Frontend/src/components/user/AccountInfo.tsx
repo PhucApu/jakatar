@@ -3,14 +3,16 @@ import { Button } from "flowbite-react";
 export default function AccountInfo() {
   return (
     <>
-      <div className='flex-col mb-5'>
-        <h2 className='font-bold text-2xl'>Thông tin tài khoản</h2>
-        <h3>Quản lý thông tin hồ sơ để bảo mật tài khoản</h3>
+      <div className='flex bg-teal-100 p-4 rounded-2xl mb-7 justify-between'>
+        <div className='flex-col mb-5'>
+          <h2 className='font-bold text-2xl'>Thông tin tài khoản</h2>
+          <h3>Quản lý thông tin hồ sơ để bảo mật tài khoản</h3>
+        </div>
       </div>
       <div className='flex justify-center items-center border rounded-2xl bg-gray-200 shadow'>
         <div className='flex flex-col avater w-1/2 justify-between items-center'>
           <img
-            src='../avatar_apu.png'
+            src='../avt_user.png'
             alt='anh-dai-dien'
             className='w-44 h-44 rounded-full mb-8 -my-20'
           />

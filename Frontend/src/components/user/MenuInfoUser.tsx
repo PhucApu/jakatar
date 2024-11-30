@@ -25,10 +25,10 @@ export default function MenuInfoUser() {
           <FaHistory className="mr-2 text-[#74C0FC]" />
           Lịch sử mua vé
         </a>
-        <a href="/thong-tin/dia-chi" className="flex items-center px-2 py-4 rounded hover:bg-gray-200">
+        {/* <a href="/thong-tin/dia-chi" className="flex items-center px-2 py-4 rounded hover:bg-gray-200">
           <FaMapMarkerAlt className="mr-2 text-[#63E6BE]" />
           Địa chỉ của bạn
-        </a>
+        </a> */}
         <a
           href="/thong-tin/dat-lai-mat-khau"
           className="flex items-center px-2 py-4 rounded hover:bg-gray-200"
