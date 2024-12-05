@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
-import com.bus_station_ticket.project.ProjectEntity.BusEntity;
+import com.bus_station_ticket.project.ProjectEntity.BusRouteScheduleEntity;
 import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.BusRoutesMapping;
-import com.bus_station_ticket.project.ProjectRepository.BusRepo;
+import com.bus_station_ticket.project.ProjectRepository.BusRouteScheduleRepo;
 import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
 
 @Service
@@ -28,7 +28,10 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
        // private TicketRepo ticketRepo;
 
        @Autowired
-       private BusRepo busRepo;
+       private BusRouteScheduleRepo busRouteScheduleRepo;
+
+       // @Autowired
+       // private BusRepo busRepo;
 
        @Autowired
        private BusRoutesMapping busRoutesMapping;
@@ -96,6 +99,7 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               // Optional<BusRoutesEntity> optional =
               // this.repo.findByRoutesId(busRoutesEntity.getRoutesId());
 
+              busRoutesEntity.setRoutesId(-1l);
               if (isForeignKeyEmpty(busRoutesEntity) == false && isDuplicateLocations(busRoutesEntity) == false) {
                      busRoutesEntity.setRoutesId(null);
                      this.repo.save(busRoutesEntity);
@@ -199,11 +203,11 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               // BusRoutes foreign key bus
 
               // lay danh sach bus tham chieu den BusRoutes duoc xoa
-              List<BusEntity> listBusEntities = this.busRepo.findByRoutes_Id(entityObj.getRoutesId());
+              List<BusRouteScheduleEntity> listBusRouteScheduleEntities = this.busRouteScheduleRepo.findByBusRoutesEntity_Id(entityObj.getRoutesId());
 
               // kiem tra
               // neu co thuc the
-              if (listBusEntities.isEmpty() == false) {
+              if (listBusRouteScheduleEntities.isEmpty() == false) {
                      return true;
               }
 
@@ -216,12 +220,12 @@ public class BusRoutesService implements SimpleServiceInf<BusRoutesEntity, BusRo
               // BusRoutes foriegn key bus
               if (entityObj.getIsDelete()) {
                      // lay danh sach bus tham chieu den BusRoutes duoc xoa
-                     List<BusEntity> listBusEntities = this.busRepo.findByRoutes_Id(entityObj.getRoutesId());
+                     List<BusRouteScheduleEntity> listBusRouteScheduleEntities = this.busRouteScheduleRepo.findByBusRoutesEntity_Id(entityObj.getRoutesId());
 
                      // kiem tra
                      // neu co thuc the
-                     if (listBusEntities.isEmpty() == false) {
-                            for (BusEntity e : listBusEntities) {
+                     if (listBusRouteScheduleEntities.isEmpty() == false) {
+                            for (BusRouteScheduleEntity e : listBusRouteScheduleEntities) {
                                    if (e.getIsDelete() == false) {
                                           return true;
                                    }

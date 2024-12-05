@@ -10,7 +10,7 @@ import com.bus_station_ticket.project.ProjectDTO.TicketDTO;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectRepository.AccountRepo;
-import com.bus_station_ticket.project.ProjectRepository.BusRepo;
+import com.bus_station_ticket.project.ProjectRepository.BusRouteScheduleRepo;
 import com.bus_station_ticket.project.ProjectRepository.DiscountRepo;
 import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
 import com.bus_station_ticket.project.ProjectRepository.PaymentRepo;
@@ -22,7 +22,7 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
        private AccountRepo accountRepo;
 
        @Autowired
-       private BusRepo busRepo;
+       private BusRouteScheduleRepo busRouteScheduleRepo;
 
        @Autowired
        private PaymentRepo paymentRepo;
@@ -41,9 +41,10 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
               ticketDTO.setTicketId(entity.getTicketId());
               ticketDTO.setAccountEnity_Id(
                             (entity.getAccountEntity() != null) ? entity.getAccountEntity().getUserName() : null);
-              ticketDTO.setBusEntity_Id(
-                            (entity.getBusEntity() != null) ? entity.getBusEntity().getBusId() : null);
-              ticketDTO.setBusRoutesEntity_Id(entity.getRoutes_Id());
+
+              ticketDTO.setBusRouteSchedule_Id(
+                            entity.getBusRouteSchedule() != null ? entity.getBusRouteSchedule().getScheduleId() : null);
+
               ticketDTO.setPaymentEntity_Id(
                             (entity.getPaymentEntity() != null) ? entity.getPaymentEntity().getPaymentId() : null);
               ticketDTO.setDiscountEntity_Id(
@@ -58,7 +59,7 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
               // Mapping cac thuoc tinh list
               List<Long> listFeedbackEntities_Id = new ArrayList<>();
 
-              if(entity.getListFeedbackEntities() != null){
+              if (entity.getListFeedbackEntities() != null) {
                      for (FeedbackEntity e : entity.getListFeedbackEntities()) {
                             listFeedbackEntities_Id.add(e.getFeedbackId());
                      }
@@ -78,9 +79,8 @@ public class TicketMapping implements MappingInterface<TicketEntity, TicketDTO> 
 
               ticketEntity.setAccountEntity(this.accountRepo.findByUserName(dto.getAccountEnity_Id()).orElse(null));
 
-              ticketEntity.setBusEntity(this.busRepo.findByBusId(dto.getBusEntity_Id()).orElse(null));
-
-              ticketEntity.setRoutes_Id(dto.getBusRoutesEntity_Id());
+              ticketEntity.setBusRouteSchedule(
+                            this.busRouteScheduleRepo.findByScheduleId(dto.getBusRouteSchedule_Id()).orElse(null));
 
               ticketEntity.setPaymentEntity(this.paymentRepo.findByPaymentId(dto.getPaymentEntity_Id()).orElse(null));
 

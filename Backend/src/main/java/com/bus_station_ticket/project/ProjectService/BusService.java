@@ -1,6 +1,6 @@
 package com.bus_station_ticket.project.ProjectService;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +17,13 @@ import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.BusDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
-import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
+import com.bus_station_ticket.project.ProjectEntity.BusRouteScheduleEntity;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
 import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
 import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
 import com.bus_station_ticket.project.ProjectMappingEntityToDtoSevice.BusMapping;
 import com.bus_station_ticket.project.ProjectRepository.BusRepo;
-import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
+import com.bus_station_ticket.project.ProjectRepository.BusRouteScheduleRepo;
 import com.bus_station_ticket.project.ProjectRepository.EmployeeRepo;
 import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
@@ -37,8 +37,11 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        @Autowired
        private EmployeeRepo employeeRepo;
 
+       // @Autowired
+       // private BusRoutesRepo busRoutesRepo;
+
        @Autowired
-       private BusRoutesRepo busRoutesRepo;
+       private BusRouteScheduleRepo busRouteScheduleRepo;
 
        @Autowired
        private PenaltyTicketRepo penaltyTicketRepo;
@@ -125,7 +128,7 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        public ResponseBoolAndMess save(BusEntity entityObj) {
 
               // Optional<BusEntity> optional = this.repo.findByBusId(entityObj.getBusId());
-
+              entityObj.setBusId(-1L);
               if (isForeignKeyEmpty(entityObj) == false && isDuplicatBusNumber(entityObj) == false) {
                      entityObj.setBusId(null);
                      this.repo.save(entityObj);
@@ -198,17 +201,18 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        @Override
        public Boolean foreignKeyViolationIfDelete(BusEntity entityObj) {
 
-              // Bus foreign key employee, ticket, penalty_tiket
+              // Bus foreign key employee, bus_routes_schedule , penalty_tiket
 
               List<EmployeeEntity> employeeEntities = this.employeeRepo.findByBusEntityId(entityObj.getBusId());
 
-              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusEntity_Id(entityObj.getBusId());
+              List<BusRouteScheduleEntity> listBusRouteScheduleEntities = this.busRouteScheduleRepo
+                            .findByBusEntity_Id(entityObj.getBusId());
 
               List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
                             .findByBusEntity_Id(entityObj.getBusId());
 
               // kiem tra
-              if (employeeEntities.isEmpty() == true && ticketEntities.isEmpty() == true
+              if (employeeEntities.isEmpty() == true && listBusRouteScheduleEntities.isEmpty() == true
                             && penaltyTicketEntities.isEmpty() == true) {
                      return false;
               }
@@ -223,7 +227,8 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
               if (entityObj.getIsDelete() == true) {
                      List<EmployeeEntity> employeeEntities = this.employeeRepo.findByBusEntityId(entityObj.getBusId());
 
-                     List<TicketEntity> ticketEntities = this.ticketRepo.findByBusEntity_Id(entityObj.getBusId());
+                     List<BusRouteScheduleEntity> listBusRouteScheduleEntities = this.busRouteScheduleRepo
+                                   .findByBusEntity_Id(entityObj.getBusId());
 
                      List<PenaltyTicketEntity> penaltyTicketEntities = this.penaltyTicketRepo
                                    .findByBusEntity_Id(entityObj.getBusId());
@@ -237,9 +242,9 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
                                    }
                             }
                      }
-                     if (ticketEntities.isEmpty() == false) {
+                     if (listBusRouteScheduleEntities.isEmpty() == false) {
 
-                            for (TicketEntity e : ticketEntities) {
+                            for (BusRouteScheduleEntity e : listBusRouteScheduleEntities) {
                                    if (e.getIsDelete() == false) {
                                           return true;
                                    }
@@ -283,6 +288,7 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
        public Boolean isDuplicatBusNumber(BusEntity busEntity) {
               // Kiểm tra biển số xe trong database
+              
               Optional<BusEntity> existingBusEntity = this.repo.findByBusNumber(busEntity.getBusNumber());
 
               // Nếu không tìm thấy xe nào, không trùng
@@ -299,64 +305,81 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
               return true;
        }
 
+       // @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation
+       // = Isolation.READ_COMMITTED)
+       // public List<BusDTO> getByDepartureLocationAndDestinationLocation(String
+       // departureLocation,
+       // String destinationLocation) {
+       // BusRoutesEntity busRoutesEntity = this.busRoutesRepo
+       // .findByDepartureLocationAndDestinationLocation(departureLocation,
+       // destinationLocation)
+       // .orElse(null);
+
+       // if (busRoutesEntity != null) {
+
+       // List<BusEntity> listBusEntities =
+       // this.repo.findByRoutes_Id(busRoutesEntity.getRoutesId());
+
+       // List<BusDTO> listBusDTOs = new ArrayList<>();
+
+       // for (BusEntity e : listBusEntities) {
+       // BusDTO busDTO = this.busMapping.toDTO(e);
+       // listBusDTOs.add(busDTO);
+       // }
+
+       // return listBusDTOs;
+       // }
+       // return new ArrayList<>();
+       // }
+
+       // @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation
+       // = Isolation.READ_COMMITTED)
+       // public Integer numberSeatRemain(Long busId, String departureLocation, String
+       // destinationLocation,
+       // LocalDateTime departureTime, LocalDateTime arivalTime) {
+
+       // List<TicketEntity> ticketEntities = this.ticketRepo.findByBusAndRoutes(busId,
+       // departureLocation,
+       // destinationLocation, departureTime, arivalTime);
+
+       // int countSeatNotAval = 0;
+       // for (TicketEntity e : ticketEntities) {
+       // if (e.getStatus().equals("failure") == false) {
+       // countSeatNotAval++;
+       // }
+       // }
+
+       // BusEntity busEntity = this.repo.findByBusId(busId).orElse(null);
+
+       // int numberSeatRemain = busEntity.getCapacity() - countSeatNotAval;
+
+       // return numberSeatRemain;
+       // }
+
+       // Kiểm tra ghế có thỏa không và trống không
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public List<BusDTO> getByDepartureLocationAndDestinationLocation(String departureLocation,
-                     String destinationLocation) {
-              BusRoutesEntity busRoutesEntity = this.busRoutesRepo
-                            .findByDepartureLocationAndDestinationLocation(departureLocation, destinationLocation)
-                            .orElse(null);
+       public ResponseBoolAndMess isValSeat(String seat, Long scheduleId, LocalDate departureDate) {
 
-              if (busRoutesEntity != null) {
+              BusRouteScheduleEntity busRouteScheduleEntity = this.busRouteScheduleRepo.findByScheduleId(scheduleId).orElse(null);
 
-                     List<BusEntity> listBusEntities = this.repo.findByRoutes_Id(busRoutesEntity.getRoutesId());
-
-                     List<BusDTO> listBusDTOs = new ArrayList<>();
-
-                     for (BusEntity e : listBusEntities) {
-                            BusDTO busDTO = this.busMapping.toDTO(e);
-                            listBusDTOs.add(busDTO);
-                     }
-
-                     return listBusDTOs;
+              if(busRouteScheduleEntity == null){
+                     return new ResponseBoolAndMess(false,
+                                   "Schedule is not availible. Schedule id " + scheduleId + " may not exsit");
               }
-              return new ArrayList<>();
-       }
+              Long busId = busRouteScheduleEntity.getBusEntity().getBusId();
 
-       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public Integer numberSeatRemain(Long busId, String departureLocation, String destinationLocation,
-                     LocalDateTime departureTime, LocalDateTime arivalTime) {
-
-              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusAndRoutes(busId, departureLocation,
-                            destinationLocation, departureTime, arivalTime);
-
-              int countSeatNotAval = 0;
-              for (TicketEntity e : ticketEntities) {
-                     if (e.getStatus().equals("failure") == false) {
-                            countSeatNotAval++;
-                     }
+              if (isValSeatFormat(busId, seat) == false) {
+                     return new ResponseBoolAndMess(false,
+                                   "Seat is not availible. Seat " + seat + " may not in the correct format");
               }
 
-              BusEntity busEntity = this.repo.findByBusId(busId).orElse(null);
-
-              int numberSeatRemain = busEntity.getCapacity() - countSeatNotAval;
-
-              return numberSeatRemain;
-       }
-
-       @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public ResponseBoolAndMess isValSeat(String seat, Long busId, String departureLocation,
-                     String destinationLocation, LocalDateTime departureTime, LocalDateTime arivalTime) {
-
-              if( isValSeatFormat(busId, seat) == false){
-                     return new ResponseBoolAndMess(false, "Seat is not availible. Seat " + seat + " may not in the correct format");
-              }
-
-              List<TicketEntity> ticketEntities = this.ticketRepo.findByBusAndRoutes(busId, departureLocation,
-                            destinationLocation, departureTime, arivalTime);
-              if (ticketEntities.isEmpty() ==     false) {
+              List<TicketEntity> ticketEntities = this.ticketRepo.findByScheduleIdAndDepartureDate(scheduleId,
+                            departureDate);
+              if (ticketEntities.isEmpty() == false) {
                      for (TicketEntity e : ticketEntities) {
                             if (e.getSeatNumber().equals(seat) && e.getStatus().equals("failure") == false) {
-                                   return new ResponseBoolAndMess(false, "Seat is not availible. Seat " + seat + " may be overbooked");
+                                   return new ResponseBoolAndMess(false,
+                                                 "Seat is not availible. Seat " + seat + " may be overbooked");
                             }
                      }
                      return new ResponseBoolAndMess(true, "Seat is availible.");
@@ -367,14 +390,24 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
 
        // kiểm tra các ghế còn trống
        // Mặc định các ghế sẽ có dạng mã <busId> + "_"+ [A01,A40] ví dụ 1_A01,1_A02
-
        @Transactional(propagation = Propagation.REQUIRED, readOnly = true, isolation = Isolation.READ_COMMITTED)
-       public ResponseObject getListSeatBusEmpty(Long busId, String departureLocation, String destinationLocation,
-                     LocalDateTime departureTime, LocalDateTime arrivalTime) {
+       public ResponseObject getListSeatBusEmpty(Long scheduleId, LocalDate departureDate) {
+              BusRouteScheduleEntity busRouteScheduleEntity = this.busRouteScheduleRepo.findByScheduleId(scheduleId).orElse(null);
 
               ResponseObject responseObject = new ResponseObject();
 
+              if(busRouteScheduleEntity == null){
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Not found bus route schedule with schedule id " + scheduleId);
+                     responseObject.setData(null);
+                     return responseObject;      
+              }
+
+              Long busId = busRouteScheduleEntity.getBusEntity().getBusId();
+              
               List<String> seatData = getDataSeatFromBus(busId);
+
+              Map<String, Object> datas = new HashMap<>();
 
               List<Object> rs = new ArrayList<>();
 
@@ -382,23 +415,22 @@ public class BusService implements SimpleServiceInf<BusEntity, BusDTO, Long> {
               Map<String, Boolean> seatStatus = new HashMap<>();
 
               for (String seat : seatData) {
-                     ResponseBoolAndMess check = isValSeat(seat, busId, departureLocation,
-                                   destinationLocation, departureTime, arrivalTime);
+                     ResponseBoolAndMess check = isValSeat(seat, scheduleId, departureDate);
                      seatStatus.put(seat, check.getValueBool());
               }
               rs.add(seatStatus);
+              datas.put("listSeatEmpty", rs);
 
               responseObject.setStatus("success");
-              responseObject.addMessage("busId", busId);
-              responseObject.addMessage("departureLocation", departureLocation);
-              responseObject.addMessage("destinationLocation", destinationLocation);
-              responseObject.addMessage("departureTime", departureTime);
-              responseObject.addMessage("arrivalTime", arrivalTime);
-              responseObject.setData(rs);
+              responseObject.addMessage("mess", "List seat empty on bus id " + busId);
+              datas.put("busId", busId);
+
+              responseObject.setData(datas);
 
               return responseObject;
        }
 
+       // Lấy dữ liệu ghế của xe buyết có liên quan
        @Transactional
        public List<String> getDataSeatFromBus(Long busId) {
 
