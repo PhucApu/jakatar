@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bus_station_ticket.project.ProjectConfig.LoggerConfig;
@@ -21,6 +22,9 @@ import com.bus_station_ticket.project.ProjectDTO.AccountDTO;
 import com.bus_station_ticket.project.ProjectService.AccountService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @RestController
 @RequestMapping("/accounts")
@@ -53,7 +57,8 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
 
                      // ghi logger
-                     LoggerConfig.writeInfoLevel(AccountController.class, "Successfully retrieved data", "getAll");
+
+                     LoggerConfig.writeInfoLevel(AccountController.class, "/accounts", "Successfully retrieved data");
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
@@ -65,7 +70,7 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
 
               // ghi logger
               // ghi logger
-              LoggerConfig.writeInfoLevel(AccountController.class, "getAll", "There is no data in the database");
+              LoggerConfig.writeWarningLevel(AccountController.class, "/accounts", "There is no data in the database");
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
@@ -83,6 +88,10 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(AccountController.class, "/accounts/{username-id}",
+                                   "Incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
 
@@ -96,12 +105,18 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.addMessage("mess", "Found data with matching login name");
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
+                     LoggerConfig.writeInfoLevel(AccountController.class, "/accounts/{username-id}",
+                                   "Found data with matching login name");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(accountDTO);
               responseObject.addMessage("mess", "No user found with matching login name");
+
+              LoggerConfig.writeWarningLevel(AccountController.class, "/accounts/{username-id}",
+                            "No user found with matching login name");
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
 
@@ -124,12 +139,18 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
 
+                     LoggerConfig.writeInfoLevel(AccountController.class, "/accounts/insert",
+                                   responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(accountDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(AccountController.class, "/accounts/insert",
+                            responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -146,7 +167,12 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(AccountController.class, "/accounts/delete/{username-id}",
+                                   "Missing path variable value or incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+
               }
 
               // Lấy đối tượng AccountEntity dựa vào username
@@ -162,12 +188,19 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
+
+                     LoggerConfig.writeInfoLevel(AccountController.class, "/accounts/delete/{username-id}",
+                                   "Missing path variable value or incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(accountDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(AccountController.class, "/accounts/delete/{username-id}",
+                            responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -184,6 +217,10 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(AccountController.class, "/accounts/hidden/{username-id}",
+                                   "Missing path variable value or incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
 
@@ -200,12 +237,19 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
+
+                     LoggerConfig.writeInfoLevel(AccountController.class, "/accounts/hidden/{username-id}",
+                                   responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(accountDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(AccountController.class, "/accounts/hidden/{username-id}",
+                            responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -225,12 +269,18 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("accounts", "{username-id}"));
 
+                     LoggerConfig.writeInfoLevel(AccountController.class, "/accounts/update",
+                                   responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(accountDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(AccountController.class, "/accounts/update",
+                            responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
 
@@ -251,6 +301,9 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
                      responseObject.addMessage("jwtToken", this.accountService.getTokenJwt());
                      responseObject.setData(accountDTO);
 
+                     LoggerConfig.writeInfoLevel(AccountController.class, "/accounts/info-login",
+                                   "Below is the user's authentication information");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
               responseObject.setStatus(MESS_FAILURE);
@@ -258,7 +311,44 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
 
               responseObject.setData(null);
 
-              return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              LoggerConfig.writeWarningLevel(AccountController.class, "/accounts/info-login",
+                            "Could not get user authentication information");
 
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+
+       }
+
+       @PostMapping("/register")
+       public ResponseEntity<ResponseObject> register(
+                     @RequestParam("username") @NotBlank(message = "Cannot be left blank !") @Size(max = 20, min = 5, message = "Account username must be at least 5 characters and at most 20 characters") String username,
+                     @RequestParam("pass") @NotBlank(message = "Cannot be left blank !") String pass,
+                     @RequestParam("email") @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@(gmail|outlook)\\.com$", message = "You need to enter your gmail or outlook address") String email,
+                     @RequestParam("fullName") @NotBlank(message = "Cannot be left blank !") String fullName,
+                     @RequestParam("phoneNumber") @Pattern(regexp = "^(03|05|07|08|09)[0-9]{8}$", message = "Your phone number is not valid") String phoneNumber) {
+
+              ResponseObject responseObject = this.accountService.registerAccountUser(username, pass, email, fullName,
+                            phoneNumber);
+
+              if (responseObject.getStatus().equals(MESS_SUCCESS)) {
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       }
+
+       @PostMapping("/update_user")
+       public ResponseEntity<ResponseObject> updateForUser(
+                     @NotBlank(message = "Cannot be left blank !") @Size(max = 20, min = 5, message = "Account username must be at least 5 characters and at most 20 characters") @RequestParam("username") String username,
+                     @NotBlank(message = "Cannot be left blank !") @RequestParam("pass") String pass,
+                     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@(gmail|outlook)\\.com$", message = "You need to enter your gmail or outlook address") @RequestParam("email") String email,
+                     @NotBlank(message = "Cannot be left blank !") @RequestParam("fullName") String fullName,
+                     @Pattern(regexp = "^(03|05|07|08|09)[0-9]{8}$", message = "Your phone number is not valid") @RequestParam("phoneNumber") String phoneNumber) {
+
+              ResponseObject responseObject = this.accountService.updateAccountForUser(username, pass, email, fullName,
+                            phoneNumber);
+
+              if (responseObject.getStatus().equals(MESS_SUCCESS)) {
+                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+              }
+              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
 }

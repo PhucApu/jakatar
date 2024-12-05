@@ -46,24 +46,31 @@ INSERT INTO discount (discount_percentage, valid_from, valid_until, amount, is_d
 (20.0, '2024-05-01 00:00:00', '2024-06-30 23:59:59', 100, 0);
 
 -- bus_routes
-INSERT INTO bus_routes (routes_id, arival_time, departure_time, departure_location, destination_location, distance_location, price, is_delete) VALUES
-(1, '2024-11-18 08:00:00', '2024-11-18 06:00:00', 'Cần Thơ', 'Long Xuyên', 60, 50000, 0),
-(2, '2024-11-18 10:30:00', '2024-11-18 08:00:00', 'Cần Thơ', 'Châu Đốc', 120, 100000, 0),
-(3, '2024-11-18 12:00:00', '2024-11-18 09:30:00', 'Cần Thơ', 'Rạch Giá', 90, 80000, 0),
-(4, '2024-11-18 15:00:00', '2024-11-18 12:00:00', 'Cần Thơ', 'Cà Mau', 180, 150000, 0),
-(5, '2024-11-18 17:00:00', '2024-11-18 14:00:00', 'Cần Thơ', 'Bạc Liêu', 150, 120000, 0),
-(6, '2024-11-18 20:00:00', '2024-11-18 17:30:00', 'Cần Thơ', 'Sóc Trăng', 60, 50000, 0),
-(7, '2024-11-18 09:00:00', '2024-11-18 07:00:00', 'Long Xuyên', 'Châu Đốc', 50, 40000, 0),
-(8, '2024-11-18 11:30:00', '2024-11-18 09:00:00', 'Long Xuyên', 'Rạch Giá', 110, 90000, 0),
-(9, '2024-11-18 14:00:00', '2024-11-18 11:30:00', 'Long Xuyên', 'Cà Mau', 200, 170000, 0),
-(10, '2024-11-18 16:00:00', '2024-11-18 13:00:00', 'Long Xuyên', 'Bạc Liêu', 170, 140000, 0),
-(11, '2024-11-18 09:00:00', '2024-11-18 06:00:00', 'Hồ Chí Minh', 'Vĩnh Long', 135, 120000, 0),
-(12, '2024-11-18 10:30:00', '2024-11-18 07:30:00', 'Hồ Chí Minh', 'Long An', 45, 50000, 0),
-(13, '2024-11-18 11:00:00', '2024-11-18 08:00:00', 'Hồ Chí Minh', 'Tiền Giang', 70, 70000, 0),
-(14, '2024-11-18 15:00:00', '2024-11-18 12:30:00', 'Hồ Chí Minh', 'Cần Thơ', 170, 150000, 0),
-(18, '2024-11-18 08:00:00', '2024-11-18 06:00:00', 'Long An', 'Tiền Giang', 35, 40000, 0),
-(19, '2024-11-18 10:00:00', '2024-11-18 07:30:00', 'Long An', 'Hồ Chí Minh', 45, 50000, 0),
-(20, '2024-11-18 12:30:00', '2024-11-18 10:00:00', 'Long An', 'Vĩnh Long', 90, 80000, 0);
+-- Chèn dữ liệu cho bảng bus_routes
+INSERT INTO bus_routes 
+(departure_location, destination_location, distance_location, trip_time, price, is_delete) 
+VALUES 
+('Hà Nội', 'Hải Phòng', 102.5, '02:30:00', 150000, false),
+('Hà Nội', 'Ninh Bình', 90.0, '02:00:00', 120000, false),
+('Hải Phòng', 'Quảng Ninh', 75.5, '01:45:00', 100000, false),
+('Hà Nội', 'Vinh', 298.0, '05:30:00', 250000, false),
+('Đà Nẵng', 'Hội An', 30.5, '01:00:00', 50000, false),
+('Hồ Chí Minh', 'Vũng Tàu', 125.0, '03:00:00', 180000, false),
+('Cần Thơ', 'Sóc Trăng', 60.5, '01:30:00', 80000, false),
+('Đà Lạt', 'Nha Trang', 132.0, '03:15:00', 200000, false),
+('Hà Nội', 'Thanh Hóa', 180.5, '04:00:00', 220000, false),
+('Hồ Chí Minh', 'Đà Lạt', 300.0, '06:30:00', 350000, false),
+('Huế', 'Đà Nẵng', 105.0, '02:45:00', 150000, false),
+('Hải Phòng', 'Hà Nội', 102.5, '02:30:00', 150000, false),
+('Quảng Ninh', 'Hải Phòng', 75.5, '01:45:00', 100000, false),
+('Vinh', 'Hà Nội', 298.0, '05:30:00', 250000, false),
+('Hội An', 'Đà Nẵng', 30.5, '01:00:00', 50000, false),
+('Vũng Tàu', 'Hồ Chí Minh', 125.0, '03:00:00', 180000, false),
+('Sóc Trăng', 'Cần Thơ', 60.5, '01:30:00', 80000, false),
+('Nha Trang', 'Đà Lạt', 132.0, '03:15:00', 200000, false),
+('Thanh Hóa', 'Hà Nội', 180.5, '04:00:00', 220000, false),
+('Đà Lạt', 'Hồ Chí Minh', 300.0, '06:30:00', 350000, false),
+('Đà Nẵng', 'Huế', 105.0, '02:45:00', 150000, false);
 
 
 -- employee
@@ -82,28 +89,28 @@ INSERT INTO employee (driver_id, driver_name, license_number, phone_number, is_d
 
 
 -- bus
-INSERT INTO bus (bus_id, brand, bus_number, capacity, routes_id, is_delete) 
+INSERT INTO bus (bus_id, brand, bus_number, capacity, is_delete) 
 VALUES
-(1, 'Toyota', '79A-12345', 45, 1, 0),
-(2, 'Hyundai', '30B-67890', 50, 2, 0),
-(3, 'Ford', '92C-54321', 30, 3, 0),
-(4, 'Mercedes', '29D-98765', 40, 4, 0),
-(5, 'Isuzu', '51E-45678', 55, 5, 0),
-(6, 'Hino', '60F-11223', 60, 6, 0),
-(7, 'Kia', '83G-44556', 25, 7, 0),
-(8, 'Daewoo', '84H-77889', 50, 8, 0),
-(9, 'Mitsubishi', '99K-66778', 35, 9, 0),
-(10, 'Volvo', '45L-12367', 40, 10, 0),
-(11, 'Toyota', '70M-11223', 40, 11, 0),
-(12, 'Hyundai', '72N-44556', 50, 12, 0),
-(13, 'Ford', '74P-77889', 35, 13, 0),
-(14, 'Mercedes', '75Q-66778', 45, 14, 0),
-(15, 'Isuzu', '77R-55667', 55, 18, 0),
-(16, 'Hino', '78S-33445', 60, 19, 0),
-(17, 'Kia', '79T-22334', 30, 20, 0),
-(18, 'Daewoo', '81U-88990', 50, 7, 0),
-(19, 'Mitsubishi', '82V-99887', 40, 8, 0),
-(20, 'Volvo', '83W-77665', 60, 9, 0);
+(1, 'Toyota', '79A-12345', 45, 0),
+(2, 'Hyundai', '30B-67890', 50, 0),
+(3, 'Ford', '92C-54321', 30, 0),
+(4, 'Mercedes', '29D-98765', 40, 0),
+(5, 'Isuzu', '51E-45678', 55, 0),
+(6, 'Hino', '60F-11223', 60, 0),
+(7, 'Kia', '83G-44556', 25, 0),
+(8, 'Daewoo', '84H-77889', 50, 0),
+(9, 'Mitsubishi', '99K-66778', 35, 0),
+(10, 'Volvo', '45L-12367', 40, 0),
+(11, 'Toyota', '70M-11223', 40, 0),
+(12, 'Hyundai', '72N-44556', 50, 0),
+(13, 'Ford', '74P-77889', 35, 0),
+(14, 'Mercedes', '75Q-66778', 45, 0),
+(15, 'Isuzu', '77R-55667', 55, 0),
+(16, 'Hino', '78S-33445', 60,  0),
+(17, 'Kia', '79T-22334', 30,  0),
+(18, 'Daewoo', '81U-88990', 50,  0),
+(19, 'Mitsubishi', '82V-99887', 40,  0),
+(20, 'Volvo', '83W-77665', 60,  0);
 
 
 -- bus-employee
@@ -152,20 +159,103 @@ VALUES
 (10,'2024-11-24 10:50:00', 600000, 0, 600000, 'VNPay', 'success', 0);
 
 
+-- Chèn dữ liệu cho bảng bus_route_schedule
+
+-- Tuyến Hà Nội - Hải Phòng
+-- Tuyến Hà Nội - Ninh Bình
+-- Tuyến Hải Phòng - Quảng Ninh
+-- Tuyến Hà Nội - Vinh
+-- Tuyến Đà Nẵng - Hội An
+-- Tuyến Hồ Chí Minh - Vũng Tàu
+-- Tuyến Cần Thơ - Sóc Trăng
+-- Tuyến Đà Lạt - Nha Trang
+-- Tuyến Hà Nội - Thanh Hóa
+-- Tuyến Hồ Chí Minh - Đà Lạt
+-- Tuyến Huế - Đà Nẵng
+
+INSERT INTO bus_routes_schedule 
+(day_of_week, bus_id, routes_id, departure_time, is_delete) 
+VALUES 
+('Monday', 1, 1, '06:00:00', false),
+('Wednesday', 1, 1, '06:00:00', false),
+('Friday', 1, 1, '06:00:00', false),
+('Tuesday', 2, 2, '07:30:00', false),
+('Thursday', 2, 2, '07:30:00', false),
+('Saturday', 2, 2, '07:30:00', false),
+('Monday', 3, 3, '08:15:00', false),
+('Wednesday', 3, 3, '08:15:00', false),
+('Friday', 3, 3, '08:15:00', false),
+('Tuesday', 4, 4, '05:00:00', false),
+('Thursday', 4, 4, '05:00:00', false),
+('Saturday', 4, 4, '05:00:00', false),
+('Monday', 5, 5, '10:00:00', false),
+('Wednesday', 5, 5, '10:00:00', false),
+('Friday', 5, 5, '10:00:00', false),
+('Tuesday', 6, 6, '06:30:00', false),
+('Thursday', 6, 6, '06:30:00', false),
+('Saturday', 6, 6, '06:30:00', false),
+('Monday', 7, 7, '09:00:00', false),
+('Wednesday', 7, 7, '09:00:00', false),
+('Friday', 7, 7, '09:00:00', false),
+('Tuesday', 8, 8, '07:00:00', false),
+('Thursday', 8, 8, '07:00:00', false),
+('Saturday', 8, 8, '07:00:00', false),
+('Monday', 9, 9, '05:30:00', false),
+('Wednesday', 9, 9, '05:30:00', false),
+('Friday', 9, 9, '05:30:00', false),
+('Tuesday', 10, 10, '04:00:00', false),
+('Thursday', 10, 10, '04:00:00', false),
+('Saturday', 10, 10, '04:00:00', false),
+('Monday', 11, 11, '11:00:00', false),
+('Wednesday', 11, 11, '11:00:00', false),
+('Friday', 11, 11, '11:00:00', false),
+('Tuesday', 12, 12, '06:15:00', false),
+('Thursday', 12, 12, '06:15:00', false),
+('Saturday', 12, 12, '06:15:00', false),
+('Tuesday', 13, 13, '08:30:00', false),
+('Thursday', 13, 13, '08:30:00', false),
+('Saturday', 13, 13, '08:30:00', false),
+('Monday', 14, 14, '05:15:00', false),
+('Wednesday', 14, 14, '05:15:00', false),
+('Friday', 14, 14, '05:15:00', false),
+('Tuesday', 15, 15, '10:15:00', false),
+('Thursday', 15, 15, '10:15:00', false),
+('Saturday', 15, 15, '10:15:00', false),
+('Monday', 16, 16, '06:45:00', false),
+('Wednesday', 16, 16, '06:45:00', false),
+('Friday', 16, 16, '06:45:00', false),
+('Tuesday', 17, 17, '09:15:00', false),
+('Thursday', 17, 17, '09:15:00', false),
+('Saturday', 17, 17, '09:15:00', false),
+('Monday', 18, 18, '07:15:00', false),
+('Wednesday', 18, 18, '07:15:00', false),
+('Friday', 18, 18, '07:15:00', false),
+('Tuesday', 19, 19, '05:45:00', false),
+('Thursday', 19, 19, '05:45:00', false),
+('Saturday', 19, 19, '05:45:00', false);
+
+
 
 -- ticket
-INSERT INTO ticket (username_id, bus_id, routes_id, payment_id, discount_id, seat_number, departure_date, price, phone, status, is_delete) 
-VALUES
-('toan', 1, 1, 1, 1, 'A01', '2024-11-20', 450000, '0901234567', 'success', 0),
-('an', 2, 2, 2, 2, 'A02', '2024-11-21', 270000, '0912345678', 'success', 0),
-('hai', 3, 3, 3, NULL, 'A03', '2024-11-22', 380000, '0923456789', 'failure', 1),
-('linh', 4, 4, 4, 1, 'A04', '2024-11-23', 540000, '0901234567', 'success', 0),
-('hieu', 5, 5, 5, NULL, 'A05', '2024-11-24', 630000, '0912345678', 'failure', 1),
-('minh', 6, 6, 6, NULL, 'A06', '2024-11-25', 800000, '0923456789', 'success', 0),
-('thao', 7, 7, 7, NULL, 'A07', '2024-11-26', 500000, '0901234567', 'pending', 0),
-('giang', 8, 8, 8, NULL, 'A08', '2024-11-27', 250000, '0912345678', 'failure', 1),
-('viet', 9, 9, 9, 2, 'A09', '2024-11-28', 405000, '0923456789', 'success', 0),
-('phong', 10, 10, 1, NULL, 'A10', '2024-11-29', 600000, '0901234567', 'pending', 0);
+-- Chèn dữ liệu mẫu vào bảng ticket
+INSERT INTO ticket 
+(username_id, schedule_id, payment_id, discount_id, seat_number, departure_date, price, phone, status, is_delete) 
+VALUES 
+('toan', 1, 1, NULL, '1_A01', '2024-03-20', 150000, '0823072871', 'success', 0),
+('toan', 2, 2, NULL, '1_A02', '2024-03-22', 120000, '0823072871', 'success', 0),
+('an', 3, 3, 1, '1_A03', '2024-03-21', 100000, '0823072871', 'success', 0),
+('an', 4, 4, NULL, '2_A02', '2024-03-23', 250000, '0823072871', 'pending', 0),
+('hai', 5, 5, NULL, '2_A04', '2024-03-20', 50000, '0823072871', 'success', 0),
+('hai', 6, 6, 2, '2_A07', '2024-03-22', 180000, '0823072871', 'success', 0),
+('linh', 7, 7, NULL, '3_A01', '2024-03-21', 80000, '0823011122', 'success', 0),
+('linh', 8, 8, NULL, '3_A05', '2024-03-23', 200000, '0823011122', 'pending', 0),
+('hieu', 9, 9, 3, '3_A09', '2024-03-20', 220000, '0823022233', 'success', 0),
+('hieu', 10, 10, NULL, '4_A02', '2024-03-22', 350000, '0823022233', 'success', 0);
+
+
+
+
+
 
 -- feedback
 INSERT INTO feedback (feedback_id, username, content, ticket_id, date_comment, rating, is_delete) VALUES

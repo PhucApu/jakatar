@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
-import com.bus_station_ticket.project.ProjectEntity.BusEntity;
+import com.bus_station_ticket.project.ProjectEntity.BusRouteScheduleEntity;
 import com.bus_station_ticket.project.ProjectEntity.BusRoutesEntity;
-// import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
-import com.bus_station_ticket.project.ProjectRepository.BusRepo;
+// import com.bus_station_ticket.project.ProjectEntity.TicketEntity
 // import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
 // import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
+import com.bus_station_ticket.project.ProjectRepository.BusRouteScheduleRepo;
 
 @Component
 public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRoutesDTO> {
@@ -21,7 +21,8 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
        // private TicketRepo ticketRepo;
 
        @Autowired
-       private BusRepo busRepo;
+       private BusRouteScheduleRepo busRouteScheduleRepo;
+
 
        @Override
        public BusRoutesDTO toDTO(BusRoutesEntity entity) {
@@ -33,8 +34,7 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
               busRoutesDTO.setDepartureLocation(entity.getDepartureLocation());
               busRoutesDTO.setDestinationLocation(entity.getDestinationLocation());
               busRoutesDTO.setDistanceKilometer(entity.getDistanceKilometer());
-              busRoutesDTO.setDepartureTime(entity.getDepartureTime());
-              busRoutesDTO.setArivalTime(entity.getArivalTime());
+              busRoutesDTO.setTripTime(entity.getTripTime());
               busRoutesDTO.setPrice(entity.getPrice());
               busRoutesDTO.setIsDelete(entity.getIsDelete());
 
@@ -43,19 +43,19 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
 
               // if (entity.getListTicketEntities() != null) {
               //        for (TicketEntity e : entity.getListTicketEntities()) {
-              //               listTicketEntities_Id.add(e.getTicketId());
+              //               listTicketEntities_Id.add(e.getTicketId());b
               //        }
               // }
 
               // busRoutesDTO.setListTicketEntities_Id(listTicketEntities_Id);
 
-              List<Long> listBusEntities_Id = new ArrayList<>();
-              if(entity.getListBusEntities() != null){
-                     for(BusEntity e : entity.getListBusEntities()){
-                            listBusEntities_Id.add(e.getBusId());
+              List<Long> listBusRouteSchedules_Id = new ArrayList<>();
+              if(entity.getListBusRouteSchedules() != null){
+                     for(BusRouteScheduleEntity e : entity.getListBusRouteSchedules()){
+                            listBusRouteSchedules_Id.add(e.getScheduleId());
                      }
               }
-              busRoutesDTO.setListtBusEntities_Id(listBusEntities_Id);
+              busRoutesDTO.setListBusRouteSchedules_Id(listBusRouteSchedules_Id);
 
               return busRoutesDTO;
        }
@@ -69,8 +69,7 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
               busRoutesEntity.setDepartureLocation(dto.getDepartureLocation());
               busRoutesEntity.setDestinationLocation(dto.getDestinationLocation());
               busRoutesEntity.setDistanceKilometer(dto.getDistanceKilometer());
-              busRoutesEntity.setDepartureTime(dto.getDepartureTime());
-              busRoutesEntity.setArivalTime(dto.getArivalTime());
+              busRoutesEntity.setTripTime(dto.getTripTime());
               busRoutesEntity.setPrice(dto.getPrice());
               busRoutesEntity.setIsDelete(dto.getIsDelete());
 
@@ -86,14 +85,14 @@ public class BusRoutesMapping implements MappingInterface<BusRoutesEntity, BusRo
               // }
               // busRoutesEntity.setListTicketEntities(listTicketEntities);
 
-              List<BusEntity> listBusEntities = new ArrayList<>();
-              if(dto.getListtBusEntities_Id() != null){
-                     for(Long id: dto.getListtBusEntities_Id()){
-                            BusEntity busEntity = this.busRepo.findByBusId(id).orElse(null);
-                            listBusEntities.add(busEntity);
+              List<BusRouteScheduleEntity> listBusRouteScheduleEntities = new ArrayList<>();
+              if(dto.getListBusRouteSchedules_Id() != null){
+                     for(Long id: dto.getListBusRouteSchedules_Id()){
+                            BusRouteScheduleEntity busRouteScheduleEntity = this.busRouteScheduleRepo.findByScheduleId(id).orElse(null);
+                            listBusRouteScheduleEntities.add(busRouteScheduleEntity);
                      }
               }
-              busRoutesEntity.setListBusEntities(listBusEntities);
+              busRoutesEntity.setListBusRouteSchedules(listBusRouteScheduleEntities);
 
               return busRoutesEntity;
        }
