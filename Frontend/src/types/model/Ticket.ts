@@ -4,7 +4,7 @@ export interface Ticket {
   busEntity_Id: number;
   busRoutesEntity_Id: number;
   paymentEntity_Id: number;
-  discountEntity_Id: number;
+  discountEntity_Id: number | null ;
   seatNumber: string;
   departureDate: string;
   price: number;
