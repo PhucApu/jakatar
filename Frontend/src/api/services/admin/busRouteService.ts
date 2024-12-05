@@ -11,7 +11,7 @@ export const getBusRoutes = async (): Promise<BusRoute[]> => {
   });
 };
 
-export const getBusRouteById = async (busRouteId: string): Promise<BusRoute> => {
+export const getBusRouteById = async (busRouteId: number): Promise<BusRoute> => {
   return apiRequest(async () => {
     const response = await apiClient.get<ApiResponse<BusRoute>>(`/busroutes/${busRouteId}`);
     return response.data.data!;
@@ -32,14 +32,14 @@ export const updateBusRoute = async (busRoute: Partial<BusRoute>): Promise<BusRo
   });
 };
 
-export const deleteBusRoute = async (busRouteId: string): Promise<BusRoute> => {
+export const deleteBusRoute = async (busRouteId: number): Promise<BusRoute> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete<ApiResponse<BusRoute>>(`/busroutes/${busRouteId}`);
+    const response = await apiClient.delete<ApiResponse<BusRoute>>(`/busroutes/delete/${busRouteId}`);
     return response.data.data!;
   });
 };
 
-export const hideBusRoute = async (busRouteId: string): Promise<BusRoute> => {
+export const hideBusRoute = async (busRouteId: number): Promise<BusRoute> => {
   return apiRequest(async () => {
     const response = await apiClient.delete<ApiResponse<BusRoute>>(`/busroutes/hidden/${busRouteId}`);
     return response.data.data!;

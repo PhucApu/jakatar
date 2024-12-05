@@ -11,7 +11,7 @@ export const getFeedbacks = async (): Promise<Feedback[]> => {
   });
 };
 
-export const getFeedbackById = async (feedbackId: string): Promise<Feedback> => {
+export const getFeedbackById = async (feedbackId: number): Promise<Feedback> => {
   return apiRequest(async () => {
     const response = await apiClient.get<ApiResponse<Feedback>>(`/feedbacks/${feedbackId}`);
     return response.data.data!;
@@ -32,14 +32,14 @@ export const updateFeedback = async (feedback: Partial<Feedback>): Promise<Feedb
   });
 };
 
-export const deleteFeedback = async (feedbackId: string): Promise<Feedback> => {
+export const deleteFeedback = async (feedbackId: number): Promise<Feedback> => {
   return apiRequest(async () => {
-    const response = await apiClient.delete<ApiResponse<Feedback>>(`/feedbacks/${feedbackId}`);
+    const response = await apiClient.delete<ApiResponse<Feedback>>(`/feedbacks/delete/${feedbackId}`);
     return response.data.data!;
   });
 };
 
-export const hideFeedback = async (feedbackId: string): Promise<Feedback> => {
+export const hideFeedback = async (feedbackId: number): Promise<Feedback> => {
   return apiRequest(async () => {
     const response = await apiClient.delete<ApiResponse<Feedback>>(`/feedbacks/hidden/${feedbackId}`);
     return response.data.data!;
