@@ -1,10 +1,8 @@
 package com.bus_station_ticket.project.ProjectController;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,13 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bus_station_ticket.project.ProjectConfig.LoggerConfig;
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.BusDTO;
-import com.bus_station_ticket.project.ProjectDTO.BusRoutesDTO;
-import com.bus_station_ticket.project.ProjectService.BusRoutesService;
 import com.bus_station_ticket.project.ProjectService.BusService;
-import com.bus_station_ticket.project.ProjectService.TicketService;
 
 import jakarta.validation.Valid;
 
@@ -35,11 +31,9 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
        @Autowired
        private BusService busService;
 
-       @Autowired
-       private BusRoutesService busRoutesService;
+       // @Autowired
+       // private BusRoutesService busRoutesService;
 
-       @Autowired
-       private TicketService ticketService;
 
        // Lấy tất cả các BusEntity có
        // path: "/buses"
@@ -64,6 +58,8 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
                      responseObject.addMessage("length", listBusEntities.size());
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
 
+                     LoggerConfig.writeInfoLevel(BusController.class, "/buses", "Successfully retrieved data");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
@@ -71,6 +67,8 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
               responseObject.setData(listBusEntities);
               responseObject.addMessage("mess", "There is no data in the database");
               responseObject.addMessage("length", listBusEntities.size());
+
+              LoggerConfig.writeWarningLevel(BusController.class, "/buses", "There is no data in the database");
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
@@ -89,6 +87,10 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(BusController.class, "/buses/{busId}",
+                                   "Incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
 
@@ -102,12 +104,19 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
                      responseObject.addMessage("mess", "Found data with matching bus id");
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
+
+                     LoggerConfig.writeInfoLevel(BusController.class, "/buses/{busId}",
+                                   "Found data with matching bus id");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(busDTO);
               responseObject.addMessage("mess", "No bus entity found with matching bus id");
+
+              LoggerConfig.writeWarningLevel(BusController.class, "/buses/{busId}",
+                            "No bus entity found with matching bus id");
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
 
@@ -124,6 +133,10 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(BusController.class, "/buses/delete/{busId}",
+                                   "Missing path variable value or incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
 
@@ -140,12 +153,19 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
+
+                     LoggerConfig.writeInfoLevel(BusController.class, "/buses/delete/{busId}",
+                                   responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(busDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(BusController.class, "/buses/delete/{busId}",
+                            responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -162,7 +182,10 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
                      responseObject.setData(obj);
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("busId", "{busId}"));
+                     responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
+
+                     LoggerConfig.writeInfoLevel(BusController.class, "/buses/insert",
+                                   responseBoolAndMess.getValueMess());
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
@@ -170,6 +193,8 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(obj);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(BusController.class, "/buses/insert", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -188,12 +213,17 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
 
+                     LoggerConfig.writeInfoLevel(BusController.class, "/buses/update",
+                                   responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(obj);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(BusController.class, "/buses/update", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -209,6 +239,10 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(BusController.class, "/buses/hidden/{busId}",
+                                   "Missing path variable value or incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
 
@@ -224,6 +258,10 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
+
+                     LoggerConfig.writeInfoLevel(BusController.class, "/buses/hidden/{busId}",
+                                   responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
@@ -231,108 +269,114 @@ public class BusController implements RestApiSimpleControllerInf<BusDTO, Long> {
               responseObject.setData(busDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
+              LoggerConfig.writeWarningLevel(BusController.class, "/buses/hidden/{busId}",
+                            responseBoolAndMess.getValueMess());
+
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
 
-       @GetMapping("/departureLocation_and_destinationLocation")
-       public ResponseEntity<ResponseObject> getByDepartureLocationAndDestinationLocation(
-                     @RequestParam("departureLocation") String departureLocation,
-                     @RequestParam("destinationLocation") String destinationLocation) {
+       // @GetMapping("/departureLocation_and_destinationLocation")
+       // public ResponseEntity<ResponseObject> getByDepartureLocationAndDestinationLocation(
+       //               @RequestParam("departureLocation") String departureLocation,
+       //               @RequestParam("destinationLocation") String destinationLocation) {
 
-              // Tạo một đối tượng phản hồi ResponseObject
-              ResponseObject responseObject = new ResponseObject();
+       //        // Tạo một đối tượng phản hồi ResponseObject
+       //        ResponseObject responseObject = new ResponseObject();
 
-              // Lấy đối tượng AccountEntity dựa vào username
-              List<BusDTO> listBusDTOs = busService.getByDepartureLocationAndDestinationLocation(departureLocation,
-                            destinationLocation);
+       //        // Lấy đối tượng AccountEntity dựa vào username
+       //        List<BusDTO> listBusDTOs = busService.getByDepartureLocationAndDestinationLocation(departureLocation,
+       //                      destinationLocation);
 
-              // kiểm tra
-              if (listBusDTOs.isEmpty() == false) {
+       //        // kiểm tra
+       //        if (listBusDTOs.isEmpty() == false) {
 
-                     // Lấy thông tin chuyến xe
-                     BusRoutesDTO busRoutesDTO = this.busRoutesService.getByDepartureLocationAndDestinationLocation(
-                                   departureLocation, destinationLocation);
+       //               // Lấy thông tin chuyến xe
+       //               BusRoutesDTO busRoutesDTO = this.busRoutesService.getByDepartureLocationAndDestinationLocation(
+       //                             departureLocation, destinationLocation);
 
-                     responseObject.setStatus(MESS_SUCCESS);
-                     responseObject.setData(listBusDTOs);
-                     responseObject.addMessage("mess", "Found data with matching bus condition");
-                     responseObject.addMessage("routesId", busRoutesDTO.getRoutesId());
-                     responseObject.addMessage("departureLocation", busRoutesDTO.getDepartureLocation());
-                     responseObject.addMessage("destinationLocation", busRoutesDTO.getDestinationLocation());
-                     responseObject.addMessage("distanceKilometer", busRoutesDTO.getDistanceKilometer());
-                     responseObject.addMessage("departureTime", busRoutesDTO.getDepartureTime());
-                     responseObject.addMessage("arivalTime", busRoutesDTO.getArivalTime());
-                     responseObject.addMessage("price", busRoutesDTO.getPrice());
+       //               responseObject.setStatus(MESS_SUCCESS);
+       //               responseObject.setData(listBusDTOs);
+       //               responseObject.addMessage("mess", "Found data with matching bus condition");
+       //               responseObject.addMessage("routesId", busRoutesDTO.getRoutesId());
+       //               responseObject.addMessage("departureLocation", busRoutesDTO.getDepartureLocation());
+       //               responseObject.addMessage("destinationLocation", busRoutesDTO.getDestinationLocation());
+       //               responseObject.addMessage("distanceKilometer", busRoutesDTO.getDistanceKilometer());
+       //               responseObject.addMessage("departureTime", busRoutesDTO.getDepartureTime());
+       //               responseObject.addMessage("arivalTime", busRoutesDTO.getArivalTime());
+       //               responseObject.addMessage("price", busRoutesDTO.getPrice());
 
-                     // thong tin so luong ghe va so ghe con lai moi xe
-                     List<Object> list = new ArrayList<>();
+       //               // thong tin so luong ghe va so ghe con lai moi xe
+       //               List<Object> list = new ArrayList<>();
 
-                     for (BusDTO b : listBusDTOs) {
-                            Map<String, Object> info = new HashMap<>();
+       //               for (BusDTO b : listBusDTOs) {
+       //                      Map<String, Object> info = new HashMap<>();
 
-                            int numberSeatRemain = this.busService.numberSeatRemain(b.getBusId(),
-                                          busRoutesDTO.getDepartureLocation(), busRoutesDTO.getDestinationLocation(),
-                                          busRoutesDTO.getDepartureTime(), busRoutesDTO.getArivalTime());
+       //                      int numberSeatRemain = this.busService.numberSeatRemain(b.getBusId(),
+       //                                    busRoutesDTO.getDepartureLocation(), busRoutesDTO.getDestinationLocation(),
+       //                                    busRoutesDTO.getDepartureTime(), busRoutesDTO.getArivalTime());
 
-                            info.put("busId", b.getBusId());
-                            info.put("capacity", b.getCapacity());
-                            info.put("numberSeatRemain", numberSeatRemain);
+       //                      info.put("busId", b.getBusId());
+       //                      info.put("capacity", b.getCapacity());
+       //                      info.put("numberSeatRemain", numberSeatRemain);
 
-                            list.add(info);
-                     }
-                     responseObject.addMessage("numberSeatRemainInfo", list);
+       //                      list.add(info);
+       //               }
+       //               responseObject.addMessage("numberSeatRemainInfo", list);
 
-                     responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
-                     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
-              }
+       //               responseObject.addMessage("info", responseObject.getPathBasicInfor("buses", "{busId}"));
 
-              responseObject.setStatus(MESS_FAILURE);
-              responseObject.setData(listBusDTOs);
-              responseObject.addMessage("mess", "No bus entity found with matching bus condition");
+       //               LoggerConfig.writeInfoLevel(BusController.class,
+       //                             "/buses/departureLocation_and_destinationLocation", MESS_SUCCESS);
 
-              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+       //               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
+       //        }
 
-       }
+       //        responseObject.setStatus(MESS_FAILURE);
+       //        responseObject.setData(listBusDTOs);
+       //        responseObject.addMessage("mess", "No bus entity found with matching bus condition");
+
+       //        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
+
+       // }
 
        @PostMapping("/check_seat")
-       public ResponseEntity<ResponseObject> checkSeat(@RequestParam("seat") String seat,
-                     @RequestParam("busId") Long busId, @RequestParam("departureLocation") String departureLocation,
-                     @RequestParam("destinationLocation") String destinationLocation,
-                     @RequestParam("departureTime") LocalDateTime departureTime,
-                     @RequestParam("arivalTime") LocalDateTime arivalTime) {
+       public ResponseEntity<ResponseObject> checkSeat(@RequestParam("seat") String seat, @RequestParam("scheduleId") Long scheduleId, @RequestParam("departureDate") LocalDate departureDate) {
 
               ResponseObject responseObject = new ResponseObject();
 
-              ResponseBoolAndMess responseBoolAndMess = this.busService.isValSeat(seat, busId, departureLocation,
-                            destinationLocation, departureTime, arivalTime);
 
-              BusDTO busDTO = this.busService.getById_toDTO(busId);
+              ResponseBoolAndMess responseBoolAndMess = this.busService.isValSeat(seat, scheduleId, departureDate);
+
+              ResponseObject responseObject2 = this.busService.getListSeatBusEmpty(scheduleId, departureDate);
+
 
               if (responseBoolAndMess.getValueBool()) {
                      responseObject.setStatus(MESS_SUCCESS);
-                     responseObject.setData(busDTO);
+                     responseObject.setData(responseObject2.getData());
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+                     LoggerConfig.writeInfoLevel(BusController.class, "/buses/check_seat",
+                                   responseBoolAndMess.getValueMess());
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
-              responseObject.setData(busDTO);
+              responseObject.setData(responseObject2.getData());
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(BusController.class, "/buses/check_seat",
+                            responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
 
        }
 
        @GetMapping("/list_empty_seat")
-       public ResponseEntity<ResponseObject> getListSeatEmpty(@RequestParam("busId") Long busId,
-                     @RequestParam("departureLocation") String departureLocation,
-                     @RequestParam("destinationLocation") String destinationLocation,
-                     @RequestParam("departureTime") LocalDateTime departureTime,
-                     @RequestParam("arivalTime") LocalDateTime arivalTime) {
+       public ResponseEntity<ResponseObject> getListSeatEmpty(@RequestParam("scheduleId") Long scheduleId, @RequestParam("departureDate") LocalDate departureDate) {
 
-              ResponseObject responseObject = this.busService.getListSeatBusEmpty(busId, departureLocation,
-                            destinationLocation, departureTime, arivalTime);
+              ResponseObject responseObject = this.busService.getListSeatBusEmpty(scheduleId, departureDate);
+              LoggerConfig.writeInfoLevel(BusController.class, "/buses/list_empty_seat",MESS_SUCCESS);
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }

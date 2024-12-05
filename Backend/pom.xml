@@ -32,6 +32,11 @@
 	</properties>
 	<dependencies>
 
+		<!-- mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
 		<!-- Thao tác với JpaRepository -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -120,16 +125,15 @@
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
-			<version>0.12.6</version>	
+			<version>0.12.6</version>
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- mail -->
+		<!-- google
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
-			<version>3.3.4</version>
-		</dependency>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency> -->
 
 	</dependencies>
 
