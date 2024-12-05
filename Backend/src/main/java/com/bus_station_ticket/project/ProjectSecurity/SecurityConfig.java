@@ -35,6 +35,8 @@ public class SecurityConfig {
                      "/accounts/hidden/{username-id}",
                      "/accounts/update",
                      "/accounts/info-login",
+                     "/accounts/register",
+                     "/accounts/update_user",
 
                      "/buses",
                      "/buses/{busId}",
@@ -42,9 +44,16 @@ public class SecurityConfig {
                      "/buses/insert",
                      "/buses/update",
                      "/buses/hidden/{busId}",
-                     "/buses/departureLocation_and_destinationLocation",
                      "/buses/check_seat",
                      "/buses/list_empty_seat",
+
+                     "/bus_routes_schedule",
+                     "/bus_routes_schedule/{scheduleId}",
+                     "/bus_routes_schedule/insert",
+                     "/bus_routes_schedule/update",
+                     "/bus_routes_schedule/delete/{scheduleId}",
+                     "/bus_routes_schedule/hidden/{scheduleId}",
+                     "/bus_routes_schedule/departureLocation_destinationLocation",
 
                      "/busroutes",
                      "/busroutes/{routesId}",
@@ -101,258 +110,96 @@ public class SecurityConfig {
                      "/tickets/statistics",
                      "/tickets/ticket_by_date_username",
                      "/tickets/ticket_by_ticketId_username",
+                     "/tickets/ticket_full_info/{ticketId}",
+
+                     "/sendEmail",
 
                      "/create_payment"
        };
 
        private final String[] ADMIN_ACCESS_PATH = {
-                     "/accounts",
-                     "/accounts/{username-id}",
-                     "/accounts/insert",
                      "/accounts/delete/{username-id}",
                      "/accounts/hidden/{username-id}",
-                     "/accounts/update",
-                     "/accounts/info-login",
 
-                     "/buses",
-                     "/buses/{busId}",
                      "/buses/delete/{busId}",
                      "/buses/insert",
-                     "/buses/update",
                      "/buses/hidden/{busId}",
-                     "/buses/departureLocation_and_destinationLocation",
-                     "/buses/check_seat",
-                     "/buses/list_empty_seat",
 
-                     "/busroutes",
-                     "/busroutes/{routesId}",
                      "/busroutes/delete/{routesId}",
                      "/busroutes/hidden/{routesId}",
                      "/busroutes/insert",
-                     "/busroutes/update",
 
-                     "/discounts",
-                     "/discounts/{discountId}",
-                     "/discounts/delete/{discountId}",
-                     "/discounts/hidden/{discountId}",
-                     "/discounts/insert",
-                     "/discounts/update",
-
-                     "/employees",
-                     "/employees/{driverId}",
-                     "/employees/delete/{driverId}",
-                     "/employees/hidden/{driverId}",
-                     "/employees/insert",
-                     "/employees/update",
-                     "/employees/update/bus_and_employee",
-                     "/employees/delete/bus_and_employee",
-                     "/employees/bus_and_employee",
-
-                     "/feedbacks",
-                     "/feedbacks/{feedbackId}",
-                     "/feedbacks/delete/{feedbackId}",
-                     "/feedbacks/hidden/{feedbackId}",
-                     "/feedbacks/insert",
-                     "/feedbacks/update",
-
-                     "/payments",
-                     "/payments/{paymentId}",
                      "/payments/delete/{paymentId}",
-                     "/payments/hidden/{paymentId}",
-                     "/payments/insert",
-                     "/payments/update",
-
-                     "/penaltytickets",
-                     "/penaltytickets/{penaltyTicketId}",
-                     "/penaltytickets/delete/{penaltyticketId}",
-                     "/penaltytickets/hidden/{penaltyticketId}",
-                     "/penaltytickets/insert",
-                     "/penaltytickets/update",
-                     "/penaltytickets/statistics",
-
-                     "/tickets",
-                     "/tickets/{ticketId}",
-                     "/tickets/delete/{ticketId}",
-                     "/tickets/hidden/{ticketId}",
-                     "/tickets/insert",
-                     "/tickets/update",
-                     "/tickets/statistics",
-                     "/tickets/ticket_by_date_username",
-                     "/tickets/ticket_by_ticketId_username",
-
-                     "/create_payment"
+                     "/payments/hidden/{paymentId}"
        };
 
        private final String[] MANAGER_ACCESS_PATH = {
 
-                     "/accounts",
-                     "/accounts/{username-id}",
                      "/accounts/insert",
-                     // "/accounts/delete/{username-id}",
-                     // "/accounts/hidden/{username-id}",
-                     "/accounts/update",
-                     "/accounts/info-login",
 
-                     "/buses",
-                     "/buses/{busId}",
-                     // "/buses/delete/{busId}",
-                     "/buses/insert",
                      "/buses/update",
-                     // "/buses/hidden/{busId}",
-                     "/buses/departureLocation_and_destinationLocation",
-                     "/buses/check_seat",
-                     "/buses/list_empty_seat",
 
-                     "/busroutes",
-                     "/busroutes/{routesId}",
-                     // "/busroutes/delete/{routesId}",
-                     // "/busroutes/hidden/{routesId}",
-                     "/busroutes/insert",
+                     "/bus_routes_schedule/insert",
+                     "/bus_routes_schedule/update",
+                     "/bus_routes_schedule/delete/{scheduleId}",
+                     "/bus_routes_schedule/hidden/{scheduleId}",
                      "/busroutes/update",
 
-                     "/discounts",
-                     "/discounts/{discountId}",
-                     // "/discounts/delete/{discountId}",
-                     // "/discounts/hidden/{discountId}",
-                     // "/discounts/insert",
-                     // "/discounts/update",
+                     "/discounts/delete/{discountId}",
+                     "/discounts/hidden/{discountId}",
+                     "/discounts/insert",
 
-                     "/employees",
-                     "/employees/{driverId}",
                      "/employees/delete/{driverId}",
                      "/employees/hidden/{driverId}",
                      "/employees/insert",
                      "/employees/update",
                      "/employees/update/bus_and_employee",
                      "/employees/delete/bus_and_employee",
-                     "/employees/bus_and_employee",
 
-                     "/feedbacks",
-                     "/feedbacks/{feedbackId}",
-                     "/feedbacks/delete/{feedbackId}",
-                     "/feedbacks/hidden/{feedbackId}",
-                     "/feedbacks/insert",
-                     "/feedbacks/update",
-
-                     "/payments",
-                     "/payments/{paymentId}",
-                     // "/payments/delete/{paymentId}",
-                     // "/payments/hidden/{paymentId}",
                      "/payments/insert",
                      "/payments/update",
 
-                     "/penaltytickets",
-                     "/penaltytickets/{penaltyTicketId}",
-                     // "/penaltytickets/delete/{penaltyticketId}",
-                     // "/penaltytickets/hidden/{penaltyticketId}",
-                     // "/penaltytickets/insert",
-                     // "/penaltytickets/update",
-                     "/penaltytickets/statistics",
+                     "/penaltytickets/delete/{penaltyticketId}",
+                     "/penaltytickets/hidden/{penaltyticketId}",
+                     "/penaltytickets/insert",
+                     "/penaltytickets/update"
 
-                     "/tickets",
-                     "/tickets/{ticketId}",
-                     "/tickets/delete/{ticketId}",
-                     "/tickets/hidden/{ticketId}",
-                     "/tickets/insert",
-                     "/tickets/update",
-                     "/tickets/statistics",
-                     "/tickets/ticket_by_date_username",
-                     "/tickets/ticket_by_ticketId_username",
-
-                     "/create_payment"
        };
 
        private final String[] STAFF_ACCESS_PATH = {
 
-                     "/accounts",
-                     "/accounts/{username-id}",
-                     // "/accounts/insert",
-                     // "/accounts/delete/{username-id}",
-                     // "/accounts/hidden/{username-id}",
-                     // "/accounts/update",
-                     "/accounts/info-login",
+                     "/accounts/update",
 
-                     "/buses",
-                     "/buses/{busId}",
-                     // "/buses/delete/{busId}",
-                     // "/buses/insert",
-                     // "/buses/update",
-                     // "/buses/hidden/{busId}",
-                     "/buses/departureLocation_and_destinationLocation",
-                     "/buses/check_seat",
-                     "/buses/list_empty_seat",
+                     "/discounts/update",
 
-                     "/busroutes",
-                     "/busroutes/{routesId}",
-                     // "/busroutes/delete/{routesId}",
-                     // "/busroutes/hidden/{routesId}",
-                     // "/busroutes/insert",
-                     // "/busroutes/update",
-
-                     "/discounts",
-                     "/discounts/{discountId}",
-                     // "/discounts/delete/{discountId}",
-                     // "/discounts/hidden/{discountId}",
-                     // "/discounts/insert",
-                     // "/discounts/update",
-
-                     "/employees",
-                     "/employees/{driverId}",
-                     // "/employees/delete/{driverId}",
-                     // "/employees/hidden/{driverId}",
-                     // "/employees/insert",
-                     // "/employees/update",
-                     // "/employees/update/bus_and_employee",
-                     // "/employees/delete/bus_and_employee",
-                     "/employees/bus_and_employee",
-
-                     "/feedbacks",
-                     "/feedbacks/{feedbackId}",
-                     // "/feedbacks/delete/{feedbackId}",
-                     // "/feedbacks/hidden/{feedbackId}",
-                     // "/feedbacks/insert",
+                     "/feedbacks/delete/{feedbackId}",
+                     "/feedbacks/hidden/{feedbackId}",
                      "/feedbacks/update",
 
-                     "/payments",
-                     "/payments/{paymentId}",
-                     // "/payments/delete/{paymentId}",
-                     // "/payments/hidden/{paymentId}",
-                     // "/payments/insert",
-                     // "/payments/update",
-
-                     "/penaltytickets",
-                     "/penaltytickets/{penaltyTicketId}",
-                     // "/penaltytickets/delete/{penaltyticketId}",
-                     // "/penaltytickets/hidden/{penaltyticketId}",
-                     // "/penaltytickets/insert",
-                     // "/penaltytickets/update",
                      "/penaltytickets/statistics",
 
-                     "/tickets",
-                     "/tickets/{ticketId}",
                      "/tickets/delete/{ticketId}",
                      "/tickets/hidden/{ticketId}",
                      "/tickets/insert",
                      "/tickets/update",
-                     "/tickets/statistics",
-                     "/tickets/ticket_by_date_username",
-                     "/tickets/ticket_by_ticketId_username",
+                     "/tickets/statistics"
 
-                     "/create_payment"
        };
 
        private final String[] USER_ACCESS_PATH = {
                      "/accounts",
                      "/accounts/{username-id}",
-                     "/accounts/insert",
-                     "/accounts/update",
                      "/accounts/info-login",
+                     "/accounts/update_user",
 
                      "/buses",
                      "/buses/{busId}",
-                     "/buses/departureLocation_and_destinationLocation",
                      "/buses/check_seat",
                      "/buses/list_empty_seat",
+
+                     "/bus_routes_schedule",
+                     "/bus_routes_schedule/{scheduleId}",
+                     "/bus_routes_schedule/departureLocation_destinationLocation",
 
                      "/busroutes",
                      "/busroutes/{routesId}",
@@ -362,22 +209,25 @@ public class SecurityConfig {
 
                      "/employees",
                      "/employees/{driverId}",
+                     "/employees/bus_and_employee",
 
                      "/feedbacks",
                      "/feedbacks/{feedbackId}",
+                     "/feedbacks/insert",
 
                      "/payments",
                      "/payments/{paymentId}",
-                     "/payments/insert",
 
                      "/penaltytickets",
                      "/penaltytickets/{penaltyTicketId}",
 
                      "/tickets",
                      "/tickets/{ticketId}",
-                     "/tickets/insert",
                      "/tickets/ticket_by_date_username",
                      "/tickets/ticket_by_ticketId_username",
+                     "/tickets/ticket_full_info/{ticketId}",
+
+                     "/sendEmail",
 
                      "/create_payment"
 
@@ -389,6 +239,9 @@ public class SecurityConfig {
        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
               http
                             .cors(cors -> cors.configurationSource(new WebConfig()))
+                            // .oauth2Login(oauth2 -> oauth2.loginPage("/sign-in-google")
+                            // // .defaultSuccessUrl("/info-login-google", true)
+                            // .successHandler(new AuthenticationSuccessHandlerCustom()))
                             // kích hoạt xác thực bằng HTTP Basic Filter
                             .httpBasic(request -> request
                                           .authenticationEntryPoint(new ExceptionAuthenticationEntryPoint())
@@ -396,14 +249,15 @@ public class SecurityConfig {
                             )
                             // Cấu hình phân quyền
                             .authorizeHttpRequests(request -> request
-                                          .requestMatchers("/vnpay-payment-return", "/accounts/insert").permitAll()
-                                          .requestMatchers(USER_ACCESS_PATH).hasAnyRole("USER","STAFF","MANAGER", "ADMIN")
-                                          .requestMatchers(STAFF_ACCESS_PATH).hasAnyRole("STAFF", "MANAGER", "ADMIN")
-                                          .requestMatchers(MANAGER_ACCESS_PATH).hasAnyRole("MANAGER","ADMIN")
-                                          .requestMatchers(ADMIN_ACCESS_PATH).hasAnyRole("ADMIN")
-                                          
-                                          .anyRequest()
-                                          .authenticated())
+                                          .requestMatchers("/vnpay-payment-return", "/accounts/register").permitAll()
+                                          .requestMatchers(USER_ACCESS_PATH)
+                                          .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER", "ROLE_STAFF", "ROLE_USER")
+                                          .requestMatchers(STAFF_ACCESS_PATH)
+                                          .hasAnyAuthority("ROLE_STAFF", "ROLE_MANAGER", "ROLE_ADMIN")
+                                          .requestMatchers(MANAGER_ACCESS_PATH)
+                                          .hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
+                                          .requestMatchers(ADMIN_ACCESS_PATH).hasAnyAuthority("ROLE_ADMIN")
+                                          .anyRequest().authenticated())
                             .exceptionHandling(
                                           request -> request.accessDeniedHandler(new ExceptionAccessDeniedHandler())
                                                         .authenticationEntryPoint(
@@ -411,6 +265,7 @@ public class SecurityConfig {
 
                             // Thêm filter JWT trước Basic Authentication
                             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                            // .addFilterAfter(jwtFilter, OAuth2LoginAuthenticationFilter.class)
                             // vô hiệu hóa bảo mật bằng CSRF Filter
                             .csrf(request -> request.disable())
                             // vô hiệu hóa bảo mật bằng Form
