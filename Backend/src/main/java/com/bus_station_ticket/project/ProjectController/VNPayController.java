@@ -1,6 +1,6 @@
 package com.bus_station_ticket.project.ProjectController;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +22,21 @@ public class VNPayController {
        @Autowired
        private TicketService ticketService;
 
-
        @PostMapping("/create_payment")
-       public ResponseEntity<ResponseObject> creatPayment(HttpServletRequest request,
-                     @RequestParam("returnUrl") String returnUrl, @RequestParam("seat") List<String> seats,
-                     @RequestParam("busId") Long busId, @RequestParam("departureLocation") String departureLocation,
-                     @RequestParam("destinationLocation") String destinationLocation,
-                     @RequestParam("departureTime") LocalDateTime departureTime,
-                     @RequestParam("arivalTime") LocalDateTime arivalTime, @RequestParam("discountId") Long discountId,
+       public ResponseEntity<ResponseObject> creatPayment(
+                     HttpServletRequest request,
+                     @RequestParam("returnUrl") String returnUrl,
+                     @RequestParam("seats") List<String> seats, // Danh sách ghế
+                     @RequestParam("departureDate") LocalDate departureDate,
+                     @RequestParam("scheduleId") Long scheduleId,
+                     @RequestParam("discountId") Long discountId,
                      @RequestParam("token") String token) {
 
               try {
                      String baseUrl = request.getScheme() + "://" + request.getServerName() + ":"
                                    + request.getServerPort() + "/vnpay-payment-return";
 
-                     ResponseObject responseObject = this.ticketService.createMultipleTicketsAndPayment(request, baseUrl, seats,
-                                   busId, departureLocation, destinationLocation, departureTime, arivalTime, discountId,
-                                   token);
+                     ResponseObject responseObject = this.ticketService.createMultipleTicketsAndPayment(request, baseUrl, seats, departureDate, scheduleId, discountId, token);
 
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               } catch (Exception e) {

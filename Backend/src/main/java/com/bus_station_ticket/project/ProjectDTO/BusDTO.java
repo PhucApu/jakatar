@@ -29,30 +29,15 @@ public class BusDTO {
        @NotNull(message = "Employee entity IDs cannot be null")
        private List<Long> listEmployeeEntities_Id;
 
-       @NotNull(message = "Ticket entity IDs cannot be null")
-       private List<Long> listTicketEntities_Id;
+       @NotNull(message = "Bus Routes Schedules entity IDs cannot be null")
+       private List<Long> listBusRouteSchedules_Id;
 
        @NotNull(message = "Penalty ticket entity IDs cannot be null")
        private List<Long> listPenaltyTicketEntities_Id;
-       
-       // @NotNull(message = "Penalty ticket entity IDs cannot be null")
-       private Long routesId;
 
        public BusDTO() {
        }
 
-       public BusDTO(String busNumber, int capacity, String brand, Boolean isDelete, List<Long> listEmployeeEntities_Id,
-                     List<Long> listTicketEntities_Id, List<Long> listPenaltyTicketEntities_Id) {
-              this.busNumber = busNumber;
-              this.capacity = capacity;
-              this.brand = brand;
-              this.isDelete = isDelete;
-              this.listEmployeeEntities_Id = listEmployeeEntities_Id;
-              this.listTicketEntities_Id = listTicketEntities_Id;
-              this.listPenaltyTicketEntities_Id = listPenaltyTicketEntities_Id;
-       }
-
-       
        public Long getBusId() {
               return busId;
        }
@@ -101,14 +86,6 @@ public class BusDTO {
               this.listEmployeeEntities_Id = listEmployeeEntities_Id;
        }
 
-       public List<Long> getListTicketEntities_Id() {
-              return listTicketEntities_Id;
-       }
-
-       public void setListTicketEntities_Id(List<Long> listTicketEntities_Id) {
-              this.listTicketEntities_Id = listTicketEntities_Id;
-       }
-
        public List<Long> getListPenaltyTicketEntities_Id() {
               return listPenaltyTicketEntities_Id;
        }
@@ -117,12 +94,12 @@ public class BusDTO {
               this.listPenaltyTicketEntities_Id = listPenaltyTicketEntities_Id;
        }
 
-       public Long getRoutesId() {
-              return routesId;
+       public List<Long> getListBusRouteSchedules_Id() {
+              return listBusRouteSchedules_Id;
        }
 
-       public void setRoutesId(Long routesId) {
-              this.routesId = routesId;
+       public void setListBusRouteSchedules_Id(List<Long> listBusRouteSchedules_Id) {
+              this.listBusRouteSchedules_Id = listBusRouteSchedules_Id;
        }
 
 }

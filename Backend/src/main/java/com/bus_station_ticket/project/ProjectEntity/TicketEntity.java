@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -29,13 +29,8 @@ public class TicketEntity {
        private AccountEntity accountEntity;
 
        @ManyToOne
-       @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = false)
-       private BusEntity busEntity;
-
-       // @ManyToOne
-       // @JoinColumn(name = "routesId", referencedColumnName = "routesId", nullable = false)
-       @Column(name = "routesId", nullable = false)
-       private Long routesId;
+       @JoinColumn(name = "schedule_id", referencedColumnName = "schedule_id", nullable = false)
+       private BusRouteScheduleEntity busRouteSchedule;
 
        @ManyToOne
        @JoinColumn(name = "payment_id", referencedColumnName = "payment_id", nullable = false)
@@ -48,8 +43,8 @@ public class TicketEntity {
        @Column(name = "seat_number", nullable = false, columnDefinition = "VARCHAR(10)")
        private String seatNumber;
 
-       @Column(name = "departure_date", nullable = false, columnDefinition = "DATETIME")
-       private LocalDateTime departureDate;
+       @Column(name = "departure_date", nullable = false, columnDefinition = "DATE")
+       private LocalDate departureDate;
 
        @Column(name = "price", nullable = false, columnDefinition = "FLOAT", length = 5)
        private float price;
@@ -69,22 +64,19 @@ public class TicketEntity {
        public TicketEntity() {
        }
 
-       public TicketEntity(AccountEntity accountEnitty, BusEntity busEntity, 
-       // BusRoutesEntity busRoutesEntity,
-                     PaymentEntity paymentEntity, DiscountEntity discountEntity, String seatNumber,
-                     LocalDateTime departureDate, float price, String phoneNumber,
-                     List<FeedbackEntity> listFeedbackEntities, Boolean isDelete) {
-              this.accountEntity = accountEnitty;
-              this.busEntity = busEntity;
-              // this.busRoutesEntity = busRoutesEntity;
+       public TicketEntity(AccountEntity accountEntity, BusRouteScheduleEntity busRouteSchedule, PaymentEntity paymentEntity,
+                     DiscountEntity discountEntity, String seatNumber, LocalDate departureDate, float price,
+                     String phoneNumber, List<FeedbackEntity> listFeedbackEntities, String status, Boolean isDelete) {
+              this.accountEntity = accountEntity;
+              this.busRouteSchedule = busRouteSchedule;
               this.paymentEntity = paymentEntity;
               this.discountEntity = discountEntity;
               this.seatNumber = seatNumber;
               this.departureDate = departureDate;
               this.price = price;
               this.phoneNumber = phoneNumber;
-
               this.listFeedbackEntities = listFeedbackEntities;
+              this.status = status;
               this.isDelete = isDelete;
        }
 
@@ -103,16 +95,6 @@ public class TicketEntity {
        public void setAccountEntity(AccountEntity accountEntity) {
               this.accountEntity = accountEntity;
        }
-
-       public BusEntity getBusEntity() {
-              return busEntity;
-       }
-
-       public void setBusEntity(BusEntity busEntity) {
-              this.busEntity = busEntity;
-       }
-
-       
 
        public PaymentEntity getPaymentEntity() {
               return paymentEntity;
@@ -136,14 +118,6 @@ public class TicketEntity {
 
        public void setSeatNumber(String seatNumber) {
               this.seatNumber = seatNumber;
-       }
-
-       public LocalDateTime getDepartureDate() {
-              return departureDate;
-       }
-
-       public void setDepartureDate(LocalDateTime departureDate) {
-              this.departureDate = departureDate;
        }
 
        public float getPrice() {
@@ -178,17 +152,6 @@ public class TicketEntity {
               this.isDelete = isDelete;
        }
 
-       
-
-       @Override
-       public String toString() {
-              return "TicketEntity [ticketId=" + ticketId + ", accountEntity=" + accountEntity + ", busEntity="
-                            + busEntity + ", paymentEntity=" + paymentEntity + ", discountEntity=" + discountEntity
-                            + ", seatNumber=" + seatNumber + ", departureDate=" + departureDate + ", price=" + price
-                            + ", phoneNumber=" + phoneNumber + ", listFeedbackEntities=" + listFeedbackEntities
-                            + ", status=" + status + ", isDelete=" + isDelete + "]";
-       }
-
        public String getStatus() {
               return status;
        }
@@ -197,11 +160,20 @@ public class TicketEntity {
               this.status = status;
        }
 
-       public Long getRoutes_Id() {
-              return routesId;
+       public BusRouteScheduleEntity getBusRouteSchedule() {
+              return busRouteSchedule;
        }
 
-       public void setRoutes_Id(Long routesId) {
-              this.routesId = routesId;
+       public void setBusRouteSchedule(BusRouteScheduleEntity busRouteSchedule) {
+              this.busRouteSchedule = busRouteSchedule;
        }
+
+       public LocalDate getDepartureDate() {
+              return departureDate;
+       }
+
+       public void setDepartureDate(LocalDate departureDate) {
+              this.departureDate = departureDate;
+       }
+
 }
