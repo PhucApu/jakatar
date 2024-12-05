@@ -1,3 +1,4 @@
+
 -- Đây là file được dùng để test database, phải chạy bằng tay 
 
 -- Mật khẩu admin là 123456Admin@

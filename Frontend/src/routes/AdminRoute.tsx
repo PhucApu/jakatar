@@ -14,7 +14,6 @@ import Ticket from '../pages/admin/Ticket';
 import Payment from '../pages/admin/Payment';
 import Discount from '../pages/admin/Discount';
 import FeedBack from '../pages/admin/FeedBack';
-import Revenue from '../pages/admin/Revenue';
 import UnAuthorized from '../pages/shared/UnAuthorized';
 import PenaltyTicket from '../pages/admin/PenaltyTicket';
 import Account from '../pages/admin/Account';
@@ -40,7 +39,7 @@ export default function AdminRoute() {
           <Routes>
             <Route path='/' element={<AdminDashboard />} />
             <Route path='/chuyen-di' element={<Trip />} />
-            <Route path='/lich-trinh' element={<TripRoute />} />
+            <Route path='/tuyen-xe' element={<TripRoute />} />
             <Route path='/khach-hang' element={<Account />} />
             <Route path='/xe' element={<Bus />} />
             <Route path='/tai-xe' element={<Driver />} />
@@ -49,7 +48,7 @@ export default function AdminRoute() {
             <Route path='/thanh-toan' element={<Payment />} />
             <Route path='/khuyen-mai' element={<Discount />} />
             <Route path='/phan-hoi' element={<FeedBack />} />
-            <Route path='/doanh-thu' element={<Revenue />} />
+            <Route path='/thanh-toan' element={<Payment />} />
 
             <Route path='/unauthorized' element={<UnAuthorized />} />
           </Routes>
