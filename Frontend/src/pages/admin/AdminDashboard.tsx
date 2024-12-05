@@ -93,7 +93,7 @@ const AdminDashboard = () => {
         <div className="space-y-2">
           <label htmlFor="dateA" className="block">Ngày bắt đầu</label>
           <input
-            type="datetime-local"
+            type="date"
             id="dateA"
             value={dateA}
             onChange={(e) => setDateA(e.target.value)}
@@ -103,7 +103,7 @@ const AdminDashboard = () => {
         <div className="space-y-2">
           <label htmlFor="dateB" className="block">Ngày kết thúc</label>
           <input
-            type="datetime-local"
+            type="date"
             id="dateB"
             value={dateB}
             onChange={(e) => setDateB(e.target.value)}

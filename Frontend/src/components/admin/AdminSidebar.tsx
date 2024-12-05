@@ -14,6 +14,7 @@ export default function AdminSidebar() {
           </Sidebar.Item>
           <Sidebar.Collapse icon={FaBus} label="Quản lý nhà xe">
             <Sidebar.Item href="/admin/chuyen-di">Chuyến đi</Sidebar.Item>
+            <Sidebar.Item href="/admin/phan-cong-xe-tuyen">Xe - tuyến</Sidebar.Item>
             <Sidebar.Item href="/admin/tuyen-xe">Tuyến Xe</Sidebar.Item>
             <Sidebar.Item href="/admin/xe">Xe</Sidebar.Item>
             <Sidebar.Item href="/admin/tai-xe">Tài xế</Sidebar.Item>

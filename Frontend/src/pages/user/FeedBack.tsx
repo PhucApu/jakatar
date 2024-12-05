@@ -4,6 +4,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Feedback } from "@type/model/Feedback";
 import { createFeedback } from "../../api/services/admin/feedbackService";
+import { useSelector, UseSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 export default function FeedBack() {
   const [rating, setRating] = useState(0);
@@ -17,7 +19,8 @@ export default function FeedBack() {
   
 
   // Giả sử lấy username từ thông tin đăng nhập
-  const username = "phuc"; // Thay bằng cách lấy giá trị từ auth state/context.
+  // Thay bằng cách lấy giá trị từ auth state/context.
+  const username = useSelector((state: RootState) => state.user.currentUser?.userName);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
