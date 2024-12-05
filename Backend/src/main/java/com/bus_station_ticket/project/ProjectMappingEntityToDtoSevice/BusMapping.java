@@ -8,14 +8,12 @@ import org.springframework.stereotype.Component;
 
 import com.bus_station_ticket.project.ProjectDTO.BusDTO;
 import com.bus_station_ticket.project.ProjectEntity.BusEntity;
+import com.bus_station_ticket.project.ProjectEntity.BusRouteScheduleEntity;
 import com.bus_station_ticket.project.ProjectEntity.EmployeeEntity;
 import com.bus_station_ticket.project.ProjectEntity.PenaltyTicketEntity;
-import com.bus_station_ticket.project.ProjectEntity.TicketEntity;
-import com.bus_station_ticket.project.ProjectRepository.BusRoutesRepo;
+import com.bus_station_ticket.project.ProjectRepository.BusRouteScheduleRepo;
 import com.bus_station_ticket.project.ProjectRepository.EmployeeRepo;
 import com.bus_station_ticket.project.ProjectRepository.PenaltyTicketRepo;
-import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
-
 @Component
 public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
 
@@ -23,10 +21,7 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
        private EmployeeRepo employeeRepo;
 
        @Autowired
-       private TicketRepo ticketRepo;
-
-       @Autowired
-       private BusRoutesRepo busRoutesRepo;
+       private BusRouteScheduleRepo busRouteScheduleRepo;
 
        @Autowired
        private PenaltyTicketRepo penaltyTicketRepo;
@@ -44,7 +39,7 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
 
               // Mapping các thuộc tính list
               List<Long> listEmployeeEntities_Id = new ArrayList<>();
-              List<Long> listTicketEntities_Id = new ArrayList<>();
+              List<Long> listBusRouteSchedules_Id = new ArrayList<>();
               List<Long> listPenaltyTicketEntities_Id = new ArrayList<>();
 
               if (entity.getListEmployeeEntities() != null) {
@@ -53,9 +48,9 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
                      }
               }
 
-              if (entity.getListTicketEntities() != null) {
-                     for (TicketEntity e : entity.getListTicketEntities()) {
-                            listTicketEntities_Id.add(e.getTicketId());
+              if (entity.getListBusRouteSchedules() != null) {
+                     for (BusRouteScheduleEntity e : entity.getListBusRouteSchedules()) {
+                            listBusRouteSchedules_Id.add(e.getScheduleId());
                      }
               }
 
@@ -66,10 +61,8 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
               }
 
               busDTO.setListEmployeeEntities_Id(listEmployeeEntities_Id);
-              busDTO.setListTicketEntities_Id(listTicketEntities_Id);
+              busDTO.setListBusRouteSchedules_Id(listBusRouteSchedules_Id);
               busDTO.setListPenaltyTicketEntities_Id(listPenaltyTicketEntities_Id);
-
-              busDTO.setRoutesId(entity.getBusRoutesEntity() != null ? entity.getBusRoutesEntity().getRoutesId() : null);
 
               return busDTO;
        }
@@ -97,14 +90,15 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
               }
               busEntity.setListEmployeeEntities(listEmployeeEntities);
 
-              List<TicketEntity> listTicketEntities = new ArrayList<>();
-              if (dto.getListTicketEntities_Id() != null) {
-                     for (Long value : dto.getListTicketEntities_Id()) {
-                            TicketEntity ticketEntity = this.ticketRepo.findByTicketId(value).orElse(null);
-                            listTicketEntities.add(ticketEntity);
+              List<BusRouteScheduleEntity> listBusRouteScheduleEntities = new ArrayList<>();
+              if (dto.getListBusRouteSchedules_Id() != null) {
+                     for (Long value : dto.getListBusRouteSchedules_Id()) {
+                            BusRouteScheduleEntity busRouteScheduleEntity = this.busRouteScheduleRepo
+                                          .findByScheduleId(value).orElse(null);
+                            listBusRouteScheduleEntities.add(busRouteScheduleEntity);
                      }
               }
-              busEntity.setListTicketEntities(listTicketEntities);
+              busEntity.setListBusRouteSchedules(listBusRouteScheduleEntities);
 
               List<PenaltyTicketEntity> listPenaltyTicketEntities = new ArrayList<>();
               if (dto.getListPenaltyTicketEntities_Id() != null) {
@@ -115,9 +109,6 @@ public class BusMapping implements MappingInterface<BusEntity, BusDTO> {
                      }
               }
               busEntity.setListPenaltyTicketEntities(listPenaltyTicketEntities);
-
-              busEntity.setBusRoutesEntity(busRoutesRepo.findByRoutesId(dto.getRoutesId()).orElse(null));
-              
 
               return busEntity;
        }

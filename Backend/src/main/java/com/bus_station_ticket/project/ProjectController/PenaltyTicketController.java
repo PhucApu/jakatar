@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bus_station_ticket.project.ProjectConfig.LoggerConfig;
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.PenaltyTicketDTO;
@@ -53,6 +54,8 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
                      responseObject.addMessage("length", listPenaltyTicketEntities.size());
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("penaltytickets", "{penaltyTicketId}"));
 
+                     LoggerConfig.writeInfoLevel(PenaltyTicketController.class, "/penaltytickets", "Successfully retrieved data");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
@@ -60,6 +63,8 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
               responseObject.setData(listPenaltyTicketEntities);
               responseObject.addMessage("mess", "There is no data in the database");
               responseObject.addMessage("length", listPenaltyTicketEntities.size());
+
+              LoggerConfig.writeWarningLevel(PenaltyTicketController.class, "/penaltytickets", "There is no data in the database");
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
@@ -84,12 +89,17 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
                      responseObject.addMessage("mess", "Found data with matching penalty ticket id");
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("penaltytickets", "{penaltyTicketId}"));
+
+                     LoggerConfig.writeInfoLevel(PenaltyTicketController.class, "/penaltytickets/{penaltyTicketId}", "Found data with matching penalty ticket id");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus("failure");
               responseObject.setData(penaltyTicketDTO);
               responseObject.addMessage("mess", "No penalty ticket entity found with matching penalty ticket id");
+
+              LoggerConfig.writeWarningLevel(PenaltyTicketController.class, "/penaltytickets/{penaltyTicketId}", "No penalty ticket entity found with matching penalty ticket id");
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -105,6 +115,9 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(PenaltyTicketController.class, "/penaltytickets/delete/{penaltyticketId}", "Missing path variable value or incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
 
@@ -121,12 +134,17 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("penaltytickets", "{penaltyticketId}"));
+
+                     LoggerConfig.writeInfoLevel(PenaltyTicketController.class, "/penaltytickets/delete/{penaltyticketId}", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(penaltyTicketDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(PenaltyTicketController.class, "/penaltytickets/delete/{penaltyticketId}", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -142,6 +160,9 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(PenaltyTicketController.class, "/penaltytickets/hidden/{penaltyticketId}", "Missing path variable value or incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
 
@@ -157,12 +178,17 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("penaltytickets", "{penaltyticketId}"));
+
+                     LoggerConfig.writeInfoLevel(PenaltyTicketController.class, "/penaltytickets/hidden/{penaltyticketId}", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(penaltyTicketDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(PenaltyTicketController.class, "/penaltytickets/hidden/{penaltyticketId}", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -181,12 +207,16 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("penaltytickets", "{penaltyticketId}"));
 
+                     LoggerConfig.writeInfoLevel(PenaltyTicketController.class, "/penaltytickets/insert", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(obj);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(PenaltyTicketController.class, "/penaltytickets/insert", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -205,12 +235,16 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("penaltytickets", "{penaltyticketId}"));
 
+                     LoggerConfig.writeInfoLevel(PenaltyTicketController.class, "/penaltytickets/update", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(obj);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(PenaltyTicketController.class, "/penaltytickets/update", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -223,12 +257,18 @@ public class PenaltyTicketController implements RestApiSimpleControllerInf<Penal
 
               if(dateA.isBefore(dateB)){
                      responseObject = this.penaltyTicketService.statisticPenaltyTicketRangeDay(dateA,dateB);
+
+                     LoggerConfig.writeInfoLevel(PenaltyTicketController.class, "/penaltytickets/statistics", MESS_SUCCESS);
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.addMessage("mess", "The statistical date entered is incorrect");
               responseObject.setData(null);
+
+              LoggerConfig.writeWarningLevel(PenaltyTicketController.class, "/penaltytickets/statistics", MESS_FAILURE);
+
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        } 
 
