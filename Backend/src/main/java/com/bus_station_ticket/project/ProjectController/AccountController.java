@@ -320,11 +320,11 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
 
        @PostMapping("/register")
        public ResponseEntity<ResponseObject> register(
-                     @RequestParam("username") @NotBlank(message = "Cannot be left blank !") @Size(max = 20, min = 5, message = "Account username must be at least 5 characters and at most 20 characters") String username,
-                     @RequestParam("pass") @NotBlank(message = "Cannot be left blank !") String pass,
-                     @RequestParam("email") @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@(gmail|outlook)\\.com$", message = "You need to enter your gmail or outlook address") String email,
-                     @RequestParam("fullName") @NotBlank(message = "Cannot be left blank !") String fullName,
-                     @RequestParam("phoneNumber") @Pattern(regexp = "^(03|05|07|08|09)[0-9]{8}$", message = "Your phone number is not valid") String phoneNumber) {
+                     @RequestParam("username") String username,
+                     @RequestParam("pass") String pass,
+                     @RequestParam("email") String email,
+                     @RequestParam("fullName") String fullName,
+                     @RequestParam("phoneNumber") String phoneNumber) {
 
               ResponseObject responseObject = this.accountService.registerAccountUser(username, pass, email, fullName,
                             phoneNumber);
@@ -337,11 +337,11 @@ public class AccountController implements RestApiSimpleControllerInf<AccountDTO,
 
        @PostMapping("/update_user")
        public ResponseEntity<ResponseObject> updateForUser(
-                     @NotBlank(message = "Cannot be left blank !") @Size(max = 20, min = 5, message = "Account username must be at least 5 characters and at most 20 characters") @RequestParam("username") String username,
-                     @NotBlank(message = "Cannot be left blank !") @RequestParam("pass") String pass,
-                     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@(gmail|outlook)\\.com$", message = "You need to enter your gmail or outlook address") @RequestParam("email") String email,
-                     @NotBlank(message = "Cannot be left blank !") @RequestParam("fullName") String fullName,
-                     @Pattern(regexp = "^(03|05|07|08|09)[0-9]{8}$", message = "Your phone number is not valid") @RequestParam("phoneNumber") String phoneNumber) {
+                     @RequestParam(name = "username") String username,
+                     @RequestParam(name = "pass", defaultValue = "no") String pass,
+                     @RequestParam(name = "email", defaultValue = "no") String email,
+                     @RequestParam(name = "fullName", defaultValue = "no") String fullName,
+                     @RequestParam(name = "phoneNumber", defaultValue = "no") String phoneNumber) {
 
               ResponseObject responseObject = this.accountService.updateAccountForUser(username, pass, email, fullName,
                             phoneNumber);

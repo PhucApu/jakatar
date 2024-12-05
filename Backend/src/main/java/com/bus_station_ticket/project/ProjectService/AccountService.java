@@ -3,6 +3,7 @@ package com.bus_station_ticket.project.ProjectService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -26,7 +27,6 @@ import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 import com.bus_station_ticket.project.ProjectSecurity.JwtService;
 import com.bus_station_ticket.project.ProjectSecurity.UserDetailsConfig;
-
 
 @Service
 public class AccountService implements SimpleServiceInf<AccountEntity, AccountDTO, String> {
@@ -318,6 +318,10 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               // lay data doi tuong cu
               AccountEntity accountEntityOld = this.repo.findByUserName(accountEntity.getUserName()).orElse(null);
 
+              if (isCurrentHashPass(accountEntityOld.getPassWord(), pass)) {
+                     return false;
+              }
+
               // encode
               String passEncocdeNew = bCryptPasswordEncoder.encode(pass);
               String passEncodeOld = accountEntityOld.getPassWord();
@@ -381,12 +385,45 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               return null;
        }
 
-       // Register user 
+       // Register user
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        public ResponseObject registerAccountUser(String username, String pass, String email, String fullName,
                      String phoneNumber) {
 
               ResponseObject responseObject = new ResponseObject();
+
+              // Kiểm tra password
+              if (isValidPassword(pass) == false) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Register failed. Password is not valid.");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+
+              // Kiểm tra email
+              if (isValidEmail(email) == false ) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Register failed. Email is not valid.");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+
+              // Kiểm tra fullName
+              if (isValidFullName(fullName) == false ) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Register failed. Full name cannot be blank.");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+
+              // Kiểm tra phoneNumber
+              if (isValidPhoneNumber(phoneNumber) == false ) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Register failed. Phone number is not valid.");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+
 
               String role = "ROLE_USER";
               Boolean isDelete = false;
@@ -413,7 +450,7 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
        }
 
-       // Register user 
+       // Register user
        @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
        public ResponseObject updateAccountForUser(String username, String pass, String email, String fullName,
                      String phoneNumber) {
@@ -426,23 +463,81 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
               List<Long> listFeedbackEntities_Id = new ArrayList<>();
               List<Long> listTicketEntities_Id = new ArrayList<>();
 
-              AccountDTO accountDTO = new AccountDTO(username, pass, email, fullName, phoneNumber, role, isBlock,
-                            isDelete, listFeedbackEntities_Id, listTicketEntities_Id);
+              // Lấy thông tin user đăng nhập
+              AccountDTO accountDTOLogin = geAccountDTOHasLogin();
+              if (accountDTOLogin == null) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "You need to login first");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+              String usernameLogin = accountDTOLogin.getUserName();
 
+              if (!usernameLogin.equals(username)) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Cannot update");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+
+              AccountEntity accountEntity = getById(username);
+
+              // Kiểm tra từng trường dữ liệu
+              String passCurrent = pass.equals("no") ? accountEntity.getPassWord() : pass;
+              if (!pass.equals("no") && isValidPassword(pass) == false) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Cannot update. Password is not valid.");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+
+              String emailCurrent = email.equals("no") ? accountEntity.getEmail() : email;
+              if (!email.equals("no") && isValidEmail(email) == false) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Cannot update. Email is not valid.");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+
+              String fullNameCurrent = fullName.equals("no") ? accountEntity.getFullName() : fullName;
+              if (!fullName.equals("no") && isValidFullName(fullName) == false) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Cannot update. Full name cannot be blank.");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+
+              String phoneCurrent = phoneNumber.equals("no") ? accountEntity.getPhoneNumber() : phoneNumber;
+              if (!phoneNumber.equals("no") && isValidPhoneNumber(phoneNumber) == false) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Cannot update. Phone number is not valid.");
+                     responseObject.setData(null);
+                     return responseObject;
+              }
+
+              // Tạo đối tượng AccountDTO với thông tin mới
+              AccountDTO accountDTO = new AccountDTO(username, passCurrent, emailCurrent, fullNameCurrent,
+                            phoneCurrent, role, isBlock, isDelete, listFeedbackEntities_Id, listTicketEntities_Id);
+
+              // Gọi hàm cập nhật
               if (update_toDTO(accountDTO).getValueBool()) {
                      responseObject.setStatus("success");
                      responseObject.addMessage("mess", "Update success.");
                      responseObject.setData(accountDTO);
-
                      return responseObject;
               }
 
               responseObject.setStatus("failure");
-              responseObject.addMessage("mess", "Register not success.");
+              responseObject.addMessage("mess", "Update not successful.");
               responseObject.setData(accountDTO);
-
               return responseObject;
+       }
 
+       public Boolean isCurrentHashPass (String hashPassOld, String hashPassNew){
+              if(hashPassOld.equals(hashPassNew)){
+                     return true;
+              }
+              return false;
        }
 
        public AccountRepo getRepo() {
@@ -487,6 +582,28 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
        public BCryptPasswordEncoder getbCryptPasswordEncoder() {
               return bCryptPasswordEncoder;
+       }
+
+       public boolean isValidUserName(String userName) {
+              return userName != null && userName.length() >= 5 && userName.length() <= 20;
+       }
+
+       public boolean isValidPassword(String password) {
+              return password != null && password.length() >= 5;
+       }
+
+       public boolean isValidEmail(String email) {
+              String emailRegex = "^[a-zA-Z0-9._%+-]+@(gmail|outlook)\\.com$";
+              return email != null && Pattern.matches(emailRegex, email);
+       }
+
+       public boolean isValidFullName(String fullName) {
+              return fullName != null;
+       }
+
+       public boolean isValidPhoneNumber(String phoneNumber) {
+              String phoneRegex = "^(03|05|07|08|09)[0-9]{8}$";
+              return phoneNumber != null && Pattern.matches(phoneRegex, phoneNumber);
        }
 
        // @Transactional
