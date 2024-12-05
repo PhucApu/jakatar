@@ -1,8 +1,8 @@
 
-import { FaCreditCard, FaUser, FaHistory, FaKey, FaSignOutAlt } from "react-icons/fa";
+import { FaCreditCard, FaUser, FaHistory, FaMapMarkerAlt, FaKey, FaSignOutAlt } from "react-icons/fa";
+
 
 export default function MenuInfoUser() {
-
   return (
     <div className="col-span-12 hidden rounded-2xl sm:col-span-3 lg:block h-full justify-between items-center">
       <div className="px-4 py-2 scale-125 flex flex-col gap-8 mt-10">
@@ -43,12 +43,6 @@ export default function MenuInfoUser() {
           Đăng xuất
         </a>
       </div>
-        
     </div>
   );
 }
-
-
-
-
-
