@@ -249,7 +249,13 @@ public class SecurityConfig {
                             )
                             // Cấu hình phân quyền
                             .authorizeHttpRequests(request -> request
-                                          .requestMatchers("/vnpay-payment-return", "/accounts/register").permitAll()
+                                          .requestMatchers(
+                                                        "/vnpay-payment-return",
+                                                        "/accounts/register",
+                                                        "/bus_routes_schedule",
+                                                        "/bus_routes_schedule/{scheduleId}",
+                                                        "/bus_routes_schedule/departureLocation_destinationLocation")
+                                          .permitAll()
                                           .requestMatchers(USER_ACCESS_PATH)
                                           .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER", "ROLE_STAFF", "ROLE_USER")
                                           .requestMatchers(STAFF_ACCESS_PATH)
