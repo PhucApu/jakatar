@@ -45,3 +45,60 @@ export const hideAccount = async (username: string): Promise<User> => {
     return response.data.data!;
   });
 };
+
+
+// export const registerUser = async (
+//   username: string | undefined,
+//   pass: string | undefined,
+//   email: string | undefined,
+//   fullName: string | undefined,
+//   phoneNumber: string | undefined
+// ): Promise<any> => {
+//   return apiRequest(async () => {
+//     // Sử dụng query parameters để gửi dữ liệu
+//     const response = await apiClient.post('accounts/register', null, {
+//       params: {
+//         username,
+//         pass,
+//         email,
+//         fullName,
+//         phoneNumber
+//       },
+//     });
+//     console.log(">>DATA:", response.data);
+
+//     // Trả về thông điệp từ backend
+//     return response.data.data;
+//   });
+// };
+
+
+
+export const registerUser = async (
+  username: string | undefined,
+  pass: string | undefined,
+  email: string | undefined,
+  fullName: string | undefined,
+  phoneNumber: string | undefined
+): Promise<any> => {
+  return apiRequest(async () => {
+    // Kiểm tra các tham số đầu vào trước khi gửi yêu cầu
+    if (!username || !pass || !email || !fullName || !phoneNumber) {
+      throw new Error('All fields must be provided');
+    }
+
+    const response = await apiClient.post('accounts/register',null, {
+      params: {
+                username,
+                pass,
+                email,
+                fullName,
+                phoneNumber
+              },
+    });
+
+    console.log(">>DATA:", response.data);
+
+    return response.data.data;
+  });
+};
