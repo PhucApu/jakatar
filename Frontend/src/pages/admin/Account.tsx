@@ -7,13 +7,14 @@ import { HiPlus } from 'react-icons/hi';
 import { Spinner } from "flowbite-react";
 import type { TableColumn } from '@type/common/TableColumn';
 import type { User } from '@type/model/User';
-
+import * as XLSX from "xlsx";
 import {
   createAccount,
   getAccounts,
   updateAccount,
   deleteAccount,
 } from '../../api/services/admin/accountService';
+import { BiExport } from 'react-icons/bi';
 
 
 export default function Account() {
@@ -212,16 +213,30 @@ export default function Account() {
     }
   };
 
+  const HandleExport = () => {
+    // console.log("export",data)
+    var wb = XLSX.utils.book_new(),
+    ws = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, ws, "SheetUser")
+    XLSX.writeFile(wb, "ListUser.xlsx")
+  }
+
   if (loading) return <div><Spinner aria-label="Default status example" /></div>;
   if (error) return toast.error(error, { autoClose: 800 });
 
   return (
     <div className="p-4 mx-auto">
       <h1 className="uppercase font-semibold text-2xl tracking-wide mb-4">Quản lý tài khoản</h1>
+      <div className="flex justify-between">
       <Button onClick={() => handleOpenModal()} size="sm">
         <HiPlus className="mr-2 h-5 w-5" />
         Thêm tài khoản
       </Button>
+      <Button onClick={HandleExport} size="sm">
+        <BiExport className="mr-2 h-5 w-5" />
+        Xuất dữ liệu
+      </Button>
+      </div>
       <Table rows={data} columns={columns} onEdit={handleOpenModal} onDelete={(row) => handleDelete(row.userName) }/>
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>{isEditMode ? 'Cập nhật' : 'Thêm tài khoản'}</Modal.Header>

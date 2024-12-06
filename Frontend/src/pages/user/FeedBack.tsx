@@ -40,6 +40,10 @@ export default function FeedBack() {
 
   const handleSubmit = async () => {
     // Kiểm tra điều kiện các trường bắt buộc không được để trống
+    // if (username === null || username === undefined) {
+    //   toast.error("Bạn chưa đăng nhập, Vui lòng đăng nhập!",{autoClose:1000});
+    //   return;
+    // }
     if (!formData.ticketEntity_Id || !formData.content || !rating) {
       toast.error("Vui lòng nhập đầy đủ thông tin form feedback!",{autoClose:1000});
       return;
@@ -66,13 +70,13 @@ export default function FeedBack() {
 
     try {
       setLoading(true);
-      const response = await createFeedback(feedbackData);
+      await createFeedback(feedbackData);
       toast.success("Gửi đánh giá thành công!",{autoClose: 800});
       setFormData({ ticketEntity_Id: 0, content: "", rating: 0, isDelete: false });
       setRating(0);
     } catch (error) {
       console.error(error);
-      toast.error("Mã vé không tồn tại, vui lòng thử lại!",{autoClose:800});
+      toast.error("Mã vé không tồn tại hoặc bạn chưa đăng nhập, xin vui lòng thử lại!",{autoClose:900});
     } finally {
       setLoading(false);
     }
