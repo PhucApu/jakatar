@@ -3,8 +3,8 @@ import { FaStar } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Feedback } from "@type/model/Feedback";
-import { createFeedback } from "../../api/services/admin/feedbackService";
-import { useSelector, UseSelector } from "react-redux";
+import { createFeedback, sendToEmailFeedback } from "../../api/services/admin/feedbackService";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 
 export default function FeedBack() {
@@ -21,6 +21,9 @@ export default function FeedBack() {
   // Giả sử lấy username từ thông tin đăng nhập
   // Thay bằng cách lấy giá trị từ auth state/context.
   const username = useSelector((state: RootState) => state.user.currentUser?.userName);
+  const email_online = useSelector((state: RootState) => state.user.currentUser?.email);
+  const email_default = email_online || 'default@example.com';
+  console.log(">>>email",email_default);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -68,7 +71,20 @@ export default function FeedBack() {
     } as Feedback;
 
 
+    // const toMailsend = await sendToEmailFeedback(email_online,'Feedback','Chúng tôi sẽ phản hồi lại đánh giá của bạn trong thời gian sớm nhất. AnhBa Bus xin chân thành cảm ơn!!!')
+    // console.log(">>send to mail: ",toMailsend);
+
+
     try {
+
+      const toMailSend = await sendToEmailFeedback(
+        email_default,
+        "Feedback",
+        "Chúng tôi sẽ phản hồi lại đánh giá của bạn trong thời gian sớm nhất. AnhBa Bus xin chân thành cảm ơn!!!"
+      );
+      console.log(">> send to mail: ", toMailSend);
+      console.log(">>>email trc khi gui",email_default);
+  
       setLoading(true);
       await createFeedback(feedbackData);
       toast.success("Gửi đánh giá thành công!",{autoClose: 800});

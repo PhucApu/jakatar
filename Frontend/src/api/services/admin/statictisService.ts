@@ -47,6 +47,6 @@ export const getStatisticsPenaltyTickets = async (
     });
     console.log(">>DATA:",response);
     // return response.data.data!;
-    return response.data.data || {};
+    return response.data.message || {};
   });
 };
