@@ -767,6 +767,25 @@ public class TicketService implements SimpleServiceInf<TicketEntity, TicketDTO, 
                      return responseObject;
               }
 
+              // Kiểm tra xem cái vé phải là của người đó không
+              AccountDTO accountDTO = this.accountService.geAccountDTOHasLogin();
+
+              if (accountDTO == null) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "You need to login first");
+                     responseObject.setData(null);
+
+                     return responseObject;
+              }
+
+              if (accountDTO.getUserName().equals(ticketEntity.getAccountEntity().getUserName()) == false) {
+                     responseObject.setStatus("failure");
+                     responseObject.addMessage("mess", "Not allow to see a info ticket");
+                     responseObject.setData(null);
+
+                     return responseObject;
+              }
+
               responseObject.setStatus("success");
               responseObject.addMessage("mess", "Found ticket have ticketId " + ticketId);
 
