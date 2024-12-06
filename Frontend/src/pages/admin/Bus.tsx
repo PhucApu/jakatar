@@ -10,8 +10,8 @@ import type { Bus } from '@type/model/Bus';
 
 import { getBuses, createBus, updateBus, deleteBus } from '../../api/services/admin/busService';
 // import { getBusRoutes } from '../../api/services/admin/busRouteService';
-
-
+import * as XLSX from "xlsx";
+import { BiExport } from 'react-icons/bi';
 export default function Bus() {
   const [data, setData] = useState<Bus[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -217,6 +217,14 @@ export default function Bus() {
     }));
 };
 
+const HandleExport = () => {
+  // console.log("export",data)
+  var wb = XLSX.utils.book_new(),
+  ws = XLSX.utils.json_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb, ws, "SheetBus")
+  XLSX.writeFile(wb, "ListBus.xlsx")
+}
+
   if (loading) return <div><Spinner aria-label="Default status example" /></div>;
   if (error) return toast.error(error, { autoClose: 800 });
 
@@ -225,10 +233,16 @@ export default function Bus() {
       <h1 className='uppercase font-semibold text-2xl tracking-wide mb-4'>
         Quản lý buýt
       </h1>
-      <Button onClick={() => handleOpenModal(null)} size='sm'>
-        <HiPlus className='mr-2 h-5 w-5' />
-        Thêm buýt
+      <div className="flex justify-between">
+      <Button onClick={() => handleOpenModal(null)} size="sm">
+        <HiPlus className="mr-2 h-5 w-5" />
+        Thêm Buýt
       </Button>
+      <Button onClick={HandleExport} size="sm">
+        <BiExport className="mr-2 h-5 w-5" />
+        Xuất dữ liệu
+      </Button>
+      </div>
       <Table rows={data} columns={columns} onEdit={handleOpenModal} onDelete={(row) => handleDelete(row.busId)} />
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>{isEditMode ? 'Cập nhật' : 'Thêm buýt'}</Modal.Header>

@@ -18,6 +18,8 @@ import { getBusRouteSchedules} from '../../api/services/admin/BusRouteScheduleSe
 import { getPayments } from '../../api/services/admin/paymentService';
 import { getDiscounts } from '../../api/services/admin/discountService';
 import { formatDate } from '../../utils/dateFormat';
+import * as XLSX from "xlsx";
+import { BiExport } from 'react-icons/bi';
 
 export default function Ticket() {
   const [data, setData] = useState<Ticket[]>([]);
@@ -256,6 +258,14 @@ export default function Ticket() {
     }));
   };
 
+  const HandleExport = () => {
+    // console.log("export",data)
+    var wb = XLSX.utils.book_new(),
+    ws = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, ws, "SheetTicket")
+    XLSX.writeFile(wb, "ListTicket.xlsx")
+  }
+
   if (loading) return <div><Spinner aria-label="Default status example" /></div>;
   if (error) return toast.error(error, { autoClose: 800 });
   
@@ -263,10 +273,16 @@ export default function Ticket() {
   return (
     <div className='p-4 mx-auto'>
       <h1 className='uppercase font-semibold text-2xl tracking-wide mb-4'>Quản lý vé</h1>
-      <Button onClick={() => handleOpenModal()} size='sm'>
-        <HiPlus className='mr-2 h-5 w-5' />
+      <div className="flex justify-between">
+      <Button onClick={() => handleOpenModal()} size="sm">
+        <HiPlus className="mr-2 h-5 w-5" />
         Thêm vé
       </Button>
+      <Button onClick={HandleExport} size="sm">
+        <BiExport className="mr-2 h-5 w-5" />
+        Xuất dữ liệu
+      </Button>
+      </div>
       <Table rows={data} columns={columns} onEdit={handleOpenModal} onDelete={(row) => handleDelete(row.ticketId)}/>
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>{isEditMode ? 'Cập nhật' : 'Thêm vé'}</Modal.Header>
