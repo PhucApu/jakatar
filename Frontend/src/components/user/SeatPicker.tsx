@@ -1,93 +1,54 @@
 import { Button } from 'flowbite-react';
-import { useState, useEffect } from 'react';
-
-type SeatStatus = 'booked' | 'selected' | 'empty';
-
-interface Seat {
-  id: number;
-  status: SeatStatus;
-  fullId: string; // Store the full seat identifier (e.g., 1_A18)
-}
+import React from 'react';
 
 interface SeatPickerProps {
-  onSelectionChange: (selectedSeats: string[], totalAmount: number) => void;
+  seatAvailability: { [key: string]: boolean };
+  onSelectionChange: (seats: string[], total: number) => void;
   seatPrice: number;
-  emptySeats: string[]; // Accept emptySeats as prop
 }
 
-export default function SeatPicker({
+const SeatPicker: React.FC<SeatPickerProps> = ({
+  seatAvailability,
   onSelectionChange,
   seatPrice,
-  emptySeats,
-}: SeatPickerProps) {
-  const [seats, setSeats] = useState<Seat[]>([]);
+}) => {
+  const [selectedSeats, setSelectedSeats] = React.useState<string[]>([]);
+  const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
-  // Initialize seats when emptySeats changes
-  useEffect(() => {
-    const updatedSeats = Array.from({ length: 40 }, (_, i) => {
-      const seatId = `1_A${(i + 1).toString().padStart(2, '0')}`; // Full seat ID (e.g., 1_A01)
-      return {
-        id: i,
-        fullId: seatId, // Store full ID for processing
-        status: emptySeats.includes(seatId) ? 'empty' : 'booked', // Set status based on emptySeats
-      };
-    });
-    setSeats(updatedSeats);
-  }, [emptySeats]);
+  const handleSeatClick = (seat: string) => {
+    if (seatAvailability[seat]) {
+      // Only allow selection if the seat is empty
+      const newSelectedSeats = selectedSeats.includes(seat)
+        ? selectedSeats.filter((s) => s !== seat) // Deselect if already selected
+        : [...selectedSeats, seat]; // Select if not already selected
 
-  const handleSeatClick = (id: number) => {
-    setSeats((prevSeats) => {
-      const updatedSeats = prevSeats.map((seat) =>
-        seat.id === id
-          ? {
-              ...seat,
-              status:
-                seat.status === 'empty'
-                  ? 'selected'
-                  : seat.status === 'selected'
-                  ? 'empty'
-                  : seat.status,
-            }
-          : seat
-      );
+      setSelectedSeats(newSelectedSeats);
+      const newTotalAmount = newSelectedSeats.length * seatPrice;
+      setTotalAmount(newTotalAmount);
 
-      const selectedSeats = updatedSeats.filter((seat) => seat.status === 'selected');
-      const selectedSeatIds = selectedSeats.map((seat) => seat.fullId); // Use fullId for checkout
-      const totalAmount = selectedSeats.length * seatPrice;
-
-      onSelectionChange(selectedSeatIds, totalAmount); // Pass full seat IDs to parent
-
-      return updatedSeats;
-    });
-  };
-
-  const getSeatColor = (status: SeatStatus) => {
-    switch (status) {
-      case 'booked':
-        return 'failure';
-      case 'selected':
-        return 'blue';
-      case 'empty':
-      default:
-        return 'gray';
+      onSelectionChange(newSelectedSeats, newTotalAmount); // Pass back the updated selection and total
     }
   };
 
+  const sortedSeats = Object.keys(seatAvailability).sort(); // Sort seat IDs
+
   return (
-    <div className="flex gap-6">
-      <div className="grid grid-cols-4 gap-2">
-        {seats.map((seat) => (
-          <Button
-            key={seat.id}
-            size="sm"
-            color={`${getSeatColor(seat.status)}`}
-            onClick={() => handleSeatClick(seat.id)}
-            disabled={seat.status === 'booked'}
-          >
-            {seat.fullId.replace('1_', '')} {/* Display seat without '1_' prefix */}
-          </Button>
-        ))}
-      </div>
+    <div className='grid grid-cols-4 gap-4'>
+      {sortedSeats.map((seat) => (
+        <Button
+          size='sm'
+          key={seat}
+          onClick={() => handleSeatClick(seat)}
+          className={`seat ${seatAvailability[seat] ? 'bg-gray-300' : 'bg-red-800'} 
+                      ${selectedSeats.includes(seat) ? 'bg-blue-500' : ''} 
+                    `}
+          disabled={!seatAvailability[seat]}
+        >
+          {seat.replace(/^\d+_/, "")}
+        </Button>
+      ))}
     </div>
   );
-}
+};
+
+export default SeatPicker;

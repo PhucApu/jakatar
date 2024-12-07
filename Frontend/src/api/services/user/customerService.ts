@@ -32,7 +32,7 @@ export const getSeatList = async (data: any): Promise<any> => {
 
 export const createPayment = async (data: any): Promise<any> => {
   return apiRequest(async () => {
-    const response = await apiClient.post<any>('/create_payment?', null, {
+    const response = await apiClient.post<any>('/create_payment', null, {
       params: {
         ...data
       }

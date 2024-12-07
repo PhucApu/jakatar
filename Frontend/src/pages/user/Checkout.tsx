@@ -1,11 +1,15 @@
-import { Label, TextInput } from 'flowbite-react';
+import { Button, Label, TextInput } from 'flowbite-react';
 import SeatPicker from '../../components/user/SeatPicker';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getSeatList } from '../../api/services/user/customerService';
+import { createPayment, getSeatList } from '../../api/services/user/customerService';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 export default function Checkout() {
   const location = useLocation();
+
+  const user = useSelector((state: RootState) => state.user.currentUser);
 
   const searchParams = new URLSearchParams(location.search);
   const seatPrice = +searchParams.get('price');
@@ -14,10 +18,11 @@ export default function Checkout() {
   const departureDate = searchParams.get('date');
   const departureTime = searchParams.get('time');
   const scheduleId = searchParams.get('scheduleId');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
-  const [emptySeats, setEmptySeats] = useState<string[]>([]);
+  const [emptySeats, setEmptySeats] = useState<{ [key: string]: boolean }>({}); // Store seats with true/false status
 
   useEffect(() => {
     if (departureLocation && scheduleId) {
@@ -25,11 +30,10 @@ export default function Checkout() {
         try {
           const data = await getSeatList({ departureDate, scheduleId });
           console.log(data.data);
-          const listSeatEmpty = Object.keys(data.data.listSeatEmpty[0]).filter(
-            (key) => {data.data.listSeatEmpty[0][key]}
-          );
-          setEmptySeats(listSeatEmpty);
-          console.log(emptySeats)
+
+          // Access the first item of listSeatEmpty array and set seat availability
+          const seatAvailability = data.data.listSeatEmpty[0];
+          setEmptySeats(seatAvailability);
         } catch (error) {
           console.error('Error fetching seat data:', error);
         }
@@ -49,13 +53,48 @@ export default function Checkout() {
     return `${formattedHours}g ${minutes}p`;
   }
 
+  // Function to handle form submission
+  const handlePayment = async () => {
+    try {
+      setIsSubmitting(true);
+
+      // Retrieve JWT token from localStorage
+      const jwtToken = localStorage.getItem('jwtToken');
+
+      // Prepare the data object to pass to createPayment
+      const paymentData = {
+        returnUrl: '/create_payment',
+        seats: selectedSeats.toString(),
+        scheduleId,
+        departureDate,
+        discountId: 1,
+        token: jwtToken,
+      };
+
+      const paymentResponse = await createPayment(paymentData);
+
+      if (paymentResponse.data) {
+        console.log('Payment response:', paymentResponse.data);
+        window.location.href = paymentResponse.data;
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className='lg:grid lg:grid-cols-10 gap-8 px-8 mx-auto'>
       <div className='lg:col-span-7'>
         <section className='bg-white border border-gray-200 rounded-lg shadow-sm py-4 px-16 mt-4'>
           <h2 className='text-xl text-center font-semibold'>Chọn ghế</h2>
           <div className='flex gap-x-16 py-4'>
-            <SeatPicker onSelectionChange={handleSelectionChange} emptySeats={emptySeats} seatPrice={seatPrice} />
+            <SeatPicker
+              onSelectionChange={handleSelectionChange}
+              seatAvailability={emptySeats}
+              seatPrice={seatPrice}
+            />
             <div>
               <div className='flex items-center gap-x-2'>
                 <div className='w-4 h-4 bg-white bg-opacity-50 border border-gray-200'></div>
@@ -72,6 +111,8 @@ export default function Checkout() {
             </div>
           </div>
         </section>
+
+        {/* Customer Info Section */}
         <section className='bg-white border border-gray-200 rounded-lg shadow-sm py-8 px-16 mt-4'>
           <h2 className='text-xl text-center font-semibold'>Thông tin khách hàng</h2>
           <div className='flex gap-x-8 py-8'>
@@ -80,19 +121,19 @@ export default function Checkout() {
                 <div className='mb-2 block'>
                   <Label htmlFor='name' value='Họ và tên *' />
                 </div>
-                <TextInput id='name' type='text' placeholder='Họ và tên' required />
+                <TextInput id='name' type='text' placeholder='Họ và tên' value={user?.fullName} required />
               </div>
               <div>
                 <div className='mb-2 block'>
                   <Label htmlFor='phone' value='Số điện thoại *' />
                 </div>
-                <TextInput id='phone' type='phone' placeholder='Số điện thoại' required />
+                <TextInput id='phone' type='phone' placeholder='Số điện thoại' value={user?.phoneNumber} required />
               </div>
               <div>
                 <div className='mb-2 block'>
                   <Label htmlFor='email' value='Email *' />
                 </div>
-                <TextInput id='email' type='email' placeholder='Email' required />
+                <TextInput id='email' type='email' placeholder='Email' value={user?.email} required />
               </div>
             </form>
             <div className='basis-[50%] flex flex-col gap-4'>
@@ -113,10 +154,19 @@ export default function Checkout() {
             </div>
           </div>
         </section>
+
+        {/* Payment Section */}
         <section className='bg-white border border-gray-200 rounded-lg shadow-sm py-2 px-16 mt-4'>
           <h2 className='text-xl text-center font-semibold'>Thanh toán</h2>
+          <div className='w-full flex my-6'>
+          <Button className='w-full' onClick={handlePayment} disabled={isSubmitting}>
+            {isSubmitting ? 'Processing Payment...' : 'Thanh toán bằng VNPay'}
+          </Button>
+          </div>
         </section>
       </div>
+
+      {/* Booking Info */}
       <div className='lg:col-span-3 max-h-min bg-white border border-gray-200 flex flex-col gap-y-2 rounded-lg shadow-sm py-4 px-16 mt-4'>
         <h2 className='text-xl text-center font-semibold'>Thông tin chuyến xe</h2>
         <div className='flex items-center justify-between'>
