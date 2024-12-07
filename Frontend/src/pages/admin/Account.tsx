@@ -79,7 +79,7 @@ export default function Account() {
       toast.error('Tên tài khoản không được để trống', { autoClose: 800 });
       return false;
     }
-    const userNameRegex = /^.{5,20}$/;
+    const userNameRegex = /^.{3,20}$/;
     if (!userNameRegex.test(formData.userName)) {
       toast.error('Tên tài khoản phải từ 5 đến 20 ký tự', { autoClose: 800 });
       return false;

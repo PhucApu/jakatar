@@ -9,7 +9,7 @@ const ExportTicket: React.FC = () => {
   const [data, setData] = useState<Ticket[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [ticket, setTicket] = useState<Ticket | null>(null);
 
 
 
@@ -60,9 +60,21 @@ const ExportTicket: React.FC = () => {
     }
   };
 
+  // Gọi API để lấy thông tin ticket
+  const fetchTicket = async () => {
+    if (!firstTicketId) return;
+    try {
+      const ticketData = await getTicketById(firstTicketId);
+      setTicket(ticketData);
+    } catch (error: any) {
+      setError(error.message || "Failed to fetch ticket.");
+    }
+  };
+
   useEffect(() => {
     fetchTickets();
-  }, []);
+    fetchTicket();
+  }, [firstTicketId]);
 
   const handleExport = () => {
     const ticketElement = document.getElementById("ticket");
@@ -85,6 +97,17 @@ const ExportTicket: React.FC = () => {
     return new Blob([ab], { type: mimeString });
   };
 
+  // Gọi API để lấy thông tin ticket
+  // const fetchTicket = async () => {
+  //   if (!firstTicketId) return;
+  //   try {
+  //     const ticketData = await getTicketById(firstTicketId);
+  //     setTicket(ticketData);
+  //   } catch (error: any) {
+  //     setError(error.message || "Failed to fetch ticket.");
+  //   }
+  // };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 -m-32 ">
       <div
@@ -93,32 +116,35 @@ const ExportTicket: React.FC = () => {
       >
         <h2 className="text-2xl font-bold mb-4">Vé xe AnhBaBus</h2>
         <p className="text-lg font-medium mb-2">
-          <strong>Mã vé:</strong>{firstTicketId}
+          <strong>Mã vé:</strong>{ticketIdArray}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Mã khách hàng: </strong> Toan {}
+          <strong>Mã khách hàng: </strong> {ticket?.accountEnity_Id}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>From:</strong> Ho Chi Minh City
+          <strong>From:</strong> Hà Nội
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>To:</strong> Hanoi
+          <strong>To:</strong> Hải Phòng
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Thời gian khởi hành:</strong> 2024-12-06 08:00 AM
+          <strong>Thời gian khởi hành:</strong> {ticket?.departureDate}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Số ghế:</strong> 1_A02, 2_A02
+          <strong>Số ghế:</strong>{ticket?.seatNumber}
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>Mã giảm giá:</strong>{ticket?.discountEntity_Id}
         </p>
         <p className="text-xl font-bold mt-4">
-          Giá: <span className="text-yellow-300">350,000 VND</span>
+          Giá: <span className="text-yellow-300">{ticket?.price}</span>
         </p>
       </div>
       <div className="flex gap-4">
       <button
         className="mt-6 font-semibold py-2 px-4 rounded-lg shadow-lg transition-transform transform hover:scale-105"
       >
-        <a href="/dat-ve">Quay lại</a>
+        <a href="/">Quay lại</a>
       </button>
       <button
         onClick={handleExport}

@@ -2,7 +2,7 @@ import { Button, Label, TextInput } from 'flowbite-react';
 import SeatPicker from '../../components/user/SeatPicker';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { createPayment, getSeatList } from '../../api/services/user/customerService';
+import { createPayment, getSeatList, getDiscountById } from '../../api/services/user/customerService';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 
@@ -22,16 +22,15 @@ export default function Checkout() {
 
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
-  const [emptySeats, setEmptySeats] = useState<{ [key: string]: boolean }>({}); // Store seats with true/false status
+  const [emptySeats, setEmptySeats] = useState<{ [key: string]: boolean }>({});
+  const [discountId, setDiscountId] = useState<number | null>(null);
+  const [discountPercentage, setDiscountPercentage] = useState<number>(0);
 
   useEffect(() => {
     if (departureLocation && scheduleId) {
       const fetchSeats = async () => {
         try {
           const data = await getSeatList({ departureDate, scheduleId });
-          console.log(data.data);
-
-          // Access the first item of listSeatEmpty array and set seat availability
           const seatAvailability = data.data.listSeatEmpty[0];
           setEmptySeats(seatAvailability);
         } catch (error) {
@@ -47,34 +46,45 @@ export default function Checkout() {
     setTotalAmount(total);
   };
 
+  const handleDiscountApply = async () => {
+    if (discountId !== null) {
+      try {
+        const response = await getDiscountById(discountId);
+        if (response.status === 'success') {
+          const discount = response.data;
+          setDiscountPercentage(discount.discountPercentage);
+          // Apply discount to the total amount
+          const discountedAmount = totalAmount - (totalAmount * discount.discountPercentage) / 100;
+          setTotalAmount(discountedAmount);
+        }
+      } catch (error) {
+        console.error('Error applying discount:', error);
+      }
+    }
+  };
+
   function formatTime(timeString: string): string {
     const [hours, minutes] = timeString.split(':');
     const formattedHours = parseInt(hours, 10);
     return `${formattedHours}g ${minutes}p`;
   }
 
-  // Function to handle form submission
   const handlePayment = async () => {
     try {
       setIsSubmitting(true);
-
-      // Retrieve JWT token from localStorage
       const jwtToken = localStorage.getItem('jwtToken');
-
-      // Prepare the data object to pass to createPayment
       const paymentData = {
         returnUrl: '/create_payment',
         seats: selectedSeats.toString(),
         scheduleId,
         departureDate,
-        discountId: 1,
+        discountId,
         token: jwtToken,
       };
 
       const paymentResponse = await createPayment(paymentData);
 
       if (paymentResponse.data) {
-        console.log('Payment response:', paymentResponse.data);
         window.location.href = paymentResponse.data;
       }
     } catch (error) {
@@ -155,13 +165,29 @@ export default function Checkout() {
           </div>
         </section>
 
+        {/* Discount Section */}
+        <section className='bg-white border border-gray-200 rounded-lg shadow-sm py-2 px-16 mt-4'>
+          <h2 className='text-xl text-center font-semibold'>Áp dụng mã giảm giá</h2>
+          <div className='flex gap-4 items-center'>
+            <TextInput
+              id='discountCode'
+              type='number'
+              placeholder='Nhập mã giảm giá'
+              value={discountId || ''}
+              onChange={(e) => setDiscountId(Number(e.target.value))}
+            />
+            <Button onClick={handleDiscountApply}>Áp dụng</Button>
+          </div>
+        </section>
+
         {/* Payment Section */}
         <section className='bg-white border border-gray-200 rounded-lg shadow-sm py-2 px-16 mt-4'>
-          <h2 className='text-xl text-center font-semibold'>Thanh toán</h2>
+          <h2 className='text-xl py-2 text-center font-semibold'>Thanh toán</h2>
+          <p className='text-xl'>Tổng cộng: <strong className='text-cyan-600'>{totalAmount.toLocaleString('vi-vn')} VNĐ</strong></p>
           <div className='w-full flex my-6'>
-          <Button className='w-full' onClick={handlePayment} disabled={isSubmitting}>
-            {isSubmitting ? 'Processing Payment...' : 'Thanh toán bằng VNPay'}
-          </Button>
+            <Button className='w-full' onClick={handlePayment} disabled={isSubmitting}>
+              {isSubmitting ? 'Processing Payment...' : 'Thanh toán bằng VNPay'}
+            </Button>
           </div>
         </section>
       </div>

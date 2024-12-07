@@ -40,3 +40,10 @@ export const createPayment = async (data: any): Promise<any> => {
     return response.data;
   });
 }
+
+export const getDiscountById = async (id: number): Promise<any> => {
+  return apiRequest(async () => {
+    const response = await apiClient.get<any>(`/discounts/${id}`);
+    return response.data;
+  });
+}
