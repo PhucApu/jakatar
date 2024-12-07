@@ -65,57 +65,72 @@ export default function SignUp() {
   };
 
   return (
-    <section className='bg-gray-50'>
-      <div className='flex flex-col items-center justify-center px-6 py-8 mx-auto'>
-        <div className='w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0'>
-          <div className='p-6 space-y-4 md:space-y-6 sm:p-8'>
-            <h1 className='text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl'>
+    <section className="bg-gray-50">
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto">
+        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
+          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
               Đăng ký
             </h1>
-            <form className='space-y-4 md:space-y-6' onSubmit={handleSubmit}>
-              {error && <Alert color='failure'>{error}</Alert>}
+            <form className="space-y-4 md:space-y-6" action="#">
               <div>
                 <label
-                  htmlFor='fullName'
-                  className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
-                >
-                  Họ và tên
-                </label>
-                <input
-                  type='text'
-                  name='fullName'
-                  id='fullName'
-                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
-                  placeholder='Nhập họ và tên'
-                  value={signUpForm.fullName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor='phoneNumber'
-                  className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
-                >
-                  Số điện thoại
-                </label>
-                <input
-                  type='tel'
-                  name='phoneNumber'
-                  id='phoneNumber'
-                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
-                  placeholder='Nhập SĐT'
-                  value={signUpForm.phoneNumber}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor='username'
-                  className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                  htmlFor="username"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Tên tài khoản
+                </label>
+                <input
+                  name="username"
+                  value={formData.username || ''}
+                  onChange={handleChange}
+                  placeholder="Nhập tên tài khoản"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5 "
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="pass"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Mật khẩu
+                </label>
+                <input
+                  type="password"
+                  name="pass"
+                  id="pass"
+                  placeholder="••••••••"
+                  value={formData.pass || ''}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="repeatPass"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Nhập lại Mật khẩu
+                </label>
+                <input
+                  type="password"
+                  name="repeatPass"
+                  id="repeatPass"
+                  placeholder="••••••••"
+                  value={repeatPass}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="fullName"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Họ và tên
                 </label>
                 <input
                   type='text'
@@ -137,19 +152,22 @@ export default function SignUp() {
                   Email
                 </label>
                 <input
-                  type='email'
-                  name='email'
-                  id='email'
-                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
-                  placeholder='Nhập email'
-                  value={signUpForm.email}
-                  onChange={handleInputChange}
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="nhập email"
+                  value={formData.email || ''}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
                   required
                 />
               </div>
               <div>
-                <label htmlFor='pass' className='block mb-2 text-sm font-medium text-gray-900'>
-                  Mật khẩu
+                <label
+                  htmlFor="phoneNumber"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Số điện thoại
                 </label>
                 <input
                   type='password'
@@ -187,9 +205,12 @@ export default function SignUp() {
               >
                 Đăng ký
               </button>
-              <p className='text-sm font-light text-gray-500'>
-                Đã có tài khoản?{' '}
-                <a href='/dang-nhap' className='font-medium text-teal-600 hover:underline'>
+              <p className="text-sm font-light text-gray-500 ">
+                Đã có tài khoản?{" "}
+                <a
+                  href="/dang-nhap"
+                  className="font-medium text-teal-600 hover:underline "
+                >
                   Đăng nhập
                 </a>
               </p>
