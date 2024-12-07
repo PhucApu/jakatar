@@ -12,7 +12,8 @@ interface TripInfoProps {
     departurnDate: string;
     tripTime: string;
     price: number;
-    availableSeats: number;
+    busId: number;
+    scheduleId: number;
   };
 }
 
@@ -40,15 +41,23 @@ export default function TripInfo({ trip }: TripInfoProps) {
           <Timeline.Item>
             <Timeline.Point icon={FaClock} />
             <Timeline.Content>
-              <Timeline.Time className='text-black text-xl font-light'>{formatTime(trip.departurnTime)}</Timeline.Time>
-              <Timeline.Title className='font-semibold'>{trip.departureLocation}</Timeline.Title>
+              <Timeline.Time className='text-black text-xl font-light'>
+                {formatTime(trip.departurnTime)}
+              </Timeline.Time>
+              <Timeline.Title className='font-semibold'>
+                {trip.departureLocation}
+              </Timeline.Title>
             </Timeline.Content>
           </Timeline.Item>
           <Timeline.Item>
             <Timeline.Point icon={GiPositionMarker} />
             <Timeline.Content>
-              <Timeline.Time className='text-black text-xl font-light'>{formatTime(trip.destinationTime)}</Timeline.Time>
-              <Timeline.Title className='font-semibold'>{trip.destinationLocation}</Timeline.Title>
+              <Timeline.Time className='text-black text-xl font-light'>
+                {formatTime(trip.destinationTime)}
+              </Timeline.Time>
+              <Timeline.Title className='font-semibold'>
+                {trip.destinationLocation}
+              </Timeline.Title>
             </Timeline.Content>
           </Timeline.Item>
         </Timeline>
@@ -62,12 +71,23 @@ export default function TripInfo({ trip }: TripInfoProps) {
             <p>40 chỗ</p>
           </div>
         </div>
-        <Badge color='success' className='text-lg'>{formatDate(trip.departurnDate)}</Badge>
+        <Badge color='success' className='text-lg'>
+          {formatDate(trip.departurnDate)}
+        </Badge>
       </div>
-      <HR className='my-3'/>
+      <HR className='my-3' />
       <div className='flex items-center justify-between px-10'>
         <p className='text-cyan-600 font-bold text-xl'>{trip.price.toLocaleString()}đ</p>
-        <Button size='lg' onClick={() => navigate('/dat-ve')}>Đặt vé</Button>
+        <Button
+          size='lg'
+          onClick={() =>
+            navigate(
+              `/dat-ve?busId=${trip.busId}&scheduleId=${trip.scheduleId}&departure=${trip.departureLocation}&destination=${trip.destinationLocation}&price=${trip.price}&date=${trip.departurnDate}&time=${trip.departurnTime}`
+            )
+          }
+        >
+          Đặt vé
+        </Button>
       </div>
     </div>
   );

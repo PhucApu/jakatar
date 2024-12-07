@@ -22,3 +22,21 @@ export const searchBuses = async (departure: string, destination: string): Promi
     return response.data || [];
   });
 };
+
+export const getSeatList = async (data: any): Promise<any> => {
+  return apiRequest(async () => {
+    const response = await apiClient.get<any>(`/buses/list_empty_seat?departureDate=${data.departureDate}&scheduleId=${data.scheduleId}`);
+    return response.data || [];
+  });
+}
+
+export const createPayment = async (data: any): Promise<any> => {
+  return apiRequest(async () => {
+    const response = await apiClient.post<any>('/create_payment?', null, {
+      params: {
+        ...data
+      }
+    });
+    return response.data;
+  });
+}
