@@ -8,6 +8,7 @@ import AdminSidebar from '../components/admin/AdminSidebar';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import Trip from '../pages/admin/Trip';
 import TripRoute from '../pages/admin/TripRoute';
+import BusRouteSchedule  from '../pages/admin/BusRouteSchedule';
 import Bus from '../pages/admin/Bus';
 import Driver from '../pages/admin/Driver';
 import Ticket from '../pages/admin/Ticket';
@@ -42,6 +43,7 @@ export default function AdminRoute() {
           <Routes>
             <Route path='/' element={<AdminDashboard />} />
             <Route path='/chuyen-di' element={<Trip />} />
+            <Route path='/phan-cong-xe-tuyen' element={<BusRouteSchedule />} />
             <Route path='/tuyen-xe' element={<TripRoute />} />
             <Route path='/khach-hang' element={<Account />} />
             <Route path='/xe' element={<Bus />} />

@@ -12,11 +12,14 @@ import type { Ticket } from '@type/model/Ticket';
 // Import các API cần thiết
 import { getTickets, createTicket, updateTicket, deleteTicket } from '../../api/services/admin/ticketService';
 import { getAccounts } from '../../api/services/admin/accountService';
-import { getBuses } from '../../api/services/admin/busService';
-import { getBusRoutes } from '../../api/services/admin/busRouteService';
+import { getBusRouteSchedules} from '../../api/services/admin/BusRouteScheduleService';
+// import { getBuses } from '../../api/services/admin/busService';
+// import { getBusRoutes } from '../../api/services/admin/busRouteService';
 import { getPayments } from '../../api/services/admin/paymentService';
 import { getDiscounts } from '../../api/services/admin/discountService';
 import { formatDate } from '../../utils/dateFormat';
+import * as XLSX from "xlsx";
+import { BiExport } from 'react-icons/bi';
 
 export default function Ticket() {
   const [data, setData] = useState<Ticket[]>([]);
@@ -28,23 +31,25 @@ export default function Ticket() {
   const [formData, setFormData] = useState<Partial<Ticket>>({});
 
   // State cho các dropdown liên quan
-  // trạng thái danh sách busRouterID
-  const [busRouter, setBusRouter] = useState<{ routesId: number }[]>([]);
-  // trạng thái danh sách busID
-  const [bus, setBus] = useState<{ busId: number }[]>([]);
+  // // trạng thái danh sách busRouterID
+  // const [busRouter, setBusRouter] = useState<{ routesId: number }[]>([]);
+  // // trạng thái danh sách busID
+  // const [bus, setBus] = useState<{ busId: number }[]>([]);
   // trạng thái danh sách tài khoản
   const [accounts, setAccounts] = useState<{ userName: string }[]>([]);
   // trạng thái danh sách tài khoản
   const [payments, setPayments] = useState<{ paymentId: number }[]>([]);
   // trạng thái danh sách discounts
   const [discounts, setDiscounts] = useState<{ discountId?: number }[]>([]);
+  // trạng thái danh sách bus Route Schedule
+  const [busRouteSchedule, setBusRouteSchedule] = useState<{ scheduleId: number }[]>([]);
 
   // Cấu trúc cột bảng ticket
   const columns: TableColumn<Ticket>[] = [
     { name: 'ID Vé', selector: (row) => row.ticketId, sortable: true },
     { name: 'ID Tài khoản', selector: (row) => row.accountEnity_Id, sortable: true },
-    { name: 'ID Xe buýt', selector: (row) => row.busEntity_Id, sortable: true },
-    { name: 'ID Tuyến', selector: (row) => row.busRoutesEntity_Id, sortable: true },
+    { name: 'ID Xe - tuyến xe', selector: (row) => row.busRouteSchedule_Id, sortable: true },
+    // { name: 'ID Tuyến', selector: (row) => row.busRoutesEntity_Id, sortable: true },
     { name: 'Số ghế', selector: (row) => row.seatNumber, sortable: true },
     { name: 'Ngày khởi hành', selector: (row) => formatDate(row.departureDate) , sortable: true },
     { name: 'Số điện thoại', selector: (row) => row.phoneNumber, sortable: true },
@@ -73,14 +78,15 @@ export default function Ticket() {
   const fetchRelatedData = async () => {
     try {
       const accountData = await getAccounts();
-      const busData = await getBuses();
-      const routeData = await getBusRoutes();
+      // const busData = await getBuses();
+      // const routeData = await getBusRoutes();
+      const busRouteSchedules = await getBusRouteSchedules();
       const paymentData = await getPayments();
       const discountData = await getDiscounts();
-
       setAccounts(accountData);
-      setBus(busData);
-      setBusRouter(routeData);
+      // setBus(busData);
+      console.log(">>>>", busRouteSchedules)
+      setBusRouteSchedule(busRouteSchedules);
       setPayments(paymentData);
       setDiscounts(discountData);
     } catch (error: any) {
@@ -103,8 +109,8 @@ export default function Ticket() {
       setFormData({
         ticketId: 0,
         accountEnity_Id: '',
-        busEntity_Id: 0,
-        busRoutesEntity_Id: 0,
+        busRouteSchedule_Id: 0,
+        // busRoutesEntity_Id: 0,
         paymentEntity_Id: 0,
         discountEntity_Id: null,
         seatNumber: '',
@@ -128,15 +134,15 @@ export default function Ticket() {
       return false;
     }
   
-    if (!formData.busEntity_Id || formData.busEntity_Id <= 0) {
-      toast.error("ID xe buýt không được để trống", { autoClose: 800 });
+    if (!formData.busRouteSchedule_Id || formData.busRouteSchedule_Id <= 0) {
+      toast.error("ID Xe - tuyến xe không được để trống", { autoClose: 800 });
       return false;
     }
   
-    if (!formData.busRoutesEntity_Id || formData.busRoutesEntity_Id <= 0) {
-      toast.error("ID tuyến xe không được để trống", { autoClose: 800 });
-      return false;
-    }
+    // if (!formData.busRoutesEntity_Id || formData.busRoutesEntity_Id <= 0) {
+    //   toast.error("ID tuyến xe không được để trống", { autoClose: 800 });
+    //   return false;
+    // }
   
     if (!formData.paymentEntity_Id || formData.paymentEntity_Id <= 0) {
       toast.error("ID thanh toán không hợp lệ", { autoClose: 800 });
@@ -252,6 +258,14 @@ export default function Ticket() {
     }));
   };
 
+  const HandleExport = () => {
+    // console.log("export",data)
+    var wb = XLSX.utils.book_new(),
+    ws = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, ws, "SheetTicket")
+    XLSX.writeFile(wb, "ListTicket.xlsx")
+  }
+
   if (loading) return <div><Spinner aria-label="Default status example" /></div>;
   if (error) return toast.error(error, { autoClose: 800 });
   
@@ -259,10 +273,16 @@ export default function Ticket() {
   return (
     <div className='p-4 mx-auto'>
       <h1 className='uppercase font-semibold text-2xl tracking-wide mb-4'>Quản lý vé</h1>
-      <Button onClick={() => handleOpenModal()} size='sm'>
-        <HiPlus className='mr-2 h-5 w-5' />
+      <div className="flex justify-between">
+      <Button onClick={() => handleOpenModal()} size="sm">
+        <HiPlus className="mr-2 h-5 w-5" />
         Thêm vé
       </Button>
+      <Button onClick={HandleExport} size="sm">
+        <BiExport className="mr-2 h-5 w-5" />
+        Xuất dữ liệu
+      </Button>
+      </div>
       <Table rows={data} columns={columns} onEdit={handleOpenModal} onDelete={(row) => handleDelete(row.ticketId)}/>
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>{isEditMode ? 'Cập nhật' : 'Thêm vé'}</Modal.Header>
@@ -284,22 +304,22 @@ export default function Ticket() {
               </select>
             </div>
             <div className='space-y-2 flex flex-col'>
-              <label htmlFor='busEntity_Id'>ID Xe buýt</label>
+              <label htmlFor='busRouteSchedule_Id'>ID Xe - tuyến xe buýt</label>
               <select id="" className="rounded-lg border-gray-200 bg-gray-50" 
-                name='busEntity_Id'
-                value={formData.busEntity_Id || ''}
+                name='busRouteSchedule_Id'
+                value={formData.busRouteSchedule_Id || ''}
                 onChange={handleChange}
                 // disabled={isEditMode}
                >
-                <option value="" disabled className=''>Chọn ID vé xe bus</option>
-                {bus.map((buses) => (
-                  <option key={buses.busId} value={buses.busId}>
-                    {buses.busId}
+                <option value="" disabled className=''>Chọn ID xe - tuyến</option>
+                {busRouteSchedule.map((schedule) => (
+                  <option key={schedule.scheduleId} value={schedule.scheduleId}>
+                    {schedule.scheduleId}
                   </option>
                 ))}
               </select>
             </div>
-            <div className='space-y-2 flex flex-col'>
+            {/* <div className='space-y-2 flex flex-col'>
               <label htmlFor='busRoutesEntity_Id'>ID Tuyến</label>
               <select id="" className="rounded-lg border-gray-200 bg-gray-50" 
                 name='busRoutesEntity_Id'
@@ -314,7 +334,7 @@ export default function Ticket() {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
             <div className='space-y-2'>
               <label htmlFor='seatNumber'>Số ghế</label>
               <TextInput

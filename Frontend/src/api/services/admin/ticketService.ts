@@ -50,16 +50,16 @@ export const hideTicket = async (ticketId: number): Promise<Ticket> => {
 // lấy ticket theo ticketId và userName
 export const getTicketByIdAndUserName = async (
   ticketId: number,
-  userName: string
+  username: string
 ): Promise<Ticket> => {
   return apiRequest(async () => {
     const response = await apiClient.get<ApiResponse<Ticket>>('/tickets/ticket_by_ticketId_username', {
       params: {
         ticketId,
-        userName,
+        username,
       },
     });
-    console.log(">>DATA1:",response.data.data);
+    console.log(">>DATA110000:",response.data.data);
     // return response.data.data!;
     return response.data.data || {};
   });
@@ -78,8 +78,31 @@ export const getListTicketDateAToDateB = async (
         dateB,
       },
     });
-    console.log(">>DATA2:",response.data.data);
+    // console.log(">>DATA2:",response.data.data);
+    // // return response.data.data!;
+    // console.log(">>DATA3:",response.data.data)
+    return response.data.data || {};
+  });
+};
+
+
+// lấy danh sách ticket theo dateA đến dateB and UserName
+export const getListTicketDateAToDateBAndUser = async (
+  username: string,
+  dateA: string,
+  dateB: string
+): Promise<Ticket> => {
+  return apiRequest(async () => {
+    const response = await apiClient.get<ApiResponse<Ticket>>('/tickets/ticket_by_date_username', {
+      params: {
+        username,
+        dateA,
+        dateB,
+      },
+    });
+    // console.log(">>DATA10:",response.data.data);
     // return response.data.data!;
+    
     return response.data.data || {};
   });
 };

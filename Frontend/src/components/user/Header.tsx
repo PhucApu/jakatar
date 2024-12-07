@@ -85,13 +85,13 @@ export default function Header() {
                         <FaHistory className='mr-2 text-[#74C0FC]' />
                         Lịch sử mua vé
                       </a>
-                      <a
+                      {/* <a
                         href='/thong-tin/dia-chi'
                         className='flex items-center p-2 hover:bg-gray-100'
                       >
                         <FaMapMarkerAlt className='mr-2 text-[#63E6BE]' />
                         Địa chỉ của bạn
-                      </a>
+                      </a> */}
                       <a
                         href='/thong-tin/dat-lai-mat-khau'
                         className='flex items-center p-2 hover:bg-gray-100'

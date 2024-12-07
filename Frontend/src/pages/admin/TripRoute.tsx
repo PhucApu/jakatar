@@ -25,6 +25,7 @@ export default function BusRoute() {
     { name: 'Điểm khởi hành', selector: (row) => row.departureLocation, sortable: true },
     { name: 'Điểm đến', selector: (row) => row.destinationLocation, sortable: true },
     { name: 'Khoảng cách (km)', selector: (row) => row.distanceKilometer, sortable: true },
+    { name: 'Thời gian chuyến đi', selector: (row) => row.tripTime, sortable: true },
     { name: 'Giá vé', selector: (row) => row.price.toLocaleString('vi-VN') + 'đ', sortable: true },
     { name: 'Tình trạng', selector: (row) => (row.isDelete ? 'Không hiển thị' : 'Hiển thị'), sortable: true },
   ];
@@ -70,11 +71,11 @@ export default function BusRoute() {
         departureLocation: '',
         destinationLocation: '',
         distanceKilometer: 0,
-        departureTime: '',
-        arivalTime: '',
+        tripTime: '',
+        // arivalTime: '',
         price: 0,
         isDelete: false,
-        listtBusEntities_Id: []
+        listBusRouteSchedules_Id: []
       });
     }
     setOpenModal(true);
@@ -97,19 +98,19 @@ export default function BusRoute() {
       toast.error('Khoảng cách phải lớn hơn hoặc bằng 1 km', { autoClose: 800 });
       return false;
     }
-    if (!formData.departureTime) {
-      toast.error('Thời gian khởi hành không được để trống', { autoClose: 800 });
+    if (!formData.tripTime) {
+      toast.error('Thời gian chuyến đi không được để trống', { autoClose: 800 });
       return false;
     }
-    if (!formData.arivalTime) {
-      toast.error('Thời gian đến không được để trống', { autoClose: 800 });
-      return false;
-    }
+    // if (!formData.arivalTime) {
+    //   toast.error('Thời gian đến không được để trống', { autoClose: 800 });
+    //   return false;
+    // }
     
-    if (new Date(formData.departureTime) >= new Date(formData.arivalTime)) {
-      toast.error('Thời gian khởi hành phải trước thời gian đến', { autoClose: 800 });
-      return false;
-    }
+    // if (new Date(formData.departureTime) >= new Date(formData.arivalTime)) {
+    //   toast.error('Thời gian khởi hành phải trước thời gian đến', { autoClose: 800 });
+    //   return false;
+    // }
     if (formData.price === undefined || formData.price < 0) {
       toast.error('Giá vé phải lớn hơn hoặc bằng 0', { autoClose: 800 });
       return false;
@@ -263,17 +264,17 @@ export default function BusRoute() {
               />
             </div>
             <div>
-              <label htmlFor='departureTime'>Thời gian khởi hành</label>
+              <label htmlFor='tripTime'>Thời gian chuyến đi</label>
               <TextInput
-                name='departureTime'
-                type='datetime-local'
-                value={formData.departureTime || ''}
-                onChange={(e) => setFormData((prev) => ({ ...prev, departureTime: e.target.value }))}
-                placeholder='Nhập thời gian đi'
+                name='tripTime'
+                type='time'
+                value={formData.tripTime || ''}
+                onChange={(e) => setFormData((prev) => ({ ...prev, tripTime: e.target.value }))}
+                placeholder='Nhập thời gian của chuyến đi'
               />
               
             </div>
-            <div>
+            {/* <div>
               <label htmlFor='arivalTime'>Thời gian đến</label>
               <TextInput
                 name='arivalTime'
@@ -282,7 +283,7 @@ export default function BusRoute() {
                 onChange={(e) => setFormData((prev) => ({ ...prev, arivalTime: e.target.value }))}
                 placeholder='Nhập thời gian đến'
               />
-            </div>
+            </div> */}
             <div>
               <label htmlFor='price'>Giá vé</label>
               <TextInput

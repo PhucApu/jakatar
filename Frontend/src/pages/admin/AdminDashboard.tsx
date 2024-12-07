@@ -23,7 +23,7 @@ const AdminDashboard = () => {
     try {
       const data = await getStatisticsTickets(dateA, dateB);
       setTicketStats(data);
-      console.log("Thống kê vé:", data);
+      console.log("Thống kê vé:", data);  
     } catch (error: any) {
       console.error("Lỗi lấy thống kê vé:", error);
       toast.error("Có lỗi xảy ra khi lấy dữ liệu thống kê vé.", { autoClose: 800 });
@@ -38,9 +38,12 @@ const AdminDashboard = () => {
       toast.error("Vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc!", { autoClose: 800 });
       return;
     }
+      // Thêm T00:00:00 vào ngày
+    const formattedDateA = `${dateA}T00:00:00`;
+    const formattedDateB = `${dateB}T00:00:00`;
     setLoading(true);
     try {
-      const data = await getStatisticsPenaltyTickets(dateA, dateB);
+      const data = await getStatisticsPenaltyTickets(formattedDateA, formattedDateB);
       setPenaltyStats(data);
       console.log("Thống kê vé phạt:", data);
     } catch (error) {
@@ -93,7 +96,7 @@ const AdminDashboard = () => {
         <div className="space-y-2">
           <label htmlFor="dateA" className="block">Ngày bắt đầu</label>
           <input
-            type="datetime-local"
+            type="date"
             id="dateA"
             value={dateA}
             onChange={(e) => setDateA(e.target.value)}
@@ -103,7 +106,7 @@ const AdminDashboard = () => {
         <div className="space-y-2">
           <label htmlFor="dateB" className="block">Ngày kết thúc</label>
           <input
-            type="datetime-local"
+            type="date"
             id="dateB"
             value={dateB}
             onChange={(e) => setDateB(e.target.value)}
@@ -134,10 +137,11 @@ const AdminDashboard = () => {
         {ticketStats && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold">Kết quả thống kê vé</h2>
-            <p><strong>Tổng vé:</strong> {checkEmtyTotal(ticketStats.size)}</p>
+            <p><strong>Tổng vé:</strong> {checkEmtyTotal(ticketStats.numberTicketSuccess + ticketStats.numberTicketPending + ticketStats.numberTicketFailure)}</p>
             <p><strong>Doanh thu thành công:</strong> {checkEmpty(ticketStats.sumMoneyTicketSuccess)} </p>
-            <p><strong>Số vé thành công:</strong> {checkEmpty(ticketStats.numberTicketSuccess)}</p>
-            <p><strong>Số vé đang xử lý:</strong> {checkEmpty(ticketStats.numberTicketPending)}</p>
+            <p><strong>Số vé thành công:</strong> {checkEmtyTotal(ticketStats.numberTicketSuccess)}</p>
+            <p><strong>Số vé đang xử lý:</strong> {checkEmtyTotal(ticketStats.numberTicketPending)}</p>
+            <p><strong>Số vé tạo thất bại:</strong> {checkEmtyTotal(ticketStats.numberTicketFailure)}</p>
           </div>
         )}
 

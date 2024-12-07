@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import { registerUser } from "../../api/services/admin/accountService";
 import { useState, ChangeEvent } from 'react';
@@ -10,6 +11,8 @@ interface User{
   fullName: string,
   phoneNumber: string
 }
+=======
+>>>>>>> DungQuan8
 export default function SignUp() {
   
   const [formData, setFormData] = useState<Partial<User>>({});
@@ -119,16 +122,25 @@ export default function SignUp() {
                   Tên tài khoản
                 </label>
                 <input
+<<<<<<< HEAD
                   name="username"
                   value={formData.username || ''}
                   onChange={handleChange}
                   placeholder="Nhập tên tài khoản"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5 "
+=======
+                  type="text"
+                  name="username"
+                  id="username"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5 "
+                  placeholder="Nhập tên tài khoản"
+>>>>>>> DungQuan8
                   required
                 />
               </div>
               <div>
                 <label
+<<<<<<< HEAD
                   htmlFor="pass"
                   className="block mb-2 text-sm font-medium text-gray-900 "
                 >
@@ -184,11 +196,15 @@ export default function SignUp() {
               <div>
                 <label
                   htmlFor="email"
+=======
+                  htmlFor="password"
+>>>>>>> DungQuan8
                   className="block mb-2 text-sm font-medium text-gray-900 "
                 >
                   Email
                 </label>
                 <input
+<<<<<<< HEAD
                   type="email"
                   name="email"
                   id="email"
@@ -196,10 +212,20 @@ export default function SignUp() {
                   value={formData.email || ''}
                   onChange={handleChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+=======
+                  type='email'
+                  name='email'
+                  id='email'
+                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
+                  placeholder='Nhập email'
+                  value={signUpForm.email}
+                  onChange={handleInputChange}
+>>>>>>> DungQuan8
                   required
                 />
               </div>
               <div>
+<<<<<<< HEAD
                 <label
                   htmlFor="phoneNumber"
                   className="block mb-2 text-sm font-medium text-gray-900 "
@@ -213,12 +239,26 @@ export default function SignUp() {
                   placeholder="nhập số điện thoại"
                   value={formData.phoneNumber || ''}
                   onChange={handleChange}
+=======
+                <label htmlFor='pass' className='block mb-2 text-sm font-medium text-gray-900'>
+                  Mật khẩu
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="••••••••"
+>>>>>>> DungQuan8
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
                   required
                 />
               </div>
               <button
+<<<<<<< HEAD
                 onClick={handleSave}
+=======
+                type="submit"
+>>>>>>> DungQuan8
                 className="w-full text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Đăng ký

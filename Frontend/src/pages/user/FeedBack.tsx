@@ -3,7 +3,9 @@ import { FaStar } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Feedback } from "@type/model/Feedback";
-import { createFeedback } from "../../api/services/admin/feedbackService";
+import { createFeedback, sendToEmailFeedback } from "../../api/services/admin/feedbackService";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 export default function FeedBack() {
   const [rating, setRating] = useState(0);
@@ -17,7 +19,11 @@ export default function FeedBack() {
   
 
   // Giả sử lấy username từ thông tin đăng nhập
-  const username = "phuc"; // Thay bằng cách lấy giá trị từ auth state/context.
+  // Thay bằng cách lấy giá trị từ auth state/context.
+  const username = useSelector((state: RootState) => state.user.currentUser?.userName);
+  const email_online = useSelector((state: RootState) => state.user.currentUser?.email);
+  const email_default = email_online || 'default@example.com';
+  console.log(">>>email",email_default);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -37,6 +43,10 @@ export default function FeedBack() {
 
   const handleSubmit = async () => {
     // Kiểm tra điều kiện các trường bắt buộc không được để trống
+    // if (username === null || username === undefined) {
+    //   toast.error("Bạn chưa đăng nhập, Vui lòng đăng nhập!",{autoClose:1000});
+    //   return;
+    // }
     if (!formData.ticketEntity_Id || !formData.content || !rating) {
       toast.error("Vui lòng nhập đầy đủ thông tin form feedback!",{autoClose:1000});
       return;
@@ -61,15 +71,28 @@ export default function FeedBack() {
     } as Feedback;
 
 
+    // const toMailsend = await sendToEmailFeedback(email_online,'Feedback','Chúng tôi sẽ phản hồi lại đánh giá của bạn trong thời gian sớm nhất. AnhBa Bus xin chân thành cảm ơn!!!')
+    // console.log(">>send to mail: ",toMailsend);
+
+
     try {
+
+      const toMailSend = await sendToEmailFeedback(
+        email_default,
+        "Feedback",
+        "Chúng tôi sẽ phản hồi lại đánh giá của bạn trong thời gian sớm nhất. AnhBa Bus xin chân thành cảm ơn!!!"
+      );
+      console.log(">> send to mail: ", toMailSend);
+      console.log(">>>email trc khi gui",email_default);
+  
       setLoading(true);
-      const response = await createFeedback(feedbackData);
+      await createFeedback(feedbackData);
       toast.success("Gửi đánh giá thành công!",{autoClose: 800});
       setFormData({ ticketEntity_Id: 0, content: "", rating: 0, isDelete: false });
       setRating(0);
     } catch (error) {
       console.error(error);
-      toast.error("Mã vé không tồn tại, vui lòng thử lại!",{autoClose:800});
+      toast.error("Mã vé không tồn tại hoặc bạn chưa đăng nhập, xin vui lòng thử lại!",{autoClose:900});
     } finally {
       setLoading(false);
     }

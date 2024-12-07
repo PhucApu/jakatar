@@ -24,7 +24,7 @@ export const getStatisticsTickets = async (
     });
     console.log(">>DATA1:",response.data.message);
     // return response.data.data!;
-    return response.data.message || {};
+    return response.data.data || {};
   });
 };
 
