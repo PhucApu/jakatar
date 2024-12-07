@@ -1,20 +1,15 @@
-<<<<<<< HEAD
-
-import { registerUser } from "../../api/services/admin/accountService";
+import { registerUser } from '../../api/services/admin/accountService';
 import { useState, ChangeEvent } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css";
-interface User{
-  username: string,
-  pass: string,
-  email: string,
-  fullName: string,
-  phoneNumber: string
+import 'react-toastify/dist/ReactToastify.css';
+interface User {
+  username: string;
+  pass: string;
+  email: string;
+  fullName: string;
+  phoneNumber: string;
 }
-=======
->>>>>>> DungQuan8
 export default function SignUp() {
-  
   const [formData, setFormData] = useState<Partial<User>>({});
   const [repeatPass, setRepeatPass] = useState<string>(''); // State for repeat password
 
@@ -29,24 +24,28 @@ export default function SignUp() {
       toast.error('Tên tài khoản phải từ 5 đến 20 ký tự', { autoClose: 800 });
       return false;
     }
-  
+
     // Kiểm tra passWord
     if (!formData.pass || formData.pass.trim() === '') {
       toast.error('Mật khẩu không được để trống', { autoClose: 800 });
       return false;
     }
-    const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]{5,}$/;
-    if ((!passwordRegex.test(formData.pass))) {
-      toast.error('Mật khẩu phải có ít nhất 5 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt', { autoClose: 800 });
+    const passwordRegex =
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]{5,}$/;
+    if (!passwordRegex.test(formData.pass)) {
+      toast.error(
+        'Mật khẩu phải có ít nhất 5 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt',
+        { autoClose: 800 }
+      );
       return false;
     }
 
-     // Check repeatPass matches passWord
-     if (formData.pass !== repeatPass) {
+    // Check repeatPass matches passWord
+    if (formData.pass !== repeatPass) {
       toast.error('Mật khẩu và mật khẩu xác nhận không khớp', { autoClose: 800 });
       return false;
     }
-  
+
     // Kiểm tra email
     if (!formData.email || formData.email.trim() === '') {
       toast.error('Email không được để trống', { autoClose: 800 });
@@ -57,13 +56,13 @@ export default function SignUp() {
       toast.error('Email phải là địa chỉ Gmail hoặc Outlook hợp lệ', { autoClose: 800 });
       return false;
     }
-  
+
     // Kiểm tra fullName
     if (!formData.fullName || formData.fullName.trim() === '') {
       toast.error('Họ và tên không được để trống', { autoClose: 800 });
       return false;
     }
-  
+
     // Kiểm tra phoneNumber
     if (!formData.phoneNumber || formData.phoneNumber.trim() === '') {
       toast.error('Số điện thoại không được để trống', { autoClose: 800 });
@@ -71,26 +70,31 @@ export default function SignUp() {
     }
     const phoneNumberRegex = /^(03|05|07|08|09)[0-9]{8}$/;
     if (!phoneNumberRegex.test(formData.phoneNumber)) {
-      toast.error('Số điện thoại không hợp lệ (VD: 03xxxxxxxx, 09xxxxxxxx)', { autoClose: 800 });
+      toast.error('Số điện thoại không hợp lệ (VD: 03xxxxxxxx, 09xxxxxxxx)', {
+        autoClose: 800,
+      });
       return false;
     }
-  
+
     return true; // Nếu tất cả kiểm tra đều hợp lệ
   };
 
-
-
   const handleSave = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if(!validDataCheck()) return;
-    
-    await registerUser(formData.username, formData.pass, formData.email, formData.fullName, formData.phoneNumber);
+    if (!validDataCheck()) return;
+
+    await registerUser(
+      formData.username,
+      formData.pass,
+      formData.email,
+      formData.fullName,
+      formData.phoneNumber
+    );
     console.log('Dữ liệu trước khi gửi:', formData);
     toast.success('Thêm tài khoản thành công.', { autoClose: 800 });
-     // Đặt lại form data và repeatPass về rỗng
-     setFormData({});
-     setRepeatPass('');
-
+    // Đặt lại form data và repeatPass về rỗng
+    setFormData({});
+    setRepeatPass('');
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -106,169 +110,126 @@ export default function SignUp() {
   };
 
   return (
-    <section className="bg-gray-50">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto">
-        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+    <section className='bg-gray-50'>
+      <div className='flex flex-col items-center justify-center px-6 py-8 mx-auto'>
+        <div className='w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0'>
+          <div className='p-6 space-y-4 md:space-y-6 sm:p-8'>
+            <h1 className='text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl'>
               Đăng ký
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form className='space-y-4 md:space-y-6' action='#'>
               <div>
                 <label
-                  htmlFor="username"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  htmlFor='username'
+                  className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                 >
                   Tên tài khoản
                 </label>
                 <input
-<<<<<<< HEAD
-                  name="username"
+                  name='username'
                   value={formData.username || ''}
                   onChange={handleChange}
-                  placeholder="Nhập tên tài khoản"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5 "
-=======
-                  type="text"
-                  name="username"
-                  id="username"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5 "
-                  placeholder="Nhập tên tài khoản"
->>>>>>> DungQuan8
+                  placeholder='Nhập tên tài khoản'
+                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5 '
                   required
                 />
               </div>
               <div>
-                <label
-<<<<<<< HEAD
-                  htmlFor="pass"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
+                <label htmlFor='pass' className='block mb-2 text-sm font-medium text-gray-900 '>
                   Mật khẩu
                 </label>
                 <input
-                  type="password"
-                  name="pass"
-                  id="pass"
-                  placeholder="••••••••"
+                  type='password'
+                  name='pass'
+                  id='pass'
+                  placeholder='••••••••'
                   value={formData.pass || ''}
                   onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
                   required
                 />
               </div>
               <div>
                 <label
-                  htmlFor="repeatPass"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
+                  htmlFor='repeatPass'
+                  className='block mb-2 text-sm font-medium text-gray-900 '
                 >
                   Nhập lại Mật khẩu
                 </label>
                 <input
-                  type="password"
-                  name="repeatPass"
-                  id="repeatPass"
-                  placeholder="••••••••"
+                  type='password'
+                  name='repeatPass'
+                  id='repeatPass'
+                  placeholder='••••••••'
                   value={repeatPass}
                   onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
                   required
                 />
               </div>
               <div>
                 <label
-                  htmlFor="fullName"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
+                  htmlFor='fullName'
+                  className='block mb-2 text-sm font-medium text-gray-900 '
                 >
                   Họ và tên
                 </label>
                 <input
-                  type="name"
-                  name="fullName"
-                  id="fullName"
-                  placeholder="nhập họ và tên"
+                  type='name'
+                  name='fullName'
+                  id='fullName'
+                  placeholder='nhập họ và tên'
                   value={formData.fullName || ''}
                   onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
                   required
                 />
               </div>
               <div>
                 <label
-                  htmlFor="email"
-=======
-                  htmlFor="password"
->>>>>>> DungQuan8
-                  className="block mb-2 text-sm font-medium text-gray-900 "
+                  htmlFor='email'
+                  className='block mb-2 text-sm font-medium text-gray-900 '
                 >
                   Email
                 </label>
                 <input
-<<<<<<< HEAD
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="nhập email"
-                  value={formData.email || ''}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
-=======
                   type='email'
                   name='email'
                   id='email'
+                  placeholder='nhập email'
+                  value={formData.email || ''}
+                  onChange={handleChange}
                   className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
-                  placeholder='Nhập email'
-                  value={signUpForm.email}
-                  onChange={handleInputChange}
->>>>>>> DungQuan8
                   required
                 />
               </div>
               <div>
-<<<<<<< HEAD
                 <label
-                  htmlFor="phoneNumber"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
+                  htmlFor='phoneNumber'
+                  className='block mb-2 text-sm font-medium text-gray-900 '
                 >
                   Số điện thoại
                 </label>
                 <input
-                  type="number"
-                  name="phoneNumber"
-                  id="phoneNumber"
-                  placeholder="nhập số điện thoại"
+                  type='number'
+                  name='phoneNumber'
+                  id='phoneNumber'
+                  placeholder='nhập số điện thoại'
                   value={formData.phoneNumber || ''}
                   onChange={handleChange}
-=======
-                <label htmlFor='pass' className='block mb-2 text-sm font-medium text-gray-900'>
-                  Mật khẩu
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  placeholder="••••••••"
->>>>>>> DungQuan8
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
                   required
                 />
               </div>
               <button
-<<<<<<< HEAD
                 onClick={handleSave}
-=======
-                type="submit"
->>>>>>> DungQuan8
-                className="w-full text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className='w-full text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center'
               >
                 Đăng ký
               </button>
-              <p className="text-sm font-light text-gray-500 ">
-                Đã có tài khoản?{" "}
-                <a
-                  href="/dang-nhap"
-                  className="font-medium text-teal-600 hover:underline "
-                >
+              <p className='text-sm font-light text-gray-500 '>
+                Đã có tài khoản?{' '}
+                <a href='/dang-nhap' className='font-medium text-teal-600 hover:underline '>
                   Đăng nhập
                 </a>
               </p>
@@ -276,7 +237,7 @@ export default function SignUp() {
           </div>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </section>
   );
 }
