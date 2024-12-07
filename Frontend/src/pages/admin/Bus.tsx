@@ -9,9 +9,9 @@ import type { TableColumn } from '@type/common/TableColumn';
 import type { Bus } from '@type/model/Bus';
 
 import { getBuses, createBus, updateBus, deleteBus } from '../../api/services/admin/busService';
-import { getBusRoutes } from '../../api/services/admin/busRouteService';
-
-
+// import { getBusRoutes } from '../../api/services/admin/busRouteService';
+import * as XLSX from "xlsx";
+import { BiExport } from 'react-icons/bi';
 export default function Bus() {
   const [data, setData] = useState<Bus[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -22,12 +22,12 @@ export default function Bus() {
   const [formData, setFormData] = useState<Partial<Bus>>({});
 
   // trạng thái danh sách busRouterID
-  const [busRouter, setBusRouter] = useState<{ routesId: number }[]>([]);
+  // const [busRouter, setBusRouter] = useState<{ routesId: number }[]>([]);
 
   const columns: TableColumn<Bus>[] = [
     { name: 'Mã buýt', selector: (row) => row.busId, sortable: true },
     { name: 'Biển kiểm soát', selector: (row) => row.busNumber, sortable: true },
-    { name: 'Mã tuyến', selector: (row) => row.routesId, sortable: true },
+    // { name: 'Mã tuyến', selector: (row) => row.routesId, sortable: true },
     { name: 'Sức chứa', selector: (row) => row.capacity, sortable: true },
     { name: 'Hãng xe', selector: (row) => row.brand, sortable: true },
     {
@@ -37,22 +37,22 @@ export default function Bus() {
     },
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [busesData, busesRouterData] = await Promise.all([getBuses(), getBusRoutes()]);
-        setData(busesData);
-        setBusRouter(busesRouterData);
-      } catch (error: any) {
-        setError(error.message);
-        toast.error(error.message, { autoClose: 800 });
-      } finally {
-        setLoading(false);
-      }
-    }; 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const [busesData, busesRouterData] = await Promise.all([getBuses(), getBusRoutes()]);
+  //       setData(busesData);
+  //       // setBusRouter(busesRouterData);
+  //     } catch (error: any) {
+  //       setError(error.message);
+  //       toast.error(error.message, { autoClose: 800 });
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }; 
   
-    fetchData();
-  });
+  //   fetchData();
+  // });
 
   const fetchBuses = async () => {
     try {
@@ -65,17 +65,21 @@ export default function Bus() {
       setLoading(false);
     }
   };
-  const fetchBusRoutes = async () => {
-    try {
-      const busesRouterData = await getBusRoutes();
-      setBusRouter(busesRouterData);
-      console.log(">>> bus routes:GUi ", busesRouterData)
-    } catch (error: any) {
-      toast(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+  useEffect(() => {
+    fetchBuses();
+  },[])
+  // const fetchBusRoutes = async () => {
+  //   try {
+  //     const busesRouterData = await getBusRoutes();
+  //     setBusRouter(busesRouterData);
+  //     console.log(">>> bus routes:GUi ", busesRouterData)
+  //   } catch (error: any) {
+  //     toast(error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
 //   const getRouterId = routers.map((router) => (
 //     router.routesId
@@ -102,9 +106,9 @@ export default function Bus() {
         capacity: 0, 
         brand: '', 
         isDelete: false,  
-        routesId: null,
+        // routesId: null,
         listEmployeeEntities_Id: [],
-        listTicketEntities_Id: [],
+        listBusRouteSchedules_Id: [],
         listPenaltyTicketEntities_Id: []
       });
     }
@@ -169,13 +173,13 @@ export default function Bus() {
             item.busId === updatedBus.busId ? updatedBus : item
           )
         );
-        fetchBuses();
+        // fetchBuses();
         toast.success('Cập nhật buýt thành công', { autoClose: 800 });
       } else {
         const newBus = await createBus(formData as Bus);
         toast.success('Thêm buýt thành công', { autoClose: 800 });
         setData((prev) => [...prev, newBus]);
-        fetchBuses();
+        // fetchBuses();
       }
       setOpenModal(false);
     } catch (error: any) {
@@ -191,7 +195,7 @@ export default function Bus() {
       try {
         await deleteBus(id);
         setData((prev) => prev.filter((item) => item.busId !== id));
-        fetchBuses();
+        // fetchBuses();
         toast.success('Xóa buýt thành công', { autoClose: 800 });
       } catch (error: any) {
         toast.error(error.message || 'Lỗi khi xóa buýt', { autoClose: 800 });
@@ -205,13 +209,21 @@ export default function Bus() {
     const { name, value } = e.target;
     setFormData((prev) => ({
         ...prev,
-        [name]: name === 'capacity' || name === 'busId' || name === 'routesId'
+        [name]: name === 'capacity' || name === 'busId'
             ? Number(value)
             : name === 'isDelete'
             ? value === '1'
             : value,
     }));
 };
+
+const HandleExport = () => {
+  // console.log("export",data)
+  var wb = XLSX.utils.book_new(),
+  ws = XLSX.utils.json_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb, ws, "SheetBus")
+  XLSX.writeFile(wb, "ListBus.xlsx")
+}
 
   if (loading) return <div><Spinner aria-label="Default status example" /></div>;
   if (error) return toast.error(error, { autoClose: 800 });
@@ -221,10 +233,16 @@ export default function Bus() {
       <h1 className='uppercase font-semibold text-2xl tracking-wide mb-4'>
         Quản lý buýt
       </h1>
-      <Button onClick={() => handleOpenModal(null)} size='sm'>
-        <HiPlus className='mr-2 h-5 w-5' />
-        Thêm buýt
+      <div className="flex justify-between">
+      <Button onClick={() => handleOpenModal(null)} size="sm">
+        <HiPlus className="mr-2 h-5 w-5" />
+        Thêm Buýt
       </Button>
+      <Button onClick={HandleExport} size="sm">
+        <BiExport className="mr-2 h-5 w-5" />
+        Xuất dữ liệu
+      </Button>
+      </div>
       <Table rows={data} columns={columns} onEdit={handleOpenModal} onDelete={(row) => handleDelete(row.busId)} />
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>{isEditMode ? 'Cập nhật' : 'Thêm buýt'}</Modal.Header>
@@ -270,12 +288,10 @@ export default function Bus() {
               </Select>
             </div>
             <div className='space-y-2 flex flex-col'>
-              <label htmlFor='routesId'>Mã tuyến xe</label>
+              {/* <label htmlFor='routesId'>Mã tuyến xe</label>
               <select id="" className="rounded-lg border-gray-200 bg-gray-50" name='routesId'
                 value={formData.routesId || ''}
                 onChange={handleChange}
-                // disabled={isEditMode}
-                // onChange={(e) => setFormData((prev) => ({ ...prev, routesEntity_Id: Number(e.target.value) }))}
               >
                 <option value="" disabled className=''>Chọn mã tuyến</option>
                 <option value="null" className=''>Chưa phân tuyến</option>
@@ -286,7 +302,7 @@ export default function Bus() {
                   
                 ))}
                 
-              </select>
+              </select> */}
             </div>
           </div>
           <HR className='my-4' />

@@ -2,12 +2,16 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import type { Ticket } from '@type/model/Ticket';
-import { getListTicketDateAToDateB } from '../../api/services/admin/ticketService';
+import { getListTicketDateAToDateBAndUser } from '../../api/services/admin/ticketService';
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+
 
 const columns = [
   { id: 'ticketId', label: 'Mã Vé' },
-  { id: 'routeId', label: 'Mã Tuyến' },
-  { id: 'busId', label: 'Mã Xe buýt' },
+  { id: 'busRouteSchedule_Id', label: 'Mã Xe - Tuyến' },
+  // { id: 'routeId', label: 'Mã Tuyến' },
+  // { id: 'busId', label: 'Mã Xe buýt' },
   { id: 'departureDate', label: 'Ngày khởi hành' },
   {
     id: 'price',
@@ -15,7 +19,7 @@ const columns = [
     format: (value: number) => value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
   },
   { id: 'seatNumber', label: 'Số ghế' },
-  { id: 'status', label: 'Trạng thái' },
+  { id: 'status', label: 'Trạng thái thanh toán' },
 ];
 
 export default function HictoryByTicket() {
@@ -23,6 +27,11 @@ export default function HictoryByTicket() {
   const [dateB, setDateB] = useState<string>(""); // Ngày kết thúc
   const [data, setData] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+
+   // Lấy username từ redux
+   const username = useSelector((state: RootState) => state.user.currentUser?.userName);
+   console.log(username);
 
   // Lấy dữ liệu ticket từ API
   const fetchTickets = async () => {
@@ -32,7 +41,7 @@ export default function HictoryByTicket() {
     }
     setLoading(true);
     try {
-      const tickets = await getListTicketDateAToDateB(dateA, dateB);
+      const tickets = await getListTicketDateAToDateBAndUser(username, dateA, dateB);
       setData(tickets);
       console.log(">>>> list:",tickets)
       toast.success("Dữ liệu đã được tải thành công!");
@@ -67,14 +76,14 @@ export default function HictoryByTicket() {
             <div className='flex items-center gap-2'>
               <span className='mx-2'>Từ</span>
               <input
-                type="datetime-local"
+                type="date"
                 value={dateA}
                 onChange={(e) => setDateA(e.target.value)}
                 className="p-2 rounded-md border"
               />
               <span className='mx-2'>đến</span>
               <input
-                type="datetime-local"
+                type="date"
                 value={dateB}
                 onChange={(e) => setDateB(e.target.value)}
                 className="p-2 rounded-md border"
@@ -113,10 +122,11 @@ export default function HictoryByTicket() {
                         className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} border-b`}
                       >
                         <td className='p-4'>{row.ticketId}</td>
-                        <td className='p-4'>{row.busRoutesEntity_Id}</td>
-                        <td className='p-4'>{row.busEntity_Id}</td>
+                        <td className='p-4'>{row.busRouteSchedule_Id}</td>
+                        {/* <td className='p-4'>{row.busRoutesEntity_Id}</td>
+                        <td className='p-4'>{row.busEntity_Id}</td> */}
                         <td className='p-4'>{row.departureDate}</td>
-                        <td className='p-4'>{columns[4].format(row.price)}</td>
+                        <td className='p-4'>{columns[3].format(row.price)}</td>
                         <td className='p-4'>{row.seatNumber}</td>
                         <td className='p-4'>{row.status}</td>
                       </tr>
