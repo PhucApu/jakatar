@@ -1,27 +1,73 @@
 import { Label, TextInput } from 'flowbite-react';
 import SeatPicker from '../../components/user/SeatPicker';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { getSeatList } from '../../api/services/user/customerService';
 
 export default function Checkout() {
+  const location = useLocation();
+
+  const searchParams = new URLSearchParams(location.search);
+  const seatPrice = +searchParams.get('price');
+  const departureLocation = searchParams.get('departure');
+  const destinationLocation = searchParams.get('destination');
+  const departureDate = searchParams.get('date');
+  const departureTime = searchParams.get('time');
+  const scheduleId = searchParams.get('scheduleId');
+
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [emptySeats, setEmptySeats] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (departureLocation && scheduleId) {
+      const fetchSeats = async () => {
+        try {
+          const data = await getSeatList({ departureDate, scheduleId });
+          console.log(data.data);
+          const listSeatEmpty = Object.keys(data.data.listSeatEmpty[0]).filter(
+            (key) => {data.data.listSeatEmpty[0][key]}
+          );
+          setEmptySeats(listSeatEmpty);
+          console.log(emptySeats)
+        } catch (error) {
+          console.error('Error fetching seat data:', error);
+        }
+      };
+      fetchSeats();
+    }
+  }, [departureLocation, scheduleId]);
+
+  const handleSelectionChange = (seats: string[], total: number) => {
+    setSelectedSeats(seats);
+    setTotalAmount(total);
+  };
+
+  function formatTime(timeString: string): string {
+    const [hours, minutes] = timeString.split(':');
+    const formattedHours = parseInt(hours, 10);
+    return `${formattedHours}g ${minutes}p`;
+  }
+
   return (
     <div className='lg:grid lg:grid-cols-10 gap-8 px-8 mx-auto'>
       <div className='lg:col-span-7'>
         <section className='bg-white border border-gray-200 rounded-lg shadow-sm py-4 px-16 mt-4'>
           <h2 className='text-xl text-center font-semibold'>Chọn ghế</h2>
           <div className='flex gap-x-16 py-4'>
-            <SeatPicker />
-            <SeatPicker />
+            <SeatPicker onSelectionChange={handleSelectionChange} emptySeats={emptySeats} seatPrice={seatPrice} />
             <div>
               <div className='flex items-center gap-x-2'>
                 <div className='w-4 h-4 bg-white bg-opacity-50 border border-gray-200'></div>
-                <span>Đã bán</span>
-              </div>
-              <div className='flex items-center gap-x-2'>
-                <div className='w-4 h-4 bg-blue-700 border border-gray-200'></div>
                 <span>Còn trống</span>
               </div>
               <div className='flex items-center gap-x-2'>
-                <div className='w-4 h-4 bg-red-700 border border-gray-200'></div>
+                <div className='w-4 h-4 bg-blue-700 border border-gray-200'></div>
                 <span>Đang chọn</span>
+              </div>
+              <div className='flex items-center gap-x-2'>
+                <div className='w-4 h-4 bg-red-700 border border-gray-200'></div>
+                <span>Đã bán</span>
               </div>
             </div>
           </div>
@@ -50,7 +96,9 @@ export default function Checkout() {
               </div>
             </form>
             <div className='basis-[50%] flex flex-col gap-4'>
-              <h3 className='text-red-500 text-xl text-center uppercase'>Điều khoản và lưu ý</h3>
+              <h3 className='text-red-500 text-xl text-center uppercase'>
+                Điều khoản và lưu ý
+              </h3>
               <p>
                 (*) Quý khách vui lòng có mặt tại bến xuất phát của xe trước ít nhất 30 phút giờ
                 xe khởi hành, mang theo thông báo đã thanh toán vé thành công có chứa mã vé được
@@ -73,23 +121,27 @@ export default function Checkout() {
         <h2 className='text-xl text-center font-semibold'>Thông tin chuyến xe</h2>
         <div className='flex items-center justify-between'>
           <p className='font-semibold text-gray-600'>Từ</p>
-          <p>Vĩnh Long</p>
+          <p>{departureLocation}</p>
         </div>
         <div className='flex items-center justify-between'>
           <p className='font-semibold text-gray-600'>Đến</p>
-          <p>TP. Hồ Chí Minh</p>
+          <p>{destinationLocation}</p>
+        </div>
+        <div className='flex items-center justify-between'>
+          <p className='font-semibold text-gray-600'>Giờ khởi hành</p>
+          <p>{formatTime(departureTime!)}</p>
         </div>
         <div className='flex items-center justify-between'>
           <p className='font-semibold text-gray-600'>Số lượng ghế</p>
-          <p>1</p>
+          <p>{selectedSeats.length}</p>
         </div>
         <div className='flex items-center justify-between'>
           <p className='font-semibold text-gray-600'>Danh sách ghế</p>
-          <p>A1, A2, B3</p>
+          <p className='max-w-32 text-right'>{selectedSeats.join(', ')}</p>
         </div>
         <div className='flex items-center justify-between'>
           <p className='font-semibold text-gray-600'>Tổng cộng</p>
-          <p className='font-bold text-cyan-600'>140.000đ</p>
+          <p className='font-bold text-cyan-600'>{totalAmount.toLocaleString()}đ</p>
         </div>
       </div>
     </div>
