@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { toPng } from "html-to-image";
 import { saveAs } from "file-saver";
 import type { Ticket } from '@type/model/Ticket';
-import { getTickets} from '../../api/services/admin/ticketService';
+import { getTickets } from '../../api/services/admin/ticketService';
 
 const ExportTicket: React.FC = () => {
+  const [data, setData] = useState<Ticket[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-    const [data, setData] = useState<Ticket[]>([]);
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-      // Lấy dữ liệu ticket từ API
+  // Lấy dữ liệu ticket từ API
   const fetchTickets = async () => {
     try {
       const tickets = await getTickets();
@@ -24,7 +24,6 @@ const ExportTicket: React.FC = () => {
   useEffect(() => {
     fetchTickets();
   }, []);
-
 
   const handleExport = () => {
     const ticketElement = document.getElementById("ticket");
@@ -48,28 +47,48 @@ const ExportTicket: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 -m-32">
       <div
         id="ticket"
-        style={{
-          border: "1px solid #ccc",
-          padding: "16px",
-          width: "300px",
-          background: "#f9f9f9",
-          textAlign: "center",
-        }}
+        className="border border-gray-300 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-xl shadow-md p-6 w-96 text-center"
       >
-        <h2>Bus Ticket</h2>
-        <p>Ticket Number: 12345ABC</p>
-        <p>Passenger Name: John Doe</p>
-        <p>From: Ho Chi Minh City</p>
-        <p>To: Hanoi</p>
-        <p>Departure Time: 2024-12-06 08:00 AM</p>
-        <p>Seat Number: B12</p>
-        <p>Price: 350,000 VND</p>
+        <h2 className="text-2xl font-bold mb-4">Vé xe AnhBaBus</h2>
+        <p className="text-lg font-medium mb-2">
+          <strong>Mã vé:</strong> 12345ABC
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>Passenger Name:</strong> John Doe
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>From:</strong> Ho Chi Minh City
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>To:</strong> Hanoi
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>Departure Time:</strong> 2024-12-06 08:00 AM
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>Seat Number:</strong> B12
+        </p>
+        <p className="text-xl font-bold mt-4">
+          Price: <span className="text-yellow-300">350,000 VND</span>
+        </p>
       </div>
-      <button onClick={handleExport}>Export Ticket as Image</button>
-    </>
+      <div className="flex gap-4">
+      <button
+        className="mt-6 font-semibold py-2 px-4 rounded-lg shadow-lg transition-transform transform hover:scale-105"
+      >
+        <a href="/dat-ve">Quay lại</a>
+      </button>
+      <button
+        onClick={handleExport}
+        className="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-transform transform hover:scale-105"
+      >
+        Xuất vé
+      </button>
+      </div>
+    </div>
   );
 };
 
