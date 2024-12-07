@@ -1,16 +1,15 @@
-import { useState } from 'react';
-import { register } from '../../api/services/user/customerService';
-import { useNavigate } from 'react-router-dom';
-import { Alert } from 'flowbite-react';
 
-interface SignUpForm {
-  username: string;
-  fullName: string;
-  email: string;
-  pass: string;
-  phoneNumber: string;
+import { registerUser } from "../../api/services/admin/accountService";
+import { useState, ChangeEvent } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+interface User{
+  username: string,
+  pass: string,
+  email: string,
+  fullName: string,
+  phoneNumber: string
 }
-
 export default function SignUp() {
   const [signUpForm, setSignUpForm] = useState<SignUpForm>({
     username: '',
@@ -125,6 +124,7 @@ export default function SignUp() {
                   required
                 />
               </div>
+            <form className="space-y-4 md:space-y-6" action="#">
               <div>
                 <label
                   htmlFor="fullName"
@@ -133,23 +133,49 @@ export default function SignUp() {
                   Họ và tên
                 </label>
                 <input
-                  type='text'
-                  name='username'
-                  id='username'
-                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
-                  placeholder='Nhập tên tài khoản'
-                  value={signUpForm.username}
-                  onChange={handleInputChange}
-                  minLength={6}
+                  type="name"
+                  name="fullName"
+                  id="fullName"
+                  placeholder="nhập họ và tên"
+                  value={formData.fullName || ''}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
                   required
                 />
               </div>
               <div>
                 <label
-                  htmlFor='email'
-                  className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
                 >
                   Email
+                  Họ và tên
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="nhập email"
+                  value={formData.email || ''}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  type="name"
+                  name="fullName"
+                  id="fullName"
+                  placeholder="nhập họ và tên"
+                  value={formData.fullName || ''}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="phoneNumber"
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Số điện thoại
                 </label>
                 <input
                   type="email"
@@ -170,38 +196,19 @@ export default function SignUp() {
                   Số điện thoại
                 </label>
                 <input
-                  type='password'
-                  name='pass'
-                  id='pass'
-                  placeholder='••••••••'
-                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
-                  value={signUpForm.pass}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor='passwordConfirm'
-                  className='block mb-2 text-sm font-medium text-gray-900'
-                >
-                  Nhập lại mật khẩu
-                </label>
-                <input
-                  type='password'
-                  name='passwordConfirm'
-                  id='passwordConfirm'
-                  placeholder='••••••••'
-                  className='bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5'
-                  value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
+                  type="number"
+                  name="phoneNumber"
+                  id="phoneNumber"
+                  placeholder="nhập số điện thoại"
+                  value={formData.phoneNumber || ''}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
                   required
                 />
               </div>
               <button
-                type='submit'
-                className='w-full text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center'
-                disabled={loading}
+                onClick={handleSave}
+                className="w-full text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Đăng ký
               </button>
