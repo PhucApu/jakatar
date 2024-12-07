@@ -11,55 +11,94 @@ interface User{
   phoneNumber: string
 }
 export default function SignUp() {
-  const [signUpForm, setSignUpForm] = useState<SignUpForm>({
-    username: '',
-    fullName: '',
-    email: '',
-    pass: '',
-    phoneNumber: '',
-  });
+  
+  const [formData, setFormData] = useState<Partial<User>>({});
+  const [repeatPass, setRepeatPass] = useState<string>(''); // State for repeat password
 
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-
-  const navigate = useNavigate();
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSignUpForm({
-      ...signUpForm,
-      [name]: value,
-    });
-  };
-
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (signUpForm.pass !== confirmPassword) {
-      setError('Mật khẩu và mật khẩu xác nhận không khớp');
-      return;
+  const validDataCheck = (): boolean => {
+    // Kiểm tra userName
+    if (!formData.username || formData.username.trim() === '') {
+      toast.error('Tên tài khoản không được để trống', { autoClose: 800 });
+      return false;
+    }
+    const userNameRegex = /^.{5,20}$/;
+    if (!userNameRegex.test(formData.username)) {
+      toast.error('Tên tài khoản phải từ 5 đến 20 ký tự', { autoClose: 800 });
+      return false;
+    }
+  
+    // Kiểm tra passWord
+    if (!formData.pass || formData.pass.trim() === '') {
+      toast.error('Mật khẩu không được để trống', { autoClose: 800 });
+      return false;
+    }
+    const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]{5,}$/;
+    if ((!passwordRegex.test(formData.pass))) {
+      toast.error('Mật khẩu phải có ít nhất 5 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt', { autoClose: 800 });
+      return false;
     }
 
-    setLoading(true);
-    try {
-      const res = await register(signUpForm);
+     // Check repeatPass matches passWord
+     if (formData.pass !== repeatPass) {
+      toast.error('Mật khẩu và mật khẩu xác nhận không khớp', { autoClose: 800 });
+      return false;
+    }
+  
+    // Kiểm tra email
+    if (!formData.email || formData.email.trim() === '') {
+      toast.error('Email không được để trống', { autoClose: 800 });
+      return false;
+    }
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|outlook)\.com$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error('Email phải là địa chỉ Gmail hoặc Outlook hợp lệ', { autoClose: 800 });
+      return false;
+    }
+  
+    // Kiểm tra fullName
+    if (!formData.fullName || formData.fullName.trim() === '') {
+      toast.error('Họ và tên không được để trống', { autoClose: 800 });
+      return false;
+    }
+  
+    // Kiểm tra phoneNumber
+    if (!formData.phoneNumber || formData.phoneNumber.trim() === '') {
+      toast.error('Số điện thoại không được để trống', { autoClose: 800 });
+      return false;
+    }
+    const phoneNumberRegex = /^(03|05|07|08|09)[0-9]{8}$/;
+    if (!phoneNumberRegex.test(formData.phoneNumber)) {
+      toast.error('Số điện thoại không hợp lệ (VD: 03xxxxxxxx, 09xxxxxxxx)', { autoClose: 800 });
+      return false;
+    }
+  
+    return true; // Nếu tất cả kiểm tra đều hợp lệ
+  };
 
-      if (res.status !== 'success') {
-        setError(res.message.mess);
-        return;
-      }
 
-      if (res.status === 'success') {
-        setError('');
-        setLoading(false);
-        navigate('/dang-nhap');
-      }
-    } catch (error) {
-      setError('Có lỗi xảy ra trong quá trình đăng ký của bạn');
+
+  const handleSave = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if(!validDataCheck()) return;
+    
+    await registerUser(formData.username, formData.pass, formData.email, formData.fullName, formData.phoneNumber);
+    console.log('Dữ liệu trước khi gửi:', formData);
+    toast.success('Thêm tài khoản thành công.', { autoClose: 800 });
+     // Đặt lại form data và repeatPass về rỗng
+     setFormData({});
+     setRepeatPass('');
+
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    if (name === 'repeatPass') {
+      setRepeatPass(value); // Cập nhật state cho repeatPass
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
@@ -124,7 +163,6 @@ export default function SignUp() {
                   required
                 />
               </div>
-            <form className="space-y-4 md:space-y-6" action="#">
               <div>
                 <label
                   htmlFor="fullName"
@@ -149,33 +187,6 @@ export default function SignUp() {
                   className="block mb-2 text-sm font-medium text-gray-900 "
                 >
                   Email
-                  Họ và tên
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="nhập email"
-                  value={formData.email || ''}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
-                  type="name"
-                  name="fullName"
-                  id="fullName"
-                  placeholder="nhập họ và tên"
-                  value={formData.fullName || ''}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="phoneNumber"
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Số điện thoại
                 </label>
                 <input
                   type="email"
@@ -225,6 +236,7 @@ export default function SignUp() {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </section>
   );
 }
