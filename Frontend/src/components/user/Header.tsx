@@ -49,7 +49,7 @@ export default function Header() {
             <div className='relative order-2 items-center flex gap-x-4'>
               {user.currentUser.role === 'ROLE_ADMIN' && (
                 <div>
-                  <Button size='sm' color='dark' onClick={() => navigate('/admin')}>
+                  <Button size='sm' onClick={() => navigate('/admin')}>
                     <IoSettings className='h-6 w-6' />
                   </Button>
                 </div>

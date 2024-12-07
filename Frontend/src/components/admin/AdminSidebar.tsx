@@ -3,8 +3,20 @@ import { HR, Sidebar } from "flowbite-react";
 import { FaHome, FaBus, FaTicketAlt, FaMoneyBill, FaSignOutAlt } from "react-icons/fa";
 import { MdFeedback } from "react-icons/md";
 import { HiShoppingBag, HiUser } from "react-icons/hi";
+import { useDispatch } from "react-redux";
+import { userClear } from "../../redux/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminSidebar() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    localStorage.removeItem('jwtToken')
+    dispatch(userClear());
+    navigate('/');
+  }
+
   return (
     <Sidebar>
       <Sidebar.Items>
@@ -36,7 +48,7 @@ export default function AdminSidebar() {
             Thanh toán
           </Sidebar.Item>
           <HR />
-          <Sidebar.Item href="/admin" icon={FaSignOutAlt}>
+          <Sidebar.Item icon={FaSignOutAlt} onClick={handleLogout}>
             Đăng xuất
           </Sidebar.Item>
         </Sidebar.ItemGroup>

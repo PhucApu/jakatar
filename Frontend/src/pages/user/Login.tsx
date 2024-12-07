@@ -4,7 +4,7 @@ import { login } from "../../api/services/user/authService";
 import { useDispatch, useSelector } from "react-redux";
 import { userStart, userSuccess, userFailed } from "../../redux/userSlice";
 import { RootState } from "../../redux/store";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Alert } from "flowbite-react";
 
 interface LoginForm {
@@ -15,6 +15,7 @@ interface LoginForm {
 export default function Login() {
   const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const navigate = useNavigate();
 
@@ -44,7 +45,8 @@ export default function Login() {
           return dispatch(userFailed(data.message.mess));
         }
         dispatch(userSuccess(data.data));
-        navigate('/');
+        const redirectTo = (location.state as { from: string })?.from || '/';
+        navigate(redirectTo);
     } catch (error) {
       dispatch(userFailed((error as Error).message));
     } finally {
