@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bus_station_ticket.project.ProjectConfig.LoggerConfig;
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
 import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.EmployeeDTO;
@@ -51,6 +52,8 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
                      responseObject.addMessage("length", listEmployeeEntities.size());
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
 
+                     LoggerConfig.writeInfoLevel(EmployeeController.class, "/employees", "Successfully retrieved data");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
 
               }
@@ -58,6 +61,8 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
               responseObject.setData(listEmployeeEntities);
               responseObject.addMessage("mess", "There is no data in the database");
               responseObject.addMessage("length", listEmployeeEntities.size());
+
+              LoggerConfig.writeWarningLevel(EmployeeController.class, "/employees", "There is no data in the database");
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }
@@ -81,12 +86,17 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
                      responseObject.addMessage("mess", "Found data with matching driver id");
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
+
+                     LoggerConfig.writeInfoLevel(EmployeeController.class, "/employees/{driverId}", "Found data with matching driver id");
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus("failure");
               responseObject.setData(employeeDTO);
               responseObject.addMessage("mess", "No employee entity found with matching driver id");
+
+              LoggerConfig.writeWarningLevel(EmployeeController.class, "/employees/{driverId}", "No employee entity found with matching driver id");
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -102,6 +112,9 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(EmployeeController.class, "/employees/delete/{driverId}", "Missing path variable value or incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
 
@@ -118,12 +131,17 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
+
+                     LoggerConfig.writeInfoLevel(EmployeeController.class, "/employees/delete/{driverId}", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(employeeDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+              
+              LoggerConfig.writeWarningLevel(EmployeeController.class, "/employees/delete/{driverId}", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -139,6 +157,9 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
                      responseObject.setStatus(MESS_FAILURE);
                      responseObject.addMessage("mess", "Missing path variable value or incorrect path variable value");
                      responseObject.setData(id);
+
+                     LoggerConfig.writeErrorLevel(EmployeeController.class, "/employees/hidden/{driverId}", "Missing path variable value or incorrect path variable value");
+
                      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
               }
 
@@ -154,12 +175,17 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
                      responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
+
+                     LoggerConfig.writeInfoLevel(EmployeeController.class, "/employees/hidden/{driverId}", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(employeeDTO);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(EmployeeController.class, "/employees/hidden/{driverId}", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -178,12 +204,16 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
 
+                     LoggerConfig.writeInfoLevel(EmployeeController.class, "/employees/insert", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(obj);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(EmployeeController.class, "/employees/insert", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -202,12 +232,16 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
 
+                     LoggerConfig.writeInfoLevel(EmployeeController.class, "/employees/update", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(obj);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(EmployeeController.class, "/employees/update", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -226,12 +260,16 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
 
+                     LoggerConfig.writeInfoLevel(EmployeeController.class, "/employees/update/bus_and_employee", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(obj);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(EmployeeController.class, "/employees/update/bus_and_employee", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -250,12 +288,16 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
 
                      responseObject.addMessage("info", responseObject.getPathBasicInfor("employees", "{driverId}"));
 
+                     LoggerConfig.writeInfoLevel(EmployeeController.class, "/employees/delete/bus_and_employee", responseBoolAndMess.getValueMess());
+
                      return ResponseEntity.status(HttpStatus.OK).body(responseObject);
               }
 
               responseObject.setStatus(MESS_FAILURE);
               responseObject.setData(obj);
               responseObject.addMessage("mess", responseBoolAndMess.getValueMess());
+
+              LoggerConfig.writeWarningLevel(EmployeeController.class, "/employees/delete/bus_and_employee", responseBoolAndMess.getValueMess());
 
               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseObject);
        }
@@ -264,6 +306,8 @@ public class EmployeeController implements RestApiSimpleControllerInf<EmployeeDT
        public ResponseEntity<ResponseObject> getBusIdAndDriverId (){
 
               ResponseObject responseObject = this.employeeService.getAllDriverIdAndBusId();
+
+              LoggerConfig.writeWarningLevel(EmployeeController.class, "/employees/bus_and_employee", MESS_SUCCESS);
 
               return ResponseEntity.status(HttpStatus.OK).body(responseObject);
        }

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bus_station_ticket.project.ProjectConfig.ResponseBoolAndMess;
+import com.bus_station_ticket.project.ProjectConfig.ResponseObject;
 import com.bus_station_ticket.project.ProjectDTO.AccountDTO;
 import com.bus_station_ticket.project.ProjectEntity.AccountEntity;
 import com.bus_station_ticket.project.ProjectEntity.FeedbackEntity;
@@ -25,6 +26,7 @@ import com.bus_station_ticket.project.ProjectRepository.FeedbackRepo;
 import com.bus_station_ticket.project.ProjectRepository.TicketRepo;
 import com.bus_station_ticket.project.ProjectSecurity.JwtService;
 import com.bus_station_ticket.project.ProjectSecurity.UserDetailsConfig;
+
 
 @Service
 public class AccountService implements SimpleServiceInf<AccountEntity, AccountDTO, String> {
@@ -236,22 +238,19 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
        public Boolean foreignKeyViolationIfDelete(AccountEntity entityObj) {
 
               // Accounnt foreign key Feedback and Ticket
-              if (entityObj.getIsBlock()) {
-                     // lấy những đối tượng ticket và feedback tham chiếu khóa ngoại đến account
-                     List<TicketEntity> ticketEntities = this.ticketRepo
-                                   .findByAccountEntity_userName(entityObj.getUserName());
+              // lấy những đối tượng ticket và feedback tham chiếu khóa ngoại đến account
+              List<TicketEntity> ticketEntities = this.ticketRepo
+                            .findByAccountEntity_userName(entityObj.getUserName());
 
-                     List<FeedbackEntity> feedbackEntities = this.feedbackRepo
-                                   .findByAccountEntity_userName(entityObj.getUserName());
+              List<FeedbackEntity> feedbackEntities = this.feedbackRepo
+                            .findByAccountEntity_userName(entityObj.getUserName());
 
-                     // kiểm tra
-                     // Nếu có thực thể tham chiếu khóa ngoại
-                     if (ticketEntities.isEmpty() == false || feedbackEntities.isEmpty() == false) {
-                            return true;
-                     }
+              // kiểm tra
+              // Nếu có thực thể tham chiếu khóa ngoại
+              if (ticketEntities.isEmpty() == true && feedbackEntities.isEmpty() == true) {
                      return false;
               }
-              return false;
+              return true;
 
        }
 
@@ -261,31 +260,36 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
 
               // Accounnt foreign key Feedback and Ticket
 
-              // lấy những đối tượng ticket và feedback tham chiếu khóa ngoại đến account
-              List<TicketEntity> ticketEntities = this.ticketRepo.findByAccountEntity_userName(entityObj.getUserName());
+              if (entityObj.getIsDelete()) {
+                     // lấy những đối tượng ticket và feedback tham chiếu khóa ngoại đến account
+                     List<TicketEntity> ticketEntities = this.ticketRepo
+                                   .findByAccountEntity_userName(entityObj.getUserName());
 
-              List<FeedbackEntity> feedbackEntities = this.feedbackRepo
-                            .findByAccountEntity_userName(entityObj.getUserName());
+                     List<FeedbackEntity> feedbackEntities = this.feedbackRepo
+                                   .findByAccountEntity_userName(entityObj.getUserName());
 
-              // kiểm tra
-              // Nếu có thực thể tham chiếu khóa ngoại
-              if (ticketEntities.isEmpty() == false) {
+                     // kiểm tra
+                     // Nếu có thực thể tham chiếu khóa ngoại
+                     if (ticketEntities.isEmpty() == false) {
 
-                     for (TicketEntity ticketEntity : ticketEntities) {
-                            if (ticketEntity.getIsDelete() == false) {
-                                   return true;
+                            for (TicketEntity ticketEntity : ticketEntities) {
+                                   if (ticketEntity.getIsDelete() == false) {
+                                          return true;
+                                   }
                             }
                      }
-              }
-              if (feedbackEntities.isEmpty() == false) {
+                     if (feedbackEntities.isEmpty() == false) {
 
-                     for (FeedbackEntity feedbackEntity : feedbackEntities) {
-                            if (feedbackEntity.getIsDelete() == false) {
-                                   return true;
+                            for (FeedbackEntity feedbackEntity : feedbackEntities) {
+                                   if (feedbackEntity.getIsDelete() == false) {
+                                          return true;
+                                   }
                             }
                      }
+                     return false;
               }
               return false;
+
        }
 
        @Transactional
@@ -375,6 +379,70 @@ public class AccountService implements SimpleServiceInf<AccountEntity, AccountDT
                      return null;
               }
               return null;
+       }
+
+       // Register user 
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       public ResponseObject registerAccountUser(String username, String pass, String email, String fullName,
+                     String phoneNumber) {
+
+              ResponseObject responseObject = new ResponseObject();
+
+              String role = "ROLE_USER";
+              Boolean isDelete = false;
+              Boolean isBlock = false;
+              List<Long> listFeedbackEntities_Id = new ArrayList<>();
+              List<Long> listTicketEntities_Id = new ArrayList<>();
+
+              AccountDTO accountDTO = new AccountDTO(username, pass, email, fullName, phoneNumber, role, isBlock,
+                            isDelete, listFeedbackEntities_Id, listTicketEntities_Id);
+
+              if (save_toDTO(accountDTO).getValueBool()) {
+                     responseObject.setStatus("success");
+                     responseObject.addMessage("mess", "Register success. Now you can login");
+                     responseObject.setData(accountDTO);
+
+                     return responseObject;
+              }
+
+              responseObject.setStatus("failure");
+              responseObject.addMessage("mess", "Register not success.");
+              responseObject.setData(accountDTO);
+
+              return responseObject;
+
+       }
+
+       // Register user 
+       @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+       public ResponseObject updateAccountForUser(String username, String pass, String email, String fullName,
+                     String phoneNumber) {
+
+              ResponseObject responseObject = new ResponseObject();
+
+              String role = "ROLE_USER";
+              Boolean isDelete = false;
+              Boolean isBlock = false;
+              List<Long> listFeedbackEntities_Id = new ArrayList<>();
+              List<Long> listTicketEntities_Id = new ArrayList<>();
+
+              AccountDTO accountDTO = new AccountDTO(username, pass, email, fullName, phoneNumber, role, isBlock,
+                            isDelete, listFeedbackEntities_Id, listTicketEntities_Id);
+
+              if (update_toDTO(accountDTO).getValueBool()) {
+                     responseObject.setStatus("success");
+                     responseObject.addMessage("mess", "Update success.");
+                     responseObject.setData(accountDTO);
+
+                     return responseObject;
+              }
+
+              responseObject.setStatus("failure");
+              responseObject.addMessage("mess", "Register not success.");
+              responseObject.setData(accountDTO);
+
+              return responseObject;
+
        }
 
        public AccountRepo getRepo() {

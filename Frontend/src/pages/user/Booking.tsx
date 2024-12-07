@@ -19,6 +19,7 @@ export default function Booking() {
     setLoading(true);
     try {
       const data = await searchBuses(fromLocation, toLocation);
+      console.log(data.data);
       setSchedules(data.data);
     } catch (error) {
       setSchedules([]);

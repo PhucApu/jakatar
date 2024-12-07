@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -33,10 +34,13 @@ public class VNPayService {
        @Transactional
        public String createOrder(HttpServletRequest request, int amount, String paymentId, String paymentInfor, String returnUrl)
                      throws UnsupportedEncodingException {
+
+              LocalDateTime now = LocalDateTime.now();
+
               // VNPAY Parameters
               String vnpVersion = "2.1.0";
               String vnpCommand = "pay";
-              String vnpTxnRef = paymentId;
+              String vnpTxnRef = paymentId + "_" + now.toString();
               String vnpIpAddr = getIpAddress(request);
               String orderType = "order-type";
               String locale = "vn";
