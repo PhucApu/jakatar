@@ -12,7 +12,7 @@ import type { TableColumn } from '@type/common/TableColumn';
 import type { BusRouteSchedule } from '@type/model/BusRouteSchedule';
 
 // Import các API cần thiết
-import { getBusRouteSchedules, createBusRouteSchedule, updateBusRouteSchedule, deleteBusRouteSchedule  } from '../../api/services/admin/BusRouteScheduleService';
+import { getBusRouteSchedules, createBusRouteSchedule, updateBusRouteSchedule, deleteBusRouteSchedule  } from '../../api/services/admin/busRouteScheduleService';
 import { getBuses } from '../../api/services/admin/busService';
 import { getBusRoutes } from '../../api/services/admin/busRouteService';
 // import { formatDate } from '../../utils/dateFormat';
@@ -224,7 +224,7 @@ export default function Ticket() {
       <h1 className='uppercase font-semibold text-2xl tracking-wide mb-4'>Quản lý xe - tuyến</h1>
       <Button onClick={() => handleOpenModal()} size='sm'>
         <HiPlus className='mr-2 h-5 w-5' />
-        Thêm vé
+        Thêm xe - tuyến 
       </Button>
       <Table rows={data} columns={columns} onEdit={handleOpenModal} onDelete={(row) => handleDelete(row.scheduleId)}/>
       <Modal show={openModal} onClose={() => setOpenModal(false)}>

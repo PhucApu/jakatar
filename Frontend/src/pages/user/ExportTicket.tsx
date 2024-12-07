@@ -2,13 +2,52 @@ import { useEffect, useState } from "react";
 import { toPng } from "html-to-image";
 import { saveAs } from "file-saver";
 import type { Ticket } from '@type/model/Ticket';
-import { getTickets } from '../../api/services/admin/ticketService';
+import { getTickets, getTicketById } from '../../api/services/admin/ticketService';
+import { useLocation } from "react-router-dom";
 
 const ExportTicket: React.FC = () => {
   const [data, setData] = useState<Ticket[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+
+
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const ticketId = searchParams.get('ticketId');
+  // const ticketIdDone = ticketId[0];
+  // console.log(">>>",ticketId)
+  // const paymentId = searchParams.get('');
+  // const ticketIdExport = getTicketById(ticketId);
+  // const ticketArray = ticketId.split(","); // Tách chuỗi dựa trên dấu phẩy
+  // if (ticketArray.length > 0) 
+  // firstTicketId = ticketArray[0];
+  let ticketIdArray: number[] = [];
+  let firstTicketId: number | null = null;
+
+
+  if (ticketId) {
+    try {
+      // Thử parse nếu ticketId là JSON
+      const parsedTicketId = JSON.parse(ticketId);
+      if (Array.isArray(parsedTicketId)) {
+        ticketIdArray = parsedTicketId.map((id: any) => Number(id));
+      } else {
+        // Nếu không phải JSON, tách chuỗi dựa trên dấu phẩy
+        ticketIdArray = ticketId.split(',').map(id => Number(id));
+      }
+    } catch (error) {
+      // Nếu không phải JSON, xử lý như chuỗi thông thường
+      ticketIdArray = ticketId.split(',').map(id => Number(id));
+    }
+  }
+  firstTicketId = ticketIdArray[0];
+  console.log(ticketIdArray);
+  console.log(firstTicketId);
+    const ticketIdExport = getTicketById(firstTicketId);
+  console.log(ticketIdExport);
+  // setData(ticketIdExport)
   // Lấy dữ liệu ticket từ API
   const fetchTickets = async () => {
     try {
@@ -47,17 +86,17 @@ const ExportTicket: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 -m-32">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 -m-32 ">
       <div
         id="ticket"
-        className="border border-gray-300 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-xl shadow-md p-6 w-96 text-center"
+        className="border border-gray-300 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-xl shadow-md p-6 w-96 text-center "
       >
         <h2 className="text-2xl font-bold mb-4">Vé xe AnhBaBus</h2>
         <p className="text-lg font-medium mb-2">
-          <strong>Mã vé:</strong> 12345ABC
+          <strong>Mã vé:</strong>{firstTicketId}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Passenger Name:</strong> John Doe
+          <strong>Mã khách hàng: </strong> Toan {}
         </p>
         <p className="text-lg font-medium mb-2">
           <strong>From:</strong> Ho Chi Minh City
@@ -66,13 +105,13 @@ const ExportTicket: React.FC = () => {
           <strong>To:</strong> Hanoi
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Departure Time:</strong> 2024-12-06 08:00 AM
+          <strong>Thời gian khởi hành:</strong> 2024-12-06 08:00 AM
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Seat Number:</strong> B12
+          <strong>Số ghế:</strong> 1_A02, 2_A02
         </p>
         <p className="text-xl font-bold mt-4">
-          Price: <span className="text-yellow-300">350,000 VND</span>
+          Giá: <span className="text-yellow-300">350,000 VND</span>
         </p>
       </div>
       <div className="flex gap-4">

@@ -106,3 +106,25 @@ export const getListTicketDateAToDateBAndUser = async (
     return response.data.data || {};
   });
 };
+
+
+// export const getTicketInfo = async (
+//   username: string | undefined,
+//   pass: string | undefined,
+//   email: string | undefined,
+//   fullName: string | undefined,
+//   phoneNumber: string | undefined
+// ): Promise<any> => {
+//   return apiRequest(async () => {
+//     // Kiểm tra các tham số đầu vào trước khi gửi yêu cầu
+//     if (!username || !pass || !email || !fullName || !phoneNumber) {
+//       throw new Error('All fields must be provided');
+//     }
+
+//     const response = await apiClient.post(`tickets/ticket_full_info/${ticketId}`)
+
+//     console.log(">>DATA:", response.data);
+
+//     return response.data.data;
+//   });
+// };

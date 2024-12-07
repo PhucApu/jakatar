@@ -12,7 +12,7 @@ import type { Ticket } from '@type/model/Ticket';
 // Import các API cần thiết
 import { getTickets, createTicket, updateTicket, deleteTicket } from '../../api/services/admin/ticketService';
 import { getAccounts } from '../../api/services/admin/accountService';
-import { getBusRouteSchedules} from '../../api/services/admin/BusRouteScheduleService';
+import { getBusRouteSchedules} from '../../api/services/admin/busRouteScheduleService';
 // import { getBuses } from '../../api/services/admin/busService';
 // import { getBusRoutes } from '../../api/services/admin/busRouteService';
 import { getPayments } from '../../api/services/admin/paymentService';
