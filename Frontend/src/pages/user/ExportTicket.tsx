@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { toPng } from "html-to-image";
 import { saveAs } from "file-saver";
 import type { Ticket } from '@type/model/Ticket';
-import { getTickets, getTicketById } from '../../api/services/admin/ticketService';
+import type { TicKetFullInfo } from '@type/model/TicKetFullInfo';
+import { getTickets, getTicketById, getTicketInfo } from '../../api/services/admin/ticketService';
 import { useLocation } from "react-router-dom";
 
 const ExportTicket: React.FC = () => {
   const [data, setData] = useState<Ticket[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [ticket, setTicket] = useState<Ticket | null>(null);
+  const [ticket, setTicket] = useState<TicKetFullInfo | null>(null);
 
 
 
@@ -64,7 +65,8 @@ const ExportTicket: React.FC = () => {
   const fetchTicket = async () => {
     if (!firstTicketId) return;
     try {
-      const ticketData = await getTicketById(firstTicketId);
+      // const ticketData = await getTicketById(firstTicketId);
+      const ticketData = await getTicketInfo(firstTicketId);
       setTicket(ticketData);
     } catch (error: any) {
       setError(error.message || "Failed to fetch ticket.");
@@ -116,28 +118,50 @@ const ExportTicket: React.FC = () => {
       >
         <h2 className="text-2xl font-bold mb-4">Vé xe AnhBaBus</h2>
         <p className="text-lg font-medium mb-2">
-          <strong>Mã vé:</strong>{ticketIdArray}
+          <strong>Mã vé: </strong>{ticketIdArray}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Mã khách hàng: </strong> {ticket?.accountEnity_Id}
+          <strong>Mã khách hàng: </strong> {ticket?.accountUsername}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>From:</strong> Hà Nội
+          <strong>Số điện thoại đặt vé: </strong>{ticket?.phoneNumber}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>To:</strong> Hải Phòng
+          <strong>From: </strong> {ticket?.departureLocation}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Thời gian khởi hành:</strong> {ticket?.departureDate}
+          <strong>To: </strong> {ticket?.destinationLocation}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Số ghế:</strong>{ticket?.seatNumber}
+          <strong>Ngày khởi hành: </strong> {ticket?.departureDate}
         </p>
         <p className="text-lg font-medium mb-2">
-          <strong>Mã giảm giá:</strong>{ticket?.discountEntity_Id}
+          <strong>Thứ: </strong> {ticket?.dayOfWeek}
         </p>
+        {/* <p className="text-lg font-medium mb-2">
+          <strong>Thời gian dự kiến: </strong> {ticket?.tripTime}
+        </p> */}
+        <p className="text-lg font-medium mb-2">
+          <strong>Thời gian khởi hành: </strong> {ticket?.departureTime}
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>Thời gian đến: </strong> {ticket?.distinationTime}
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>Số ghế: </strong>{ticket?.seatNumber}
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>Số tiền giảm: </strong>{ticket?.discountAmount}
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>Khoảng cách: </strong>{ticket?.distanceKm}
+        </p>
+        <p className="text-lg font-medium mb-2">
+          <strong>Phương thức thanh toán: </strong>{ticket?.paymentMethod}
+        </p>
+        
         <p className="text-xl font-bold mt-4">
-          Giá: <span className="text-yellow-300">{ticket?.price}</span>
+          Giá: <span className="text-yellow-300">{ticket?.finalAmount}</span>
         </p>
       </div>
       <div className="flex gap-4">

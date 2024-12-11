@@ -3,6 +3,7 @@ import apiClient from "../../apiClient";
 import { apiRequest } from '../apiRequest'; // Import centralized API middleware
 import { ApiResponse } from '@type/common/ApiResponse';
 import { Ticket } from '@type/model/Ticket';
+import { TicKetFullInfo } from '@type/model/TicKetFullInfo';
 
 export const getTickets = async (): Promise<Ticket[]> => {
   return apiRequest(async () => {
@@ -128,3 +129,12 @@ export const getListTicketDateAToDateBAndUser = async (
 //     return response.data.data;
 //   });
 // };
+
+
+// lấy full thông tin của vé để in ra vé
+export const getTicketInfo = async (ticketId: number): Promise<TicKetFullInfo> => {
+  return apiRequest(async () => {
+    const response = await apiClient.get<ApiResponse<TicKetFullInfo>>(`tickets/ticket_full_info/${ticketId}`);
+    return response.data.data!;
+  });
+}; 
